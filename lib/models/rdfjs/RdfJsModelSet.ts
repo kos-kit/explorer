@@ -20,7 +20,6 @@ export class RdfJsModelSet implements ModelSet {
         default:
           continue;
       }
-
       yield new RdfJsConceptScheme(this.dataset, rdfTypeQuad.subject);
     }
   }
