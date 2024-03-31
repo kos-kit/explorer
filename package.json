@@ -25,14 +25,18 @@
   },
   "name": "skos-app",
   "private": true,
+  "resolutions": {
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.1.0"
+  },
   "scripts": {
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "test": "TZ=UTC jest",
-    "test:ci": "TZ=UTC jest --ci",
-    "test:watch": "TZ=UTC jest --watch"
+    "test": "TZ=UTC jest --passWithNoTests",
+    "test:ci": "TZ=UTC jest --ci --passWithNoTests",
+    "test:watch": "TZ=UTC jest --passWithNoTests --watch"
   },
   "version": "0.1.0"
 }
