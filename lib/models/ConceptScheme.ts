@@ -1,10 +1,8 @@
 import { BlankNode, NamedNode } from "@rdfjs/types";
 import { Concept } from "./Concept";
-import { Label } from "./Label";
+import { LabeledModel } from "./LabeledModel";
 
-export interface ConceptScheme {
-  readonly altLabels: readonly Label[];
+export interface ConceptScheme extends LabeledModel {
   readonly concepts: readonly Concept[];
-  readonly prefLabels: readonly Label[];
   readonly node: BlankNode | NamedNode;
 }
