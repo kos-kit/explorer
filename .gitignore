@@ -1,0 +1,8 @@
+/build
+/coverage
+/.next/
+/node_modules
+/out/
+next-env.d.ts
+yarn-error.log*
+yarn-debug.log*
