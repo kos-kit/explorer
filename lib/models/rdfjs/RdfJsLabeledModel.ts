@@ -9,12 +9,21 @@ export abstract class RdfJsLabeledModel
   extends RdfJsResource
   implements LabeledModel
 {
-  *altLabels(): Iterable<Label> {
-    yield* this.labels(skos.altLabel, skosxl.altLabel);
+  get altLabels(): Iterable<Label> {
+    return this.labels(skos.altLabel, skosxl.altLabel);
   }
 
-  *hiddenLabels(): Iterable<Label> {
-    yield* this.labels(skos.hiddenLabel, skosxl.hiddenLabel);
+  get hiddenLabels(): Iterable<Label> {
+    return this.labels(skos.hiddenLabel, skosxl.hiddenLabel);
+  }
+
+  prefLabel(language: string): Label | null {
+    for (const prefLabel of this.prefLabels) {
+      if (prefLabel.literalForm.language === language) {
+        return prefLabel;
+      }
+    }
+    return null;
   }
 
   private *labels(
@@ -58,7 +67,7 @@ export abstract class RdfJsLabeledModel
     });
   }
 
-  *prefLabels(): Iterable<Label> {
-    yield* this.labels(skos.prefLabel, skosxl.prefLabel);
+  get prefLabels(): Iterable<Label> {
+    return this.labels(skos.prefLabel, skosxl.prefLabel);
   }
 }
