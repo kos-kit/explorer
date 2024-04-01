@@ -1,7 +1,12 @@
 {
   "dependencies": {
+    "@rdfjs/namespace": "^1.1.0",
+    "@rdfjs/term-set": "^1.1.0",
+    "@rdfjs/types": "^1.1.0",
+    "n3": "^1.17.3",
     "next": "14.1.4",
     "pino": "^8.19.0",
+    "rdf-parse": "^2.3.3",
     "react": "^18",
     "react-dom": "^18"
   },
@@ -9,7 +14,9 @@
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.2",
     "@types/jest": "^29.5.12",
+    "@types/n3": "^1.16.4",
     "@types/node": "^20",
+    "@types/rdfjs__term-set": "^1.0.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
@@ -37,9 +44,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "test": "TZ=UTC jest --passWithNoTests",
-    "test:ci": "TZ=UTC jest --ci --passWithNoTests",
-    "test:watch": "TZ=UTC jest --passWithNoTests --watch"
+    "test": "TZ=UTC yarn node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "version": "0.1.0"
 }
