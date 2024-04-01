@@ -46,7 +46,11 @@ export abstract class RdfJsLabeledModel
         null,
       )) {
         if (literalFormQuad.object.termType === "Literal") {
-          return new RdfJsLabel(this.dataset, term, literalFormQuad.object);
+          return new RdfJsLabel({
+            dataset: this.dataset,
+            identifier: term,
+            literalForm: literalFormQuad.object,
+          });
         }
       }
 

@@ -21,7 +21,10 @@ export class RdfJsConceptScheme
         case "NamedNode":
           if (!conceptIdentifierSet.has(term)) {
             conceptIdentifierSet.add(term);
-            return new RdfJsConcept(this.dataset, term);
+            return new RdfJsConcept({
+              dataset: this.dataset,
+              identifier: term,
+            });
           }
       }
       return null;
@@ -36,7 +39,10 @@ export class RdfJsConceptScheme
         );
         if (!conceptIdentifierSet.has(quad.subject)) {
           conceptIdentifierSet.add(quad.subject);
-          yield new RdfJsConcept(this.dataset, quad.subject);
+          yield new RdfJsConcept({
+            dataset: this.dataset,
+            identifier: quad.subject,
+          });
         }
       }
     }
