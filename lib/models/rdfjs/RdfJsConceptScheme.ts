@@ -1,10 +1,10 @@
 import { BlankNode, NamedNode } from "@rdfjs/types";
-import { Concept } from "../Concept";
-import { ConceptScheme } from "../ConceptScheme";
-import { RdfJsLabeledModel } from "./RdfJsLabeledModel";
+import { Concept } from "@/lib/models/Concept";
+import { ConceptScheme } from "@/lib/models/ConceptScheme";
+import { RdfJsLabeledModel } from "@/lib/models/rdfjs/RdfJsLabeledModel";
 import TermSet from "@rdfjs/term-set";
 import { skos } from "@/lib/vocabularies";
-import { RdfJsConcept } from "./RdfJsConcept";
+import { RdfJsConcept } from "@/lib/models/rdfjs/RdfJsConcept";
 import invariant from "ts-invariant";
 
 export class RdfJsConceptScheme

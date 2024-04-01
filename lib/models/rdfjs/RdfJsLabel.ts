@@ -1,6 +1,6 @@
 import { BlankNode, DatasetCore, Literal, NamedNode } from "@rdfjs/types";
-import { Label } from "../Label";
-import { RdfJsResource } from "./RdfJsResource";
+import { Label } from "@/lib/models/Label";
+import { RdfJsResource } from "@/lib/models/rdfjs/RdfJsResource";
 
 export class RdfJsLabel extends RdfJsResource implements Label {
   readonly literalForm: Literal;

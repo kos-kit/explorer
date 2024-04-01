@@ -1,7 +1,7 @@
 import { DatasetCore } from "@rdfjs/types";
-import { ModelSet } from "../ModelSet";
-import { ConceptScheme } from "../ConceptScheme";
-import { RdfJsConceptScheme } from "./RdfJsConceptScheme";
+import { ModelSet } from "@/lib/models/ModelSet";
+import { ConceptScheme } from "@/lib/models/ConceptScheme";
+import { RdfJsConceptScheme } from "@/lib/models/rdfjs/RdfJsConceptScheme";
 import { rdf, skos } from "@/lib/vocabularies";
 
 export class RdfJsModelSet implements ModelSet {

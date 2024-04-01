@@ -1,5 +1,5 @@
-import { Label } from "./Label";
-import { Model } from "./Model";
+import { Label } from "@/lib/models/Label";
+import { Model } from "@/lib/models/Model";
 
 export interface LabeledModel extends Model {
   altLabels(): Iterable<Label>;

@@ -1,6 +1,6 @@
 import { Literal } from "@rdfjs/types";
-import { Concept } from "../Concept";
-import { RdfJsLabeledModel } from "./RdfJsLabeledModel";
+import { Concept } from "@/lib/models/Concept";
+import { RdfJsLabeledModel } from "@/lib/models/rdfjs/RdfJsLabeledModel";
 import { skos } from "@/lib/vocabularies";
 
 export class RdfJsConcept extends RdfJsLabeledModel implements Concept {

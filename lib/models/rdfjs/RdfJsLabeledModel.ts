@@ -1,8 +1,8 @@
 import { NamedNode } from "@rdfjs/types";
-import { Label } from "../Label";
-import { LabeledModel } from "../LabeledModel";
-import { RdfJsResource } from "./RdfJsResource";
-import { RdfJsLabel } from "./RdfJsLabel";
+import { Label } from "@/lib/models/Label";
+import { LabeledModel } from "@/lib/models/LabeledModel";
+import { RdfJsResource } from "@/lib/models/rdfjs/RdfJsResource";
+import { RdfJsLabel } from "@/lib/models/rdfjs/RdfJsLabel";
 import { skos, skosxl } from "@/lib/vocabularies";
 
 export abstract class RdfJsLabeledModel

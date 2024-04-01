@@ -1,6 +1,6 @@
-import { Identifier } from "./models/Identifier";
-import { identifierToString } from "./utilities/identifierToString";
-import { slugify } from "./utilities/slugify";
+import { Identifier } from "@/lib/models/Identifier";
+import { identifierToString } from "@/lib/utilities/identifierToString";
+import { slugify } from "@/lib/utilities/slugify";
 
 export class Hrefs {
   static get root() {

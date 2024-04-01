@@ -1,4 +1,4 @@
-import { Identifier } from "../models/Identifier";
+import { Identifier } from "@/lib/models/Identifier";
 
 export function identifierToString(identifier: Identifier) {
   switch (identifier.termType) {
