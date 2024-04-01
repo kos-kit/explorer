@@ -29,7 +29,6 @@
     "prettier": "^3.2.5",
     "tailwindcss": "^3.3.0",
     "ts-invariant": "^0.10.3",
-    "ts-node": "^10.9.2",
     "typescript": "^5"
   },
   "name": "skos-app",
