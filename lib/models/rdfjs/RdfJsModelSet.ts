@@ -1,8 +1,8 @@
 import { DatasetCore } from "@rdfjs/types";
 import { ModelSet } from "../ModelSet";
 import { ConceptScheme } from "../ConceptScheme";
-import { rdf, skos } from "@tpluscode/rdf-ns-builders";
 import { RdfJsConceptScheme } from "./RdfJsConceptScheme";
+import { rdf, skos } from "@/lib/vocabularies";
 
 export class RdfJsModelSet implements ModelSet {
   constructor(private readonly dataset: DatasetCore) {}
