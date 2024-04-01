@@ -1,10 +1,19 @@
 import { BlankNode, NamedNode, DatasetCore, Term } from "@rdfjs/types";
 
 export abstract class RdfJsResource {
-  constructor(
-    readonly dataset: DatasetCore,
-    readonly identifier: BlankNode | NamedNode,
-  ) {}
+  readonly dataset: DatasetCore;
+  readonly identifier: BlankNode | NamedNode;
+
+  constructor({
+    dataset,
+    identifier,
+  }: {
+    dataset: DatasetCore;
+    identifier: BlankNode | NamedNode;
+  }) {
+    this.dataset = dataset;
+    this.identifier = identifier;
+  }
 
   protected findAndMapObject<T>(
     property: NamedNode,

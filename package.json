@@ -8,7 +8,8 @@
     "pino": "^8.19.0",
     "rdf-parse": "^2.3.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "url-slug": "^4.0.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.2",
