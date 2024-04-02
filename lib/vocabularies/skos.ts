@@ -41,7 +41,7 @@ export interface Skos {
   notation: NamedNode<"http://www.w3.org/2004/02/skos/core#notation">;
   note: NamedNode<"http://www.w3.org/2004/02/skos/core#note">;
   OrderedCollection: NamedNode<"http://www.w3.org/2004/02/skos/core#OrderedCollection">;
-  /** A resource has no more than one value of skos:prefLabel per language tag, and no more than one value of skos:prefLabel without language tag. */
+  /** A resource has no more than one value of skos:prefLabel per language tag, and no more than one value of skos:prefLabel without languageTag tag. */
   prefLabel: NamedNode<"http://www.w3.org/2004/02/skos/core#prefLabel">;
   /** skos:related is disjoint with skos:broaderTransitive */
   related: NamedNode<"http://www.w3.org/2004/02/skos/core#related">;

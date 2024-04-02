@@ -5,6 +5,7 @@ import { RdfJsResource } from "@/lib/models/rdfjs/RdfJsResource";
 import { RdfJsLabel } from "@/lib/models/rdfjs/RdfJsLabel";
 import { skos, skosxl } from "@/lib/vocabularies";
 import { mapTermToIdentifier } from "./mapTermToIdentifier";
+import { LanguageTag } from "../LanguageTag";
 
 export abstract class RdfJsLabeledModel
   extends RdfJsResource
@@ -18,9 +19,9 @@ export abstract class RdfJsLabeledModel
     return this.labels(skos.hiddenLabel, skosxl.hiddenLabel);
   }
 
-  prefLabel(language: string): Label | null {
+  prefLabel(languageTag: LanguageTag): Label | null {
     for (const prefLabel of this.prefLabels) {
-      if (prefLabel.literalForm.language === language) {
+      if (prefLabel.literalForm.language === languageTag) {
         return prefLabel;
       }
     }

@@ -4,15 +4,26 @@ import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { RdfJsConceptScheme } from "@/lib/models/rdfjs/RdfJsConceptScheme";
 import { rdf, skos } from "@/lib/vocabularies";
 import { mapTermToIdentifier } from "./mapTermToIdentifier";
+import { Identifier } from "../Identifier";
+import { identifierToString } from "@/lib/utilities/identifierToString";
 
 export class RdfJsModelSet implements ModelSet {
   constructor(private readonly dataset: DatasetCore) {}
+
+  conceptSchemeByIdentifier(identifier: Identifier): ConceptScheme {
+    for (const conceptScheme of this.conceptSchemes) {
+      if (conceptScheme.identifier.equals(identifier)) {
+        return conceptScheme;
+      }
+    }
+    throw new RangeError(identifierToString(identifier));
+  }
 
   get conceptSchemes(): Iterable<ConceptScheme> {
     return this._conceptSchemes();
   }
 
-  *_conceptSchemes(): Iterable<ConceptScheme> {
+  private *_conceptSchemes(): Iterable<ConceptScheme> {
     for (const rdfTypeQuad of this.dataset.match(
       null,
       rdf.type,
@@ -27,4 +38,6 @@ export class RdfJsModelSet implements ModelSet {
       }
     }
   }
+
+  languageTags = ["en"];
 }

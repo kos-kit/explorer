@@ -3,6 +3,7 @@ import { identifierToString } from "@/lib/utilities/identifierToString";
 import { slugify } from "@/lib/utilities/slugify";
 import { Concept } from "@/lib/models/Concept";
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
+import { LanguageTag } from "./models/LanguageTag";
 
 interface Page {
   readonly href: string;
@@ -15,15 +16,15 @@ const titlePrefix = "SKOS: ";
 export default class Pages {
   static concept({
     concept,
-    language,
+    languageTag,
   }: {
     concept: Concept;
-    language: string;
+    languageTag: LanguageTag;
   }): Page {
     const conceptIdentifierString = identifierToString(concept.identifier);
     return {
       get href() {
-        return `/${language}/concepts/${slugify(conceptIdentifierString)}`;
+        return `/${languageTag}/concepts/${slugify(conceptIdentifierString)}`;
       },
       get metadata() {
         return {
@@ -31,7 +32,7 @@ export default class Pages {
           title:
             titlePrefix +
             "Concept: " +
-            (concept.prefLabel(language)?.literalForm.value ??
+            (concept.prefLabel(languageTag)?.literalForm.value ??
               conceptIdentifierString),
         };
       },
@@ -40,10 +41,10 @@ export default class Pages {
 
   static conceptScheme({
     conceptScheme,
-    language,
+    languageTag,
   }: {
     conceptScheme: ConceptScheme;
-    language: string;
+    languageTag: LanguageTag;
   }): Page {
     const conceptSchemeIdentifierString = identifierToString(
       conceptScheme.identifier,
@@ -51,7 +52,7 @@ export default class Pages {
 
     return {
       get href() {
-        return `/${language}/conceptSchemes/${slugify(conceptSchemeIdentifierString)}`;
+        return `/${languageTag}/conceptSchemes/${slugify(conceptSchemeIdentifierString)}`;
       },
       get metadata() {
         return {
@@ -59,7 +60,7 @@ export default class Pages {
           title:
             titlePrefix +
             "Concept scheme: " +
-            (conceptScheme.prefLabel(language)?.literalForm.value ??
+            (conceptScheme.prefLabel(languageTag)?.literalForm.value ??
               conceptSchemeIdentifierString),
         };
       },
