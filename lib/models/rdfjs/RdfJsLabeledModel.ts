@@ -1,20 +1,31 @@
 import { NamedNode } from "@rdfjs/types";
-import { Label } from "../Label";
-import { LabeledModel } from "../LabeledModel";
-import { RdfJsResource } from "./RdfJsResource";
-import { RdfJsLabel } from "./RdfJsLabel";
+import { Label } from "@/lib/models/Label";
+import { LabeledModel } from "@/lib/models/LabeledModel";
+import { RdfJsResource } from "@/lib/models/rdfjs/RdfJsResource";
+import { RdfJsLabel } from "@/lib/models/rdfjs/RdfJsLabel";
 import { skos, skosxl } from "@/lib/vocabularies";
+import { mapTermToIdentifier } from "./mapTermToIdentifier";
+import { LanguageTag } from "../LanguageTag";
 
 export abstract class RdfJsLabeledModel
   extends RdfJsResource
   implements LabeledModel
 {
-  *altLabels(): Iterable<Label> {
-    yield* this.labels(skos.altLabel, skosxl.altLabel);
+  get altLabels(): Iterable<Label> {
+    return this.labels(skos.altLabel, skosxl.altLabel);
   }
 
-  *hiddenLabels(): Iterable<Label> {
-    yield* this.labels(skos.hiddenLabel, skosxl.hiddenLabel);
+  get hiddenLabels(): Iterable<Label> {
+    return this.labels(skos.hiddenLabel, skosxl.hiddenLabel);
+  }
+
+  prefLabel(languageTag: LanguageTag): Label | null {
+    for (const prefLabel of this.prefLabels) {
+      if (prefLabel.literalForm.language === languageTag) {
+        return prefLabel;
+      }
+    }
+    return null;
   }
 
   private *labels(
@@ -31,12 +42,9 @@ export abstract class RdfJsLabeledModel
 
     // Any resource in the range of a skosxl: label predicate is considered a skosxl:Label
     yield* this.filterAndMapObjects(skosXlPredicate, (term) => {
-      switch (term.termType) {
-        case "BlankNode":
-        case "NamedNode":
-          break;
-        default:
-          return null;
+      const labelIdentifier = mapTermToIdentifier(term);
+      if (labelIdentifier === null) {
+        return null;
       }
 
       for (const literalFormQuad of this.dataset.match(
@@ -46,7 +54,11 @@ export abstract class RdfJsLabeledModel
         null,
       )) {
         if (literalFormQuad.object.termType === "Literal") {
-          return new RdfJsLabel(this.dataset, term, literalFormQuad.object);
+          return new RdfJsLabel({
+            dataset: this.dataset,
+            identifier: labelIdentifier,
+            literalForm: literalFormQuad.object,
+          });
         }
       }
 
@@ -54,7 +66,7 @@ export abstract class RdfJsLabeledModel
     });
   }
 
-  *prefLabels(): Iterable<Label> {
-    yield* this.labels(skos.prefLabel, skosxl.prefLabel);
+  get prefLabels(): Iterable<Label> {
+    return this.labels(skos.prefLabel, skosxl.prefLabel);
   }
 }

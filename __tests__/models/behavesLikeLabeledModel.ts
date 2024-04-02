@@ -10,15 +10,15 @@ export const behavesLikeLabeledModel = (model: LabeledModel) => {
   };
 
   it("should get altLabels", () => {
-    expectLabels(model.altLabels());
+    expectLabels(model.altLabels);
   });
 
   it("should get hiddenLabels", () => {
-    expectLabels(model.hiddenLabels());
+    expectLabels(model.hiddenLabels);
   });
 
   it("should get prefLabels", () => {
-    const prefLabels = [...model.prefLabels()];
+    const prefLabels = [...model.prefLabels];
     expect(prefLabels).not.toHaveLength(0);
     expectLabels(prefLabels);
   });

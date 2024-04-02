@@ -1,44 +1,80 @@
-import { BlankNode, NamedNode } from "@rdfjs/types";
-import { Concept } from "../Concept";
-import { ConceptScheme } from "../ConceptScheme";
-import { RdfJsLabeledModel } from "./RdfJsLabeledModel";
+import { Concept } from "@/lib/models/Concept";
+import { ConceptScheme } from "@/lib/models/ConceptScheme";
+import { RdfJsLabeledModel } from "@/lib/models/rdfjs/RdfJsLabeledModel";
 import TermSet from "@rdfjs/term-set";
 import { skos } from "@/lib/vocabularies";
-import { RdfJsConcept } from "./RdfJsConcept";
-import invariant from "ts-invariant";
+import { RdfJsConcept } from "@/lib/models/rdfjs/RdfJsConcept";
+import { mapTermToIdentifier } from "@/lib/models/rdfjs/mapTermToIdentifier";
+import { paginateIterable } from "@/lib/utilities/paginateIterable";
+import { Identifier } from "@/lib/models/Identifier";
+import { Memoize } from "typescript-memoize";
 
 export class RdfJsConceptScheme
   extends RdfJsLabeledModel
   implements ConceptScheme
 {
-  *concepts(): Iterable<Concept> {
-    const conceptIdentifierSet = new TermSet<BlankNode | NamedNode>();
+  private *topConceptIdentifiers(): Iterable<Identifier> {
+    const conceptIdentifierSet = new TermSet<Identifier>();
 
     // ConceptScheme -> Concept statement
-    yield* this.filterAndMapObjects(skos.hasTopConcept, (term) => {
-      switch (term.termType) {
-        case "BlankNode":
-        case "NamedNode":
-          if (!conceptIdentifierSet.has(term)) {
-            conceptIdentifierSet.add(term);
-            return new RdfJsConcept(this.dataset, term);
-          }
-      }
-      return null;
-    });
-
-    // Concept -> ConceptScheme statement
-    for (const predicate of [skos.inScheme, skos.topConceptOf]) {
-      for (const quad of this.dataset.match(null, predicate, this.identifier)) {
-        invariant(
-          quad.subject.termType === "BlankNode" ||
-            quad.subject.termType === "NamedNode",
-        );
-        if (!conceptIdentifierSet.has(quad.subject)) {
-          conceptIdentifierSet.add(quad.subject);
-          yield new RdfJsConcept(this.dataset, quad.subject);
-        }
+    for (const quad of this.dataset.match(
+      this.identifier,
+      skos.topConceptOf,
+      null,
+    )) {
+      const conceptIdentifier = mapTermToIdentifier(quad.object);
+      if (
+        conceptIdentifier !== null &&
+        !conceptIdentifierSet.has(conceptIdentifier)
+      ) {
+        yield conceptIdentifier;
+        conceptIdentifierSet.add(conceptIdentifier);
       }
     }
+
+    // Concept -> ConceptScheme statement
+    for (const quad of this.dataset.match(
+      null,
+      skos.topConceptOf,
+      this.identifier,
+    )) {
+      const conceptIdentifier = mapTermToIdentifier(quad.subject);
+      if (
+        conceptIdentifier !== null &&
+        !conceptIdentifierSet.has(conceptIdentifier)
+      ) {
+        yield conceptIdentifier;
+        conceptIdentifierSet.add(conceptIdentifier);
+      }
+    }
+  }
+
+  topConcepts({
+    limit,
+    offset,
+  }: {
+    limit: number;
+    offset: number;
+  }): Iterable<Concept> {
+    return paginateIterable(this._topConcepts(), { limit, offset });
+  }
+
+  private *_topConcepts(): Iterable<Concept> {
+    for (const conceptIdentifier of this.topConceptIdentifiers()) {
+      yield new RdfJsConcept({
+        dataset: this.dataset,
+        identifier: conceptIdentifier,
+      });
+    }
+  }
+
+  @Memoize()
+  get topConceptsCount(): number {
+    let count = 0;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for (const _ of this.topConceptIdentifiers()) {
+      count++;
+    }
+    return count;
   }
 }

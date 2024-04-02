@@ -1,13 +1,21 @@
-import { BlankNode, DatasetCore, Literal, NamedNode } from "@rdfjs/types";
-import { Label } from "../Label";
-import { RdfJsResource } from "./RdfJsResource";
+import { DatasetCore, Literal } from "@rdfjs/types";
+import { Label } from "@/lib/models/Label";
+import { RdfJsResource } from "@/lib/models/rdfjs/RdfJsResource";
+import { Identifier } from "@/lib/models/Identifier";
 
 export class RdfJsLabel extends RdfJsResource implements Label {
-  constructor(
-    dataset: DatasetCore,
-    identifier: BlankNode | NamedNode,
-    readonly literalForm: Literal,
-  ) {
-    super(dataset, identifier);
+  readonly literalForm: Literal;
+
+  constructor({
+    dataset,
+    identifier,
+    literalForm,
+  }: {
+    dataset: DatasetCore;
+    identifier: Identifier;
+    literalForm: Literal;
+  }) {
+    super({ dataset, identifier });
+    this.literalForm = literalForm;
   }
 }
