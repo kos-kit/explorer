@@ -11,6 +11,6 @@ export NEXT_TELEMETRY_DISABLED=1
 
 yarn lint
 
-yarn test:ci
+yarn test
 
 yarn build
