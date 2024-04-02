@@ -7,11 +7,48 @@ import { RdfJsConcept } from "@/lib/models/rdfjs/RdfJsConcept";
 import { mapTermToIdentifier } from "@/lib/models/rdfjs/mapTermToIdentifier";
 import { paginateIterable } from "@/lib/utilities/paginateIterable";
 import { Identifier } from "@/lib/models/Identifier";
+import { Memoize } from "typescript-memoize";
 
 export class RdfJsConceptScheme
   extends RdfJsLabeledModel
   implements ConceptScheme
 {
+  private *topConceptIdentifiers(): Iterable<Identifier> {
+    const conceptIdentifierSet = new TermSet<Identifier>();
+
+    // ConceptScheme -> Concept statement
+    for (const quad of this.dataset.match(
+      this.identifier,
+      skos.topConceptOf,
+      null,
+    )) {
+      const conceptIdentifier = mapTermToIdentifier(quad.object);
+      if (
+        conceptIdentifier !== null &&
+        !conceptIdentifierSet.has(conceptIdentifier)
+      ) {
+        yield conceptIdentifier;
+        conceptIdentifierSet.add(conceptIdentifier);
+      }
+    }
+
+    // Concept -> ConceptScheme statement
+    for (const quad of this.dataset.match(
+      null,
+      skos.topConceptOf,
+      this.identifier,
+    )) {
+      const conceptIdentifier = mapTermToIdentifier(quad.subject);
+      if (
+        conceptIdentifier !== null &&
+        !conceptIdentifierSet.has(conceptIdentifier)
+      ) {
+        yield conceptIdentifier;
+        conceptIdentifierSet.add(conceptIdentifier);
+      }
+    }
+  }
+
   topConcepts({
     limit,
     offset,
@@ -22,53 +59,21 @@ export class RdfJsConceptScheme
     return paginateIterable(this._topConcepts(), { limit, offset });
   }
 
-  *_topConcepts(): Iterable<Concept> {
-    const conceptIdentifierSet = new TermSet<Identifier>();
-
-    // ConceptScheme -> Concept statement
-    for (const quad of this.dataset.match(
-      this.identifier,
-      skos.topConceptOf,
-      null,
-    )) {
-      const conceptIdentifier = mapTermToIdentifier(quad.object);
-      if (conceptIdentifier === null) {
-        continue;
-      }
-
-      if (conceptIdentifierSet.has(conceptIdentifier)) {
-        continue;
-      }
-
-      conceptIdentifierSet.add(conceptIdentifier);
-
+  private *_topConcepts(): Iterable<Concept> {
+    for (const conceptIdentifier of this.topConceptIdentifiers()) {
       yield new RdfJsConcept({
         dataset: this.dataset,
         identifier: conceptIdentifier,
       });
     }
+  }
 
-    // Concept -> ConceptScheme statement
-    for (const quad of this.dataset.match(
-      null,
-      skos.topConceptOf,
-      this.identifier,
-    )) {
-      const conceptIdentifier = mapTermToIdentifier(quad.subject);
-      if (conceptIdentifier === null) {
-        continue;
-      }
-
-      if (conceptIdentifierSet.has(conceptIdentifier)) {
-        continue;
-      }
-
-      conceptIdentifierSet.add(conceptIdentifier);
-
-      yield new RdfJsConcept({
-        dataset: this.dataset,
-        identifier: conceptIdentifier,
-      });
+  @Memoize()
+  get topConceptsCount(): number {
+    let count = 0;
+    for (const _ in this.topConceptIdentifiers()) {
+      count++;
     }
+    return count;
   }
 }
