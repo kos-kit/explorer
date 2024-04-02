@@ -56,7 +56,7 @@ export function generateMetadata({
   return Pages.conceptScheme({ conceptScheme, languageTag }).metadata;
 }
 
-export function generateStaticParams(): readonly ConceptSchemePageParams[] {
+export function generateStaticParams(): ConceptSchemePageParams[] {
   const staticParams: ConceptSchemePageParams[] = [];
   for (const conceptScheme of modelSet.conceptSchemes) {
     for (const languageTag of modelSet.languageTags) {

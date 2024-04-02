@@ -928,6 +928,13 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.12.tgz#12bb1e2be27293c1406acb6af1c3f3a1481d98c6"
   integrity sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==
 
+"@types/rdfjs__namespace@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@types/rdfjs__namespace/-/rdfjs__namespace-1.1.5.tgz#c7bffd0edf489ba73ce7ceb901a27cd357651aa0"
+  integrity sha512-g6oZJzFNdR5W8yMrhLHtwguenwLEZuqHH8xbnybhMwYABZABCLhcY9tt9xZsVHrzLm3SujVR4OYvb8M0OfU3qw==
+  dependencies:
+    rdf-js "^4.0.2"
+
 "@types/rdfjs__term-set@^1.0.2":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@types/rdfjs__term-set/-/rdfjs__term-set-1.0.3.tgz#d44c222d9f12642274e68a7b42673209cab70366"
