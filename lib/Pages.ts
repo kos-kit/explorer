@@ -1,8 +1,8 @@
 import { Metadata } from "next";
-import { Literal } from "@rdfjs/types";
-import { Identifier } from "@/lib/models/Identifier";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 import { slugify } from "@/lib/utilities/slugify";
+import { Concept } from "@/lib/models/Concept";
+import { ConceptScheme } from "@/lib/models/ConceptScheme";
 
 interface Page {
   href: string;
@@ -14,39 +14,46 @@ const titlePrefix = "SKOS: ";
 
 export default class Pages {
   static concept({
-    identifier,
-    prefLabel,
+    concept,
+    language,
   }: {
-    identifier: Identifier;
-    prefLabel: Literal | null;
+    concept: Concept;
+    language: string;
   }): Page {
+    const conceptIdentifierString = identifierToString(concept.identifier);
     return {
-      href: `/concepts/${slugify(identifierToString(identifier))}`,
+      href: `/${language}/concepts/${slugify(conceptIdentifierString)}`,
       metadata: {
         // description,
         title:
           titlePrefix +
           "Concept: " +
-          (prefLabel?.value ?? identifierToString(identifier)),
+          (concept.prefLabel(language)?.literalForm.value ??
+            conceptIdentifierString),
       },
     };
   }
 
   static conceptScheme({
-    identifier,
-    prefLabel,
+    conceptScheme,
+    language,
   }: {
-    identifier: Identifier;
-    prefLabel: Literal | null;
+    conceptScheme: ConceptScheme;
+    language: string;
   }): Page {
+    const conceptSchemeIdentifierString = identifierToString(
+      conceptScheme.identifier,
+    );
+
     return {
-      href: `/conceptSchemes/${slugify(identifierToString(identifier))}`,
+      href: `/${language}/conceptSchemes/${slugify(conceptSchemeIdentifierString)}`,
       metadata: {
         // description,
         title:
           titlePrefix +
           "Concept scheme: " +
-          (prefLabel?.value ?? identifierToString(identifier)),
+          (conceptScheme.prefLabel(language)?.literalForm.value ??
+            conceptSchemeIdentifierString),
       },
     };
   }
