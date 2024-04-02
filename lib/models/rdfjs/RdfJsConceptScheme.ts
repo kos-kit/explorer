@@ -71,7 +71,8 @@ export class RdfJsConceptScheme
   @Memoize()
   get topConceptsCount(): number {
     let count = 0;
-    for (const _ in this.topConceptIdentifiers()) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for (const _ of this.topConceptIdentifiers()) {
       count++;
     }
     return count;
