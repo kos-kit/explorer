@@ -7,7 +7,11 @@ import { rdf, skos } from "@/lib/vocabularies";
 export class RdfJsModelSet implements ModelSet {
   constructor(private readonly dataset: DatasetCore) {}
 
-  *conceptSchemes(): Iterable<ConceptScheme> {
+  get conceptSchemes(): Iterable<ConceptScheme> {
+    return this._conceptSchemes();
+  }
+
+  *_conceptSchemes(): Iterable<ConceptScheme> {
     for (const rdfTypeQuad of this.dataset.match(
       null,
       rdf.type,
