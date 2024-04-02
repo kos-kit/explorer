@@ -30,7 +30,7 @@ export default function ConceptSchemePage({
 
   return (
     <div className="flex flex-col gap-8">
-      <h1>Concept Scheme: {prefLabel}</h1>;
+      <h1>Concept Scheme: {prefLabel}</h1>
       {topConceptsCount > 0 ? (
         <section>
           <h2>Top concepts</h2>

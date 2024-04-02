@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import { identifierToString } from "@/lib/utilities/identifierToString";
-import { slugify } from "@/lib/utilities/slugify";
 import { Concept } from "@/lib/models/Concept";
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { LanguageTag } from "./models/LanguageTag";
+import { filenamify } from "./utilities/filenamify";
 
 interface Page {
   readonly href: string;
@@ -24,7 +24,7 @@ export default class Pages {
     const conceptIdentifierString = identifierToString(concept.identifier);
     return {
       get href() {
-        return `/${languageTag}/concepts/${slugify(conceptIdentifierString)}`;
+        return `/${languageTag}/concepts/${filenamify(conceptIdentifierString)}`;
       },
       get metadata() {
         return {
@@ -52,7 +52,7 @@ export default class Pages {
 
     return {
       get href() {
-        return `/${languageTag}/conceptSchemes/${slugify(conceptSchemeIdentifierString)}`;
+        return `/${languageTag}/conceptSchemes/${filenamify(conceptSchemeIdentifierString)}`;
       },
       get metadata() {
         return {
