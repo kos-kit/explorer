@@ -56,15 +56,17 @@ export function generateMetadata({
   return Pages.conceptScheme({ conceptScheme, languageTag }).metadata;
 }
 
-export function* generateStaticParams(): Iterable<ConceptSchemePageParams> {
+export function generateStaticParams(): readonly ConceptSchemePageParams[] {
+  const staticParams: ConceptSchemePageParams[] = [];
   for (const conceptScheme of modelSet.conceptSchemes) {
     for (const languageTag of modelSet.languageTags) {
-      yield {
+      staticParams.push({
         conceptSchemeIdentifier: filenamify(
           identifierToString(conceptScheme.identifier),
         ),
         languageTag,
-      };
+      });
     }
   }
+  return staticParams;
 }
