@@ -3,6 +3,6 @@ import { Identifier } from "@/lib/models/Identifier";
 import { LabeledModel } from "@/lib/models/LabeledModel";
 
 export interface ConceptScheme extends LabeledModel {
-  concepts(): Iterable<Concept>;
+  topConcepts(kwds: { limit: number; offset: number }): Iterable<Concept>;
   readonly identifier: Identifier;
 }

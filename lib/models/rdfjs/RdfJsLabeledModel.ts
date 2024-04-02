@@ -4,6 +4,7 @@ import { LabeledModel } from "@/lib/models/LabeledModel";
 import { RdfJsResource } from "@/lib/models/rdfjs/RdfJsResource";
 import { RdfJsLabel } from "@/lib/models/rdfjs/RdfJsLabel";
 import { skos, skosxl } from "@/lib/vocabularies";
+import { mapTermToIdentifier } from "./mapTermToIdentifier";
 
 export abstract class RdfJsLabeledModel
   extends RdfJsResource
@@ -40,12 +41,9 @@ export abstract class RdfJsLabeledModel
 
     // Any resource in the range of a skosxl: label predicate is considered a skosxl:Label
     yield* this.filterAndMapObjects(skosXlPredicate, (term) => {
-      switch (term.termType) {
-        case "BlankNode":
-        case "NamedNode":
-          break;
-        default:
-          return null;
+      const labelIdentifier = mapTermToIdentifier(term);
+      if (labelIdentifier === null) {
+        return null;
       }
 
       for (const literalFormQuad of this.dataset.match(
@@ -57,7 +55,7 @@ export abstract class RdfJsLabeledModel
         if (literalFormQuad.object.termType === "Literal") {
           return new RdfJsLabel({
             dataset: this.dataset,
-            identifier: term,
+            identifier: labelIdentifier,
             literalForm: literalFormQuad.object,
           });
         }

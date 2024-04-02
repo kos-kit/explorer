@@ -3,6 +3,7 @@ import { ModelSet } from "@/lib/models/ModelSet";
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { RdfJsConceptScheme } from "@/lib/models/rdfjs/RdfJsConceptScheme";
 import { rdf, skos } from "@/lib/vocabularies";
+import { mapTermToIdentifier } from "./mapTermToIdentifier";
 
 export class RdfJsModelSet implements ModelSet {
   constructor(private readonly dataset: DatasetCore) {}
@@ -17,17 +18,13 @@ export class RdfJsModelSet implements ModelSet {
       rdf.type,
       skos.ConceptScheme,
     )) {
-      switch (rdfTypeQuad.subject.termType) {
-        case "BlankNode":
-        case "NamedNode":
-          break;
-        default:
-          continue;
+      const identifier = mapTermToIdentifier(rdfTypeQuad.subject);
+      if (identifier !== null) {
+        yield new RdfJsConceptScheme({
+          dataset: this.dataset,
+          identifier,
+        });
       }
-      yield new RdfJsConceptScheme({
-        dataset: this.dataset,
-        identifier: rdfTypeQuad.subject,
-      });
     }
   }
 }

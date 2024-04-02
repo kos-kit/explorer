@@ -1,15 +1,16 @@
-import { BlankNode, NamedNode, DatasetCore, Term } from "@rdfjs/types";
+import { NamedNode, DatasetCore, Term } from "@rdfjs/types";
+import { Identifier } from "@/lib/models/Identifier";
 
 export abstract class RdfJsResource {
   readonly dataset: DatasetCore;
-  readonly identifier: BlankNode | NamedNode;
+  readonly identifier: Identifier;
 
   constructor({
     dataset,
     identifier,
   }: {
     dataset: DatasetCore;
-    identifier: BlankNode | NamedNode;
+    identifier: Identifier;
   }) {
     this.dataset = dataset;
     this.identifier = identifier;
