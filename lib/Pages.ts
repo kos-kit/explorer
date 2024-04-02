@@ -5,8 +5,8 @@ import { Concept } from "@/lib/models/Concept";
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 
 interface Page {
-  href: string;
-  metadata: Metadata;
+  readonly href: string;
+  readonly metadata: Metadata;
 }
 
 // const description = "Exploring uses of schema.org types across the web";
@@ -22,14 +22,18 @@ export default class Pages {
   }): Page {
     const conceptIdentifierString = identifierToString(concept.identifier);
     return {
-      href: `/${language}/concepts/${slugify(conceptIdentifierString)}`,
-      metadata: {
-        // description,
-        title:
-          titlePrefix +
-          "Concept: " +
-          (concept.prefLabel(language)?.literalForm.value ??
-            conceptIdentifierString),
+      get href() {
+        return `/${language}/concepts/${slugify(conceptIdentifierString)}`;
+      },
+      get metadata() {
+        return {
+          // description,
+          title:
+            titlePrefix +
+            "Concept: " +
+            (concept.prefLabel(language)?.literalForm.value ??
+              conceptIdentifierString),
+        };
       },
     };
   }
@@ -46,14 +50,18 @@ export default class Pages {
     );
 
     return {
-      href: `/${language}/conceptSchemes/${slugify(conceptSchemeIdentifierString)}`,
-      metadata: {
-        // description,
-        title:
-          titlePrefix +
-          "Concept scheme: " +
-          (conceptScheme.prefLabel(language)?.literalForm.value ??
-            conceptSchemeIdentifierString),
+      get href() {
+        return `/${language}/conceptSchemes/${slugify(conceptSchemeIdentifierString)}`;
+      },
+      get metadata() {
+        return {
+          // description,
+          title:
+            titlePrefix +
+            "Concept scheme: " +
+            (conceptScheme.prefLabel(language)?.literalForm.value ??
+              conceptSchemeIdentifierString),
+        };
       },
     };
   }
