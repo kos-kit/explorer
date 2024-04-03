@@ -1,12 +1,12 @@
 import modelSet from "./modelSet";
-import Pages from "@/lib/Pages";
-import { redirect } from "next/navigation";
+import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
 
 export default function RootPage() {
   const conceptSchemes = [...modelSet.conceptSchemes];
   if (conceptSchemes.length === 1) {
-    const conceptScheme = conceptSchemes[0];
-    redirect(Pages.conceptScheme({ conceptScheme, languageTag: "en" }).href);
+    return (
+      <ConceptSchemePage conceptScheme={conceptSchemes[0]} languageTag="en" />
+    );
   }
   throw new RangeError("# of concept schemes: " + conceptSchemes.length);
 }
