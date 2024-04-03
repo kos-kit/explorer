@@ -11,12 +11,12 @@ export abstract class RdfJsLabeledModel
   extends RdfJsResource
   implements LabeledModel
 {
-  get altLabels(): Iterable<Label> {
-    return this.labels(skos.altLabel, skosxl.altLabel);
+  get altLabels(): readonly Label[] {
+    return [...this.labels(skos.altLabel, skosxl.altLabel)];
   }
 
-  get hiddenLabels(): Iterable<Label> {
-    return this.labels(skos.hiddenLabel, skosxl.hiddenLabel);
+  get hiddenLabels(): readonly Label[] {
+    return [...this.labels(skos.hiddenLabel, skosxl.hiddenLabel)];
   }
 
   prefLabel(languageTag: LanguageTag): Label | null {
@@ -66,7 +66,7 @@ export abstract class RdfJsLabeledModel
     });
   }
 
-  get prefLabels(): Iterable<Label> {
-    return this.labels(skos.prefLabel, skosxl.prefLabel);
+  get prefLabels(): readonly Label[] {
+    return [...this.labels(skos.prefLabel, skosxl.prefLabel)];
   }
 }

@@ -18,8 +18,8 @@ export const behavesLikeLabeledModel = (model: LabeledModel) => {
   });
 
   it("should get prefLabels", () => {
-    const prefLabels = [...model.prefLabels];
-    expect(prefLabels).not.toHaveLength(0);
+    const prefLabels = model.prefLabels;
+    expect(model.prefLabels).not.toHaveLength(0);
     expectLabels(prefLabels);
   });
 };
