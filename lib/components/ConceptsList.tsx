@@ -1,10 +1,10 @@
-import Link from "@/lib/components/Link";
+import { Link } from "@/lib/components/Link";
 import { identifierToString } from "@/lib/utilities/identifierToString";
-import Pages from "@/lib/Pages";
+import { Pages } from "@/lib/Pages";
 import { Concept } from "@/lib/models/Concept";
 import { LanguageTag } from "../models/LanguageTag";
 
-export function ConceptList({
+export function ConceptsList({
   concepts,
   languageTag,
 }: {

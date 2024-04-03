@@ -1,7 +1,11 @@
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { identifierToString } from "@/lib/utilities/identifierToString";
-import { ConceptList } from "@/lib/components/ConceptList";
+import { ConceptsList } from "@/lib/components/ConceptsList";
+import { Link } from "@/lib/components/Link";
+import { Pages } from "@/lib/Pages";
+import { Pagination } from "@/lib/components/Pagination";
+import { conceptsPerPage } from "../conceptsPerPage";
 
 export function ConceptSchemePage({
   conceptScheme,
@@ -22,10 +26,27 @@ export function ConceptSchemePage({
       {topConceptsCount > 0 ? (
         <section>
           <h2>Top concepts</h2>
-          <ConceptList
-            concepts={[...conceptScheme.topConcepts({ limit: 10, offset: 0 })]}
-            languageTag={languageTag}
-          />
+          <div className="flex flex-col gap-2">
+            <ConceptsList
+              concepts={[
+                ...conceptScheme.topConcepts({ limit: 10, offset: 0 }),
+              ]}
+              languageTag={languageTag}
+            />
+            {topConceptsCount > 10 ? (
+              <Link
+                href={
+                  Pages.conceptSchemeTopConcepts({
+                    conceptScheme,
+                    languageTag,
+                    page: 0,
+                  }).href
+                }
+              >
+                More
+              </Link>
+            ) : null}
+          </div>
         </section>
       ) : null}
     </div>
