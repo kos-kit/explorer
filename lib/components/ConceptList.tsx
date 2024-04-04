@@ -4,7 +4,7 @@ import { Pages } from "@/lib/Pages";
 import { Concept } from "@/lib/models/Concept";
 import { LanguageTag } from "../models/LanguageTag";
 
-export function ConceptsList({
+export function ConceptList({
   concepts,
   languageTag,
 }: {

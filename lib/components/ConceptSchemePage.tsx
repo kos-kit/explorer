@@ -1,7 +1,7 @@
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { identifierToString } from "@/lib/utilities/identifierToString";
-import { ConceptsList } from "@/lib/components/ConceptsList";
+import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Pages } from "@/lib/Pages";
 import configuration from "@/app/configuration";
@@ -26,7 +26,7 @@ export function ConceptSchemePage({
         <section>
           <h2>Top concepts</h2>
           <div className="flex flex-col gap-2">
-            <ConceptsList
+            <ConceptList
               concepts={[
                 ...conceptScheme.topConcepts({
                   limit: configuration.relatedConceptsPerSection,

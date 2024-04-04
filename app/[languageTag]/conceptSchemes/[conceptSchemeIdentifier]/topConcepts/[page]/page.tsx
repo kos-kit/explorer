@@ -1,7 +1,7 @@
 import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
 import { Pages } from "@/lib/Pages";
-import { ConceptsList } from "@/lib/components/ConceptsList";
+import { ConceptList } from "@/lib/components/ConceptList";
 import { Pagination } from "@/lib/components/Pagination";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
@@ -46,7 +46,7 @@ export default function ConceptSchemeTopConceptsPage({
         )
       </h2>
       <div className="flex flex-col gap-2">
-        <ConceptsList
+        <ConceptList
           concepts={[
             ...conceptScheme.topConcepts({
               limit: configuration.conceptsPerPage,
