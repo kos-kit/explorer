@@ -4,8 +4,6 @@ import { identifierToString } from "@/lib/utilities/identifierToString";
 import { ConceptsList } from "@/lib/components/ConceptsList";
 import { Link } from "@/lib/components/Link";
 import { Pages } from "@/lib/Pages";
-import { Pagination } from "@/lib/components/Pagination";
-import { conceptsPerPage } from "../conceptsPerPage";
 import configuration from "@/app/configuration";
 
 export function ConceptSchemePage({
