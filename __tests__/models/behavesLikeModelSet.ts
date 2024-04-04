@@ -30,7 +30,7 @@ export const behavesLikeModelSet = (modelSet: ModelSet) => {
   });
 
   it("should get a count of concepts", () => {
-    expect(modelSet.conceptsCount).toBeGreaterThan(0);
+    expect(modelSet.conceptsCount).toStrictEqual(4482);
   });
 
   it("should get concept schemes", () => {
