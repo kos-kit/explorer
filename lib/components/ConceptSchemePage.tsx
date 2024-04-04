@@ -5,6 +5,7 @@ import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Pages } from "@/lib/Pages";
 import configuration from "@/app/configuration";
+import { LabelTable } from "./LabelTable";
 
 export function ConceptSchemePage({
   conceptScheme,
@@ -22,6 +23,10 @@ export function ConceptSchemePage({
   return (
     <div className="flex flex-col gap-8">
       <h1>Concept Scheme: {prefLabel}</h1>
+      <section>
+        <h2>Labels</h2>
+        <LabelTable model={conceptScheme} />
+      </section>
       {topConceptsCount > 0 ? (
         <section>
           <h2>Top concepts</h2>
