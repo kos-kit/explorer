@@ -1,5 +1,6 @@
 import { Link } from "@/lib/components/Link";
 import { PropsWithChildren } from "react";
+import { pageCount } from "@/lib/utilities/pageCount";
 
 function PageLink({
   active,
@@ -28,11 +29,11 @@ export function Pagination({
   itemsTotal: number;
   pageHref: (page: number) => string;
 }) {
-  const pageCount = Math.ceil(itemsTotal / itemsPerPage);
-  const lastPage = pageCount - 1;
+  const pageCount_ = pageCount({ itemsPerPage, itemsTotal });
+  const lastPage = pageCount_ - 1;
   const firstPage = 0;
   const previousPage = currentPage > 0 ? currentPage - 1 : null;
-  const nextPage = currentPage + 1 < pageCount ? currentPage + 1 : null;
+  const nextPage = currentPage + 1 < pageCount_ ? currentPage + 1 : null;
 
   return (
     <div className="flex sm:flex-row flex-col w-full mt-2 items-center gap-2 text-xs">
@@ -43,7 +44,7 @@ export function Pagination({
         <PageLink href={previousPage !== null ? pageHref(previousPage) : null}>
           <span className="w-5 h-5">{"<"}</span>
         </PageLink>
-        {[...Array(pageCount).keys()].map((page) => (
+        {[...Array(pageCount_).keys()].map((page) => (
           <PageLink
             active={page === currentPage}
             href={pageHref(page)}

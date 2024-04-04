@@ -6,6 +6,7 @@ import { Link } from "@/lib/components/Link";
 import { Pages } from "@/lib/Pages";
 import { Pagination } from "@/lib/components/Pagination";
 import { conceptsPerPage } from "../conceptsPerPage";
+import configuration from "@/app/configuration";
 
 export function ConceptSchemePage({
   conceptScheme,
@@ -29,11 +30,14 @@ export function ConceptSchemePage({
           <div className="flex flex-col gap-2">
             <ConceptsList
               concepts={[
-                ...conceptScheme.topConcepts({ limit: 10, offset: 0 }),
+                ...conceptScheme.topConcepts({
+                  limit: configuration.relatedConceptsPerSection,
+                  offset: 0,
+                }),
               ]}
               languageTag={languageTag}
             />
-            {topConceptsCount > 10 ? (
+            {topConceptsCount > configuration.relatedConceptsPerSection ? (
               <Link
                 href={
                   Pages.conceptSchemeTopConcepts({
