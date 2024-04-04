@@ -1,9 +1,9 @@
-export default function Link({
+export function Link({
   children,
   className,
   href,
   ...otherProps
-}: {href: string} & Omit<
+}: { href: string } & Omit<
   React.DetailedHTMLProps<
     React.AnchorHTMLAttributes<HTMLAnchorElement>,
     HTMLAnchorElement

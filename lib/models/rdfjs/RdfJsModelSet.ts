@@ -19,8 +19,8 @@ export class RdfJsModelSet implements ModelSet {
     throw new RangeError(identifierToString(identifier));
   }
 
-  get conceptSchemes(): Iterable<ConceptScheme> {
-    return this._conceptSchemes();
+  get conceptSchemes(): readonly ConceptScheme[] {
+    return [...this._conceptSchemes()];
   }
 
   private *_conceptSchemes(): Iterable<ConceptScheme> {

@@ -1,6 +1,6 @@
 import modelSet from "@/app/modelSet";
-import Pages from "@/lib/Pages";
-import { ConceptList } from "@/lib/components/ConceptList";
+import { Pages } from "@/lib/Pages";
+import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
@@ -22,25 +22,11 @@ export default function ConceptSchemePage({
     stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
   );
 
-  const prefLabel =
-    conceptScheme.prefLabel(languageTag)?.literalForm.value ??
-    identifierToString(conceptScheme.identifier);
-
-  const topConceptsCount = conceptScheme.topConceptsCount;
-
   return (
-    <div className="flex flex-col gap-8">
-      <h1>Concept Scheme: {prefLabel}</h1>
-      {topConceptsCount > 0 ? (
-        <section>
-          <h2>Top concepts</h2>
-          <ConceptList
-            concepts={[...conceptScheme.topConcepts({ limit: 10, offset: 0 })]}
-            languageTag={languageTag}
-          />
-        </section>
-      ) : null}
-    </div>
+    <ConceptSchemePageComponent
+      conceptScheme={conceptScheme}
+      languageTag={languageTag}
+    />
   );
 }
 
@@ -58,15 +44,20 @@ export function generateMetadata({
 
 export function generateStaticParams(): ConceptSchemePageParams[] {
   const staticParams: ConceptSchemePageParams[] = [];
-  for (const conceptScheme of modelSet.conceptSchemes) {
-    for (const languageTag of modelSet.languageTags) {
-      staticParams.push({
-        conceptSchemeIdentifier: filenamify(
-          identifierToString(conceptScheme.identifier),
-        ),
-        languageTag,
-      });
+
+  const conceptSchemes = modelSet.conceptSchemes;
+  if (conceptSchemes.length > 1) {
+    for (const conceptScheme of conceptSchemes) {
+      for (const languageTag of modelSet.languageTags) {
+        staticParams.push({
+          conceptSchemeIdentifier: filenamify(
+            identifierToString(conceptScheme.identifier),
+          ),
+          languageTag,
+        });
+      }
     }
-  }
+  } // Else the root page will be the concept scheme
+
   return staticParams;
 }

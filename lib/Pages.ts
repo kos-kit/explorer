@@ -13,7 +13,7 @@ interface Page {
 // const description = "Exploring uses of schema.org types across the web";
 const titlePrefix = "SKOS: ";
 
-export default class Pages {
+export class Pages {
   static concept({
     concept,
     languageTag,
@@ -34,7 +34,7 @@ export default class Pages {
             "Concept: " +
             (concept.prefLabel(languageTag)?.literalForm.value ??
               conceptIdentifierString),
-        };
+        } satisfies Metadata;
       },
     };
   }
@@ -62,7 +62,32 @@ export default class Pages {
             "Concept scheme: " +
             (conceptScheme.prefLabel(languageTag)?.literalForm.value ??
               conceptSchemeIdentifierString),
-        };
+        } satisfies Metadata;
+      },
+    };
+  }
+
+  static conceptSchemeTopConcepts({
+    conceptScheme,
+    languageTag,
+    page,
+  }: {
+    conceptScheme: ConceptScheme;
+    languageTag: LanguageTag;
+    page: number;
+  }) {
+    const conceptSchemePage = Pages.conceptScheme({
+      conceptScheme,
+      languageTag,
+    });
+    return {
+      get href() {
+        return conceptSchemePage.href + "/topConcepts/" + page;
+      },
+      get metadata() {
+        return {
+          title: conceptSchemePage.metadata.title + ": Top concepts",
+        } satisfies Metadata;
       },
     };
   }
