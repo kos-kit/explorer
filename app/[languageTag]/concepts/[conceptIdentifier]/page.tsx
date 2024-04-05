@@ -7,15 +7,12 @@ import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
 import { LanguageTag } from "@/lib/models/LanguageTag";
-import { MappingProperty } from "@/lib/models/MappingProperty";
 import { semanticRelationProperties } from "@/lib/models/semanticRelationProperties";
-import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
-import { config } from "process";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -43,7 +40,7 @@ export default function ConceptPage({
         <LabelTable model={concept} />
       </Section>
       {semanticRelationProperties.map((semanticRelationProperty) => {
-        let semanticRelations = concept.semanticRelations(
+        const semanticRelations = concept.semanticRelations(
           semanticRelationProperty,
         );
         if (semanticRelations.length === 0) {

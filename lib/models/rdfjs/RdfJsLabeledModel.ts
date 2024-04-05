@@ -6,6 +6,7 @@ import { RdfJsLabel } from "@/lib/models/rdfjs/RdfJsLabel";
 import { skos, skosxl } from "@/lib/vocabularies";
 import { mapTermToIdentifier } from "./mapTermToIdentifier";
 import { LanguageTag } from "../LanguageTag";
+import { LiteralLabel } from "../LiteralLabel";
 
 export abstract class RdfJsLabeledModel
   extends RdfJsModel
@@ -33,11 +34,7 @@ export abstract class RdfJsLabeledModel
     skosXlPredicate: NamedNode,
   ): Iterable<Label> {
     yield* this.filterAndMapObjects(skosPredicate, (term) =>
-      term.termType === "Literal"
-        ? ({
-            literalForm: term,
-          } satisfies Label)
-        : null,
+      term.termType === "Literal" ? new LiteralLabel(term) : null,
     );
 
     // Any resource in the range of a skosxl: label predicate is considered a skosxl:Label

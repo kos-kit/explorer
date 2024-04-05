@@ -5,7 +5,7 @@ import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { filenamify } from "@/lib/utilities/filenamify";
 import modelSet from "./modelSet";
-import { PropertyEnum } from "@/lib/models/PropertyEnum";
+import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
 
 interface Page {
   readonly href: string;
@@ -95,7 +95,7 @@ export class Pages {
   }: {
     concept: Concept;
     languageTag: LanguageTag;
-    semanticRelationProperty: PropertyEnum;
+    semanticRelationProperty: SemanticRelationProperty;
   }) {
     const conceptPage = Pages.concept({
       concept,
