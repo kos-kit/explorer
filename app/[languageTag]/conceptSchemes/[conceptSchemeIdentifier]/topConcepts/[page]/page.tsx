@@ -2,6 +2,9 @@ import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
 import { Pages } from "@/lib/Pages";
 import { ConceptList } from "@/lib/components/ConceptList";
+import { Link } from "@/lib/components/Link";
+import { PageSection } from "@/lib/components/PageSection";
+import { PageTitle } from "@/lib/components/PageTitle";
 import { Pagination } from "@/lib/components/Pagination";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
@@ -28,24 +31,29 @@ export default function ConceptSchemeTopConceptsPage({
 
   const pageInt = parseInt(page);
 
-  const prefLabel =
-    conceptScheme.prefLabel(languageTag)?.literalForm.value ??
-    identifierToString(conceptScheme.identifier);
-
   const topConceptsCount = conceptScheme.topConceptsCount;
 
   return (
-    <div className="flex flex-col gap-8">
-      <h1>Concept Scheme: {prefLabel}</h1>
-      <h2>
-        Top concepts (Page {pageInt + 1} of{" "}
-        {pageCount({
-          itemsPerPage: configuration.conceptsPerPage,
-          itemsTotal: topConceptsCount,
-        })}
-        )
-      </h2>
-      <div className="flex flex-col gap-2">
+    <>
+      <PageTitle>
+        <Link href={Pages.conceptScheme({ conceptScheme, languageTag }).href}>
+          Concept Scheme:{" "}
+          {conceptScheme.prefLabel(languageTag)?.literalForm.value ??
+            identifierToString(conceptScheme.identifier)}
+        </Link>
+      </PageTitle>
+      <PageSection
+        title={
+          <span>
+            Top concepts (Page {pageInt + 1} of{" "}
+            {pageCount({
+              itemsPerPage: configuration.conceptsPerPage,
+              itemsTotal: topConceptsCount,
+            })}
+            )
+          </span>
+        }
+      >
         <ConceptList
           concepts={[
             ...conceptScheme.topConcepts({
@@ -55,17 +63,22 @@ export default function ConceptSchemeTopConceptsPage({
           ]}
           languageTag={languageTag}
         />
-      </div>
-      <Pagination
-        currentPage={pageInt}
-        itemsPerPage={configuration.conceptsPerPage}
-        itemsTotal={topConceptsCount}
-        pageHref={(page) =>
-          Pages.conceptSchemeTopConcepts({ conceptScheme, languageTag, page })
-            .href
-        }
-      />
-    </div>
+        <div className="flex justify-center">
+          <Pagination
+            currentPage={pageInt}
+            itemsPerPage={configuration.conceptsPerPage}
+            itemsTotal={topConceptsCount}
+            pageHref={(page) =>
+              Pages.conceptSchemeTopConcepts({
+                conceptScheme,
+                languageTag,
+                page,
+              }).href
+            }
+          />
+        </div>
+      </PageSection>
+    </>
   );
 }
 

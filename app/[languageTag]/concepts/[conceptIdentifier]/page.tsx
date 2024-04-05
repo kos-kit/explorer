@@ -1,5 +1,6 @@
 import modelSet from "@/app/modelSet";
 import { Pages } from "@/lib/Pages";
+import { PageTitle } from "@/lib/components/PageTitle";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
@@ -21,7 +22,13 @@ export default function ConceptPage({
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
-  return <ConceptPageComponent concept={concept} languageTag={languageTag} />;
+  return (
+    <PageTitle>
+      Concept:{" "}
+      {concept.prefLabel(languageTag)?.literalForm.value ??
+        identifierToString(concept.identifier)}
+    </PageTitle>
+  );
 }
 
 export function generateMetadata({

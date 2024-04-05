@@ -6,7 +6,10 @@ function PageLink({
   active,
   children,
   href,
-}: PropsWithChildren<{ active?: boolean; href: string | null }>) {
+}: PropsWithChildren<{
+  active?: boolean;
+  href: string | null;
+}>) {
   if (href) {
     return (
       <Link className={`rounded p-1 ${active ? "font-bold" : ""}`} href={href}>
@@ -36,7 +39,7 @@ export function Pagination({
   const nextPage = currentPage + 1 < pageCount_ ? currentPage + 1 : null;
 
   return (
-    <div className="flex sm:flex-row flex-col w-full mt-2 items-center gap-2 text-xs">
+    <div className="flex sm:flex-row flex-col mt-2 items-center gap-2">
       <div className="flex gap-2">
         <PageLink href={currentPage !== firstPage ? pageHref(firstPage) : null}>
           <span className="w-5 h-5">{"<<"}</span>

@@ -5,7 +5,9 @@ import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Pages } from "@/lib/Pages";
 import configuration from "@/app/configuration";
-import { LabelTable } from "./LabelTable";
+import { LabelTable } from "@/lib/components/LabelTable";
+import { PageTitle } from "@/lib/components/PageTitle";
+import { PageSection } from "./PageSection";
 
 export function ConceptSchemePage({
   conceptScheme,
@@ -14,22 +16,20 @@ export function ConceptSchemePage({
   conceptScheme: ConceptScheme;
   languageTag: LanguageTag;
 }) {
-  const prefLabel =
-    conceptScheme.prefLabel(languageTag)?.literalForm.value ??
-    identifierToString(conceptScheme.identifier);
-
   const topConceptsCount = conceptScheme.topConceptsCount;
 
   return (
-    <div className="flex flex-col gap-8">
-      <h1>Concept Scheme: {prefLabel}</h1>
-      <section>
-        <h2>Labels</h2>
+    <>
+      <PageTitle>
+        Concept Scheme:{" "}
+        {conceptScheme.prefLabel(languageTag)?.literalForm.value ??
+          identifierToString(conceptScheme.identifier)}
+      </PageTitle>
+      <PageSection title="Labels">
         <LabelTable model={conceptScheme} />
-      </section>
+      </PageSection>
       {topConceptsCount > 0 ? (
-        <section>
-          <h2>Top concepts</h2>
+        <PageSection title="Top concepts">
           <div className="flex flex-col gap-2">
             <ConceptList
               concepts={[
@@ -54,8 +54,8 @@ export function ConceptSchemePage({
               </Link>
             ) : null}
           </div>
-        </section>
+        </PageSection>
       ) : null}
-    </div>
+    </>
   );
 }

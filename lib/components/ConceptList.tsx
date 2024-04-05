@@ -12,7 +12,7 @@ export function ConceptList({
   languageTag: LanguageTag;
 }) {
   return (
-    <ul className="list-disc list-inside">
+    <ul className="list-inside">
       {concepts.map((concept) => (
         <li key={identifierToString(concept.identifier)}>
           <Link href={Pages.concept({ concept, languageTag }).href}>
