@@ -1,14 +1,14 @@
 import { NamedNode } from "@rdfjs/types";
 import { Label } from "@/lib/models/Label";
 import { LabeledModel } from "@/lib/models/LabeledModel";
-import { RdfJsResource } from "@/lib/models/rdfjs/RdfJsResource";
+import { RdfJsModel } from "@/lib/models/rdfjs/RdfJsModel";
 import { RdfJsLabel } from "@/lib/models/rdfjs/RdfJsLabel";
 import { skos, skosxl } from "@/lib/vocabularies";
 import { mapTermToIdentifier } from "./mapTermToIdentifier";
 import { LanguageTag } from "../LanguageTag";
 
 export abstract class RdfJsLabeledModel
-  extends RdfJsResource
+  extends RdfJsModel
   implements LabeledModel
 {
   get altLabels(): readonly Label[] {
