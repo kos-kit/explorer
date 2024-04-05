@@ -4,6 +4,7 @@ import { Pages } from "@/app/Pages";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelTable } from "@/lib/components/LabelTable";
 import { Layout } from "@/lib/components/Layout";
+import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { MappingProperty } from "@/lib/models/MappingProperty";
@@ -48,23 +49,37 @@ export default function ConceptPage({
         if (semanticRelations.length === 0) {
           return null;
         }
-        if (
-          semanticRelations.length > configuration.relatedConceptsPerSection
-        ) {
-          semanticRelations = semanticRelations.slice(
-            0,
-            configuration.relatedConceptsPerSection,
-          );
-        }
         return (
           <Section
             key={semanticRelationProperty.name}
             title={`${semanticRelationProperty.label} concepts`}
           >
             <ConceptList
-              concepts={semanticRelations}
+              concepts={
+                semanticRelations.length <=
+                configuration.relatedConceptsPerSection
+                  ? semanticRelations
+                  : semanticRelations.slice(
+                      0,
+                      configuration.relatedConceptsPerSection,
+                    )
+              }
               languageTag={languageTag}
             />
+            {semanticRelations.length >
+            configuration.relatedConceptsPerSection ? (
+              <Link
+                href={
+                  Pages.conceptSemanticRelations({
+                    concept,
+                    languageTag,
+                    semanticRelationProperty,
+                  }).href
+                }
+              >
+                More
+              </Link>
+            ) : null}
           </Section>
         );
       })}
