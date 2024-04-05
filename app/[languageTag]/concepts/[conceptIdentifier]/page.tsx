@@ -1,11 +1,13 @@
 import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
 import { Pages } from "@/app/Pages";
+import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelTable } from "@/lib/components/LabelTable";
 import { Layout } from "@/lib/components/Layout";
 import { Section } from "@/lib/components/Section";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { MappingProperty } from "@/lib/models/MappingProperty";
+import { semanticRelationProperties } from "@/lib/models/semanticRelationProperties";
 import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
@@ -39,17 +41,32 @@ export default function ConceptPage({
       <Section title="Labels">
         <LabelTable model={concept} />
       </Section>
-      {MappingProperty.values.map((mappingProperty) => {
-        let mappingRelations = concept.mappingRelations(mappingProperty);
-        if (mappingRelations.length === 0) {
+      {semanticRelationProperties.map((semanticRelationProperty) => {
+        let semanticRelations = concept.semanticRelations(
+          semanticRelationProperty,
+        );
+        if (semanticRelations.length === 0) {
           return null;
         }
-        if (mappingRelations.length > configuration.relatedConceptsPerSection) {
-          mappingRelations = mappingRelations.slice(
+        if (
+          semanticRelations.length > configuration.relatedConceptsPerSection
+        ) {
+          semanticRelations = semanticRelations.slice(
             0,
             configuration.relatedConceptsPerSection,
           );
         }
+        return (
+          <Section
+            key={semanticRelationProperty.name}
+            title={`${semanticRelationProperty.label} concepts`}
+          >
+            <ConceptList
+              concepts={semanticRelations}
+              languageTag={languageTag}
+            />
+          </Section>
+        );
       })}
     </Layout>
   );
