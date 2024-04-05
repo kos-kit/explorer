@@ -1,28 +1,38 @@
-// import { PuzzlePieceIcon } from "@heroicons/react/24/solid";
+import { Pages } from "@/app/Pages";
+import { ListBulletIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { Link } from "@/lib/components/Link";
+import { LanguageTag } from "@/lib/models/LanguageTag";
 
-export function Navbar() {
+export function Navbar({ languageTag }: { languageTag: LanguageTag }) {
+  const title: string = Pages.root({ languageTag }).metadata.title as string;
+
   return (
-    <nav
-      className="flex items-center p-4"
-      style={{
-        background: "var(--foreground-color)",
-        color: "var(--background-color)",
-      }}
-    >
-      {/* <div className="flex items-center">
-        <PuzzlePieceIcon className="mr-2 w-6" />
-        <a href={Pages.root} className="mr-8 block lg:inline-block text-xl">
-          <b>Dive Into Schema.org</b>
-        </a>
+    <nav className="bg-white border-gray-200 dark:bg-gray-900">
+      <div className="max-w-screen-xl flex flex-wrap justify-between">
+        <Link
+          href={Pages.root({ languageTag }).href}
+          className="flex space-x-3 rtl:space-x-reverse"
+        >
+          <ListBulletIcon className="h-8 w-8" />
+          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+            {title}
+          </span>
+        </Link>
+        <div className="flex">
+          <div className="relative block">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <MagnifyingGlassIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <span className="sr-only">Search icon</span>
+            </div>
+            <input
+              autoFocus
+              className="block w-full min-w-64 p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Search..."
+              type="text"
+            />
+          </div>
+        </div>
       </div>
-      <div className="flex gap-8 text-xl">
-        <a href={Hrefs.types} className="blocklg:inline-block">
-          Types
-        </a>
-        <a href={Hrefs.about} className="blocklg:inline-block">
-          About
-        </a>
-      </div> */}
     </nav>
   );
 }

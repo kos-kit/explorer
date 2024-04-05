@@ -1,7 +1,9 @@
 import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
-import { Pages } from "@/lib/Pages";
+import { Pages } from "@/app/Pages";
 import { ConceptList } from "@/lib/components/ConceptList";
+import { Link } from "@/lib/components/Link";
+import { Section } from "@/lib/components/Section";
 import { Pagination } from "@/lib/components/Pagination";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
@@ -10,6 +12,7 @@ import { identifierToString } from "@/lib/utilities/identifierToString";
 import { pageCount } from "@/lib/utilities/pageCount";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
+import { Layout } from "@/lib/components/Layout";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -28,24 +31,31 @@ export default function ConceptSchemeTopConceptsPage({
 
   const pageInt = parseInt(page);
 
-  const prefLabel =
-    conceptScheme.prefLabel(languageTag)?.literalForm.value ??
-    identifierToString(conceptScheme.identifier);
-
   const topConceptsCount = conceptScheme.topConceptsCount;
 
   return (
-    <div className="flex flex-col gap-8">
-      <h1>Concept Scheme: {prefLabel}</h1>
-      <h2>
-        Top concepts (Page {pageInt + 1} of{" "}
-        {pageCount({
-          itemsPerPage: configuration.conceptsPerPage,
-          itemsTotal: topConceptsCount,
-        })}
-        )
-      </h2>
-      <div className="flex flex-col gap-2">
+    <Layout
+      languageTag={languageTag}
+      title={
+        <Link href={Pages.conceptScheme({ conceptScheme, languageTag }).href}>
+          Concept Scheme:{" "}
+          {conceptScheme.prefLabel(languageTag)?.literalForm.value ??
+            identifierToString(conceptScheme.identifier)}
+        </Link>
+      }
+    >
+      <Section
+        title={
+          <span>
+            Top concepts (Page {pageInt + 1} of{" "}
+            {pageCount({
+              itemsPerPage: configuration.conceptsPerPage,
+              itemsTotal: topConceptsCount,
+            })}
+            )
+          </span>
+        }
+      >
         <ConceptList
           concepts={[
             ...conceptScheme.topConcepts({
@@ -55,17 +65,22 @@ export default function ConceptSchemeTopConceptsPage({
           ]}
           languageTag={languageTag}
         />
-      </div>
-      <Pagination
-        currentPage={pageInt}
-        itemsPerPage={configuration.conceptsPerPage}
-        itemsTotal={topConceptsCount}
-        pageHref={(page) =>
-          Pages.conceptSchemeTopConcepts({ conceptScheme, languageTag, page })
-            .href
-        }
-      />
-    </div>
+        <div className="flex justify-center">
+          <Pagination
+            currentPage={pageInt}
+            itemsPerPage={configuration.conceptsPerPage}
+            itemsTotal={topConceptsCount}
+            pageHref={(page) =>
+              Pages.conceptSchemeTopConcepts({
+                conceptScheme,
+                languageTag,
+                page,
+              }).href
+            }
+          />
+        </div>
+      </Section>
+    </Layout>
   );
 }
 
