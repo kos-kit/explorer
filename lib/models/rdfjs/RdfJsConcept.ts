@@ -4,6 +4,7 @@ import { RdfJsLabeledModel } from "@/lib/models/rdfjs/RdfJsLabeledModel";
 import { skos } from "@/lib/vocabularies";
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { RdfJsConceptScheme } from "@/lib/models/rdfjs/RdfJsConceptScheme";
+import { SemanticRelationProperty } from "../SemanticRelationProperty";
 
 export class RdfJsConcept extends RdfJsLabeledModel implements Concept {
   get inSchemes(): readonly ConceptScheme[] {
@@ -22,6 +23,23 @@ export class RdfJsConcept extends RdfJsLabeledModel implements Concept {
         term.termType === "Literal" ? term : null,
       ),
     ];
+  }
+
+  semanticRelations(property: SemanticRelationProperty): readonly Concept[] {
+    return [
+      ...this.filterAndMapObjects(property.identifier, (term) =>
+        term.termType === "NamedNode"
+          ? new RdfJsConcept({ dataset: this.dataset, identifier: term })
+          : null,
+      ),
+    ];
+  }
+
+  semanticRelationsCount(property: SemanticRelationProperty): number {
+    return this.countObjects(
+      property.identifier,
+      (term) => term.termType === "NamedNode",
+    );
   }
 
   get topConceptOf(): readonly ConceptScheme[] {
