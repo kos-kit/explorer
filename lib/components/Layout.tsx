@@ -1,13 +1,14 @@
 import { PropsWithChildren } from "react";
-import { Navbar } from "./Navbar";
-import { Footer } from "./Footer";
+import { Navbar } from "@/lib/components/Navbar";
+import { Footer } from "@/lib/components/Footer";
+import { LanguageTag } from "@/lib/models/LanguageTag";
 
 export function Layout({
   children,
   languageTag,
   title,
 }: PropsWithChildren<{
-  languageTag: string;
+  languageTag: LanguageTag;
   title: React.ReactElement;
 }>) {
   return (
@@ -19,7 +20,7 @@ export function Layout({
           {children}
         </div>
       </main>
-      <Footer />
+      <Footer languageTag={languageTag} />
     </div>
   );
 }

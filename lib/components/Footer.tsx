@@ -1,4 +1,6 @@
-export function Footer() {
+import { LanguageTag } from "../models/LanguageTag";
+
+export function Footer({ languageTag }: { languageTag: LanguageTag }) {
   return (
     <footer
       className="flex items-center p-4"
