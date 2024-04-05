@@ -9,7 +9,7 @@ export function Layout({
   title,
 }: PropsWithChildren<{
   languageTag: LanguageTag;
-  title: React.ReactElement;
+  title: React.ReactElement | string;
 }>) {
   return (
     <div className="flex flex-col gap-4 min-h-screen px-2 sm:px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-4">

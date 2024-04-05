@@ -2,7 +2,6 @@ import modelSet from "@/app/modelSet";
 import { Pages } from "@/app/Pages";
 import { LabelTable } from "@/lib/components/LabelTable";
 import { Layout } from "@/lib/components/Layout";
-import { PageTitle } from "@/lib/components/PageTitle";
 import { Section } from "@/lib/components/Section";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
@@ -28,13 +27,10 @@ export default function ConceptPage({
   return (
     <Layout
       languageTag={languageTag}
-      title={
-        <span>
-          Concept:{" "}
-          {concept.prefLabel(languageTag)?.literalForm.value ??
-            identifierToString(concept.identifier)}
-        </span>
-      }
+      title={`Concept: ${
+        concept.prefLabel(languageTag)?.literalForm.value ??
+        identifierToString(concept.identifier)
+      }`}
     >
       <Section title="Labels">
         <LabelTable model={concept} />
@@ -58,17 +54,20 @@ export function generateMetadata({
 export function generateStaticParams(): ConceptPageParams[] {
   const staticParams: ConceptPageParams[] = [];
 
-  const concepts = modelSet.concepts;
-  if (concepts.length > 1) {
-    for (const concept of concepts) {
+  const conceptsCount = modelSet.conceptsCount;
+  const limit = 100;
+  let offset = 0;
+  while (offset < conceptsCount) {
+    for (const concept of modelSet.concepts({ limit, offset })) {
       for (const languageTag of modelSet.languageTags) {
         staticParams.push({
           conceptIdentifier: filenamify(identifierToString(concept.identifier)),
           languageTag,
         });
       }
+      offset++;
     }
-  } // Else the root page will be the concept scheme
+  }
 
   return staticParams;
 }

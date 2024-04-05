@@ -4,7 +4,6 @@ import { Pages } from "@/app/Pages";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
-import { PageTitle } from "@/lib/components/PageTitle";
 import { Pagination } from "@/lib/components/Pagination";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";

@@ -38,6 +38,28 @@ export abstract class RdfJsModel {
     return null;
   }
 
+  protected countObjects(
+    property: NamedNode,
+    filter?: (value: Term) => boolean,
+  ) {
+    if (!filter) {
+      filter = () => true;
+    }
+
+    let count = 0;
+    for (const quad of this.dataset.match(
+      this.identifier,
+      property,
+      null,
+      null,
+    )) {
+      if (filter(quad.object)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
   protected *filterAndMapObjects<T>(
     property: NamedNode,
     callback: (value: Term) => NonNullable<T> | null,
