@@ -6,6 +6,7 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { filenamify } from "@/lib/utilities/filenamify";
 import modelSet from "./modelSet";
 import configuration from "./configuration";
+import { PropertyEnum } from "@/lib/models/PropertyEnum";
 
 interface Page {
   readonly href: string;
@@ -61,6 +62,7 @@ export class Pages {
       },
     };
   }
+
   static conceptSchemeTopConcepts({
     conceptScheme,
     languageTag,
@@ -82,6 +84,36 @@ export class Pages {
       get metadata() {
         return {
           title: conceptSchemePage.metadata.title + ": Top concepts",
+        } satisfies Metadata;
+      },
+    };
+  }
+
+  static conceptSemanticRelations({
+    concept,
+    languageTag,
+    semanticRelationProperty,
+  }: {
+    concept: Concept;
+    languageTag: LanguageTag;
+    semanticRelationProperty: PropertyEnum;
+  }) {
+    const conceptPage = Pages.concept({
+      concept,
+      languageTag,
+    });
+
+    return {
+      get href() {
+        return (
+          conceptPage.href +
+          "/semanticRelations/" +
+          semanticRelationProperty.name
+        );
+      },
+      get metadata() {
+        return {
+          title: `${conceptPage.metadata.title}: ${semanticRelationProperty.name} concepts`,
         } satisfies Metadata;
       },
     };

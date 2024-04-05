@@ -13,16 +13,16 @@ import { identifierToString } from "@/lib/utilities/identifierToString";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
 
-interface ConceptPageParams {
+interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
   languageTag: LanguageTag;
   semanticRelationPropertyName: string;
 }
 
-export default function ConceptPage({
+export default function ConceptSemanticRelationsPage({
   params: { conceptIdentifier, languageTag, semanticRelationPropertyName },
 }: {
-  params: ConceptPageParams;
+  params: ConceptSemanticRelationsPageParams;
 }) {
   const concept = modelSet.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
@@ -55,19 +55,25 @@ export default function ConceptPage({
 }
 
 export function generateMetadata({
-  params: { conceptIdentifier, languageTag },
+  params: { conceptIdentifier, languageTag, semanticRelationPropertyName },
 }: {
-  params: ConceptPageParams;
+  params: ConceptSemanticRelationsPageParams;
 }): Metadata {
   const concept = modelSet.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
-  return Pages.concept({ concept, languageTag }).metadata;
+  return Pages.conceptSemanticRelations({
+    concept,
+    languageTag,
+    semanticRelationProperty:
+      MappingProperty.byName(semanticRelationPropertyName) ??
+      SemanticRelationProperty.byName(semanticRelationPropertyName)!,
+  }).metadata;
 }
 
-export function generateStaticParams(): ConceptPageParams[] {
-  const staticParams: ConceptPageParams[] = [];
+export function generateStaticParams(): ConceptSemanticRelationsPageParams[] {
+  const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
   const conceptsCount = modelSet.conceptsCount;
   const conceptsLimit = 100;
