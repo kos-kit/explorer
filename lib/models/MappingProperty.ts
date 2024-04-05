@@ -2,15 +2,30 @@ import { skos } from "@/lib/vocabularies";
 import { PropertyEnum } from "./PropertyEnum";
 
 export class MappingProperty extends PropertyEnum {
-  static readonly BROAD_MATCH = new MappingProperty(skos.broadMatch);
+  static readonly BROAD_MATCH = new MappingProperty(
+    skos.broadMatch,
+    "Broad match",
+  );
 
-  static readonly CLOSE_MATCH = new MappingProperty(skos.closeMatch);
+  static readonly CLOSE_MATCH = new MappingProperty(
+    skos.closeMatch,
+    "Close match",
+  );
 
-  static readonly EXACT_MATCH = new MappingProperty(skos.exactMatch);
+  static readonly EXACT_MATCH = new MappingProperty(
+    skos.exactMatch,
+    "Exact match",
+  );
 
-  static readonly NARROW_MATCH = new MappingProperty(skos.narrowMatch);
+  static readonly NARROW_MATCH = new MappingProperty(
+    skos.narrowMatch,
+    "Narrow match",
+  );
 
-  static readonly RELATED_MATCH = new MappingProperty(skos.relatedMatch);
+  static readonly RELATED_MATCH = new MappingProperty(
+    skos.relatedMatch,
+    "Related match",
+  );
 
   static byName(name: string): MappingProperty | null {
     for (const mappingProperty of MappingProperty.values) {

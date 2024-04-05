@@ -47,7 +47,7 @@ export default function ConceptSemanticRelationsPage({
       title={`Concept: ${
         concept.prefLabel(languageTag)?.literalForm.value ??
         identifierToString(concept.identifier)
-      }: ${semanticRelationPropertyName} concepts`}
+      }: ${mappingProperty?.label ?? semanticRelationProperty!.label} concepts`}
     >
       <ConceptList concepts={semanticRelations} languageTag={languageTag} />
     </Layout>

@@ -5,7 +5,6 @@ import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { filenamify } from "@/lib/utilities/filenamify";
 import modelSet from "./modelSet";
-import configuration from "./configuration";
 import { PropertyEnum } from "@/lib/models/PropertyEnum";
 
 interface Page {
@@ -113,7 +112,7 @@ export class Pages {
       },
       get metadata() {
         return {
-          title: `${conceptPage.metadata.title}: ${semanticRelationProperty.name} concepts`,
+          title: `${conceptPage.metadata.title}: ${semanticRelationProperty.label} concepts`,
         } satisfies Metadata;
       },
     };
