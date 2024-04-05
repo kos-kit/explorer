@@ -1,6 +1,44 @@
-import { LanguageTag } from "../models/LanguageTag";
+import modelSet from "@/app/modelSet";
+import { LanguageTag } from "@/lib/models/LanguageTag";
+import { Literal, NamedNode } from "@rdfjs/types";
+import { Link } from "@/lib/components/Link";
+import { Fragment } from "react";
 
 export function Footer({ languageTag }: { languageTag: LanguageTag }) {
+  let license: Literal | NamedNode | null = null;
+  let rights: Literal | null = null;
+  let rightsHolder: Literal | null = null;
+
+  const conceptSchemes = modelSet.conceptSchemes;
+  if (conceptSchemes.length === 1) {
+    const conceptScheme = conceptSchemes[0];
+    license = conceptScheme.license(languageTag);
+    rights = conceptScheme.rights(languageTag);
+    rightsHolder = conceptScheme.rightsHolder(languageTag);
+  }
+
+  if (license === null && rights === null && rightsHolder === null) {
+    return null;
+  }
+
+  const rightsParts: React.ReactNode[] = [];
+  const copyright = "© " + new Date().getFullYear();
+  if (rightsHolder !== null) {
+    rightsParts.push(copyright + " " + rightsHolder.value);
+  } else {
+    rightsParts.push(copyright);
+  }
+  if (rights !== null) {
+    rightsParts.push(rights.value);
+  }
+  if (license !== null) {
+    if (license.termType === "NamedNode") {
+      rightsParts.push(<Link href={license.value}>License</Link>);
+    } else {
+      rightsParts.push(license.value);
+    }
+  }
+
   return (
     <footer
       className="flex items-center p-4"
@@ -10,9 +48,14 @@ export function Footer({ languageTag }: { languageTag: LanguageTag }) {
       }}
     >
       <div className="mx-auto w-full max-w-screen-xl text-center">
-        {/* © 2024 <Link href="https://minorgordon.net">Minor Gordon</Link>
-        <br />
-        Licensed under the&nbsp; */}
+        {rightsParts.map((rightsPart, rightsPartI) => (
+          <Fragment key={rightsPartI}>
+            {rightsPart}
+            {rightsPartI + 1 < rightsParts.length ? (
+              <span>&nbsp;&middot;&nbsp;</span>
+            ) : null}
+          </Fragment>
+        ))}
       </div>
     </footer>
   );
