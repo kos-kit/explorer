@@ -3,7 +3,7 @@ import modelSet from "@/app/modelSet";
 import { Pages } from "@/app/Pages";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
-import { PageSection } from "@/lib/components/PageSection";
+import { Section } from "@/lib/components/Section";
 import { PageTitle } from "@/lib/components/PageTitle";
 import { Pagination } from "@/lib/components/Pagination";
 import { LanguageTag } from "@/lib/models/LanguageTag";
@@ -13,6 +13,7 @@ import { identifierToString } from "@/lib/utilities/identifierToString";
 import { pageCount } from "@/lib/utilities/pageCount";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
+import { Layout } from "@/lib/components/Layout";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -34,15 +35,17 @@ export default function ConceptSchemeTopConceptsPage({
   const topConceptsCount = conceptScheme.topConceptsCount;
 
   return (
-    <>
-      <PageTitle>
+    <Layout
+      languageTag={languageTag}
+      title={
         <Link href={Pages.conceptScheme({ conceptScheme, languageTag }).href}>
           Concept Scheme:{" "}
           {conceptScheme.prefLabel(languageTag)?.literalForm.value ??
             identifierToString(conceptScheme.identifier)}
         </Link>
-      </PageTitle>
-      <PageSection
+      }
+    >
+      <Section
         title={
           <span>
             Top concepts (Page {pageInt + 1} of{" "}
@@ -77,8 +80,8 @@ export default function ConceptSchemeTopConceptsPage({
             }
           />
         </div>
-      </PageSection>
-    </>
+      </Section>
+    </Layout>
   );
 }
 

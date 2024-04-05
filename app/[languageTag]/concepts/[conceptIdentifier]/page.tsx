@@ -1,6 +1,9 @@
 import modelSet from "@/app/modelSet";
 import { Pages } from "@/app/Pages";
+import { LabelTable } from "@/lib/components/LabelTable";
+import { Layout } from "@/lib/components/Layout";
 import { PageTitle } from "@/lib/components/PageTitle";
+import { Section } from "@/lib/components/Section";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
@@ -23,11 +26,20 @@ export default function ConceptPage({
   );
 
   return (
-    <PageTitle>
-      Concept:{" "}
-      {concept.prefLabel(languageTag)?.literalForm.value ??
-        identifierToString(concept.identifier)}
-    </PageTitle>
+    <Layout
+      languageTag={languageTag}
+      title={
+        <span>
+          Concept:{" "}
+          {concept.prefLabel(languageTag)?.literalForm.value ??
+            identifierToString(concept.identifier)}
+        </span>
+      }
+    >
+      <Section title="Labels">
+        <LabelTable model={concept} />
+      </Section>
+    </Layout>
   );
 }
 

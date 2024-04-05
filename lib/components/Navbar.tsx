@@ -1,6 +1,6 @@
 // import { PuzzlePieceIcon } from "@heroicons/react/24/solid";
 
-export function Navbar() {
+export function Navbar({ languageTag }: { languageTag: string }) {
   return (
     <nav
       className="flex items-center p-4"

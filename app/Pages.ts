@@ -61,29 +61,6 @@ export class Pages {
       },
     };
   }
-
-  static root({ languageTag }: { languageTag: string | null }): Page {
-    const conceptSchemes = modelSet.conceptSchemes;
-
-    let title: string = "SKOS";
-    if (conceptSchemes.length === 1) {
-      const conceptScheme = conceptSchemes[0];
-      const prefLabel = conceptScheme.prefLabel(
-        languageTag ?? configuration.defaultLanguageTag,
-      );
-      if (prefLabel !== null) {
-        title = prefLabel.literalForm.value;
-      }
-    }
-
-    return {
-      href: "/",
-      metadata: {
-        title: title,
-      },
-    };
-  }
-
   static conceptSchemeTopConcepts({
     conceptScheme,
     languageTag,
@@ -106,6 +83,26 @@ export class Pages {
         return {
           title: conceptSchemePage.metadata.title + ": Top concepts",
         } satisfies Metadata;
+      },
+    };
+  }
+
+  static root({ languageTag }: { languageTag: LanguageTag }): Page {
+    const conceptSchemes = modelSet.conceptSchemes;
+
+    let title: string = "SKOS";
+    if (conceptSchemes.length === 1) {
+      const conceptScheme = conceptSchemes[0];
+      const prefLabel = conceptScheme.prefLabel(languageTag);
+      if (prefLabel !== null) {
+        title = prefLabel.literalForm.value;
+      }
+    }
+
+    return {
+      href: "/",
+      metadata: {
+        title: title,
       },
     };
   }
