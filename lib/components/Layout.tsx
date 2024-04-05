@@ -11,9 +11,9 @@ export function Layout({
   title: React.ReactElement;
 }>) {
   return (
-    <div className="flex flex-col min-h-screen justify-between">
+    <div className="flex flex-col gap-4 min-h-screen px-2 sm:px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-4">
       <Navbar languageTag={languageTag} />
-      <main className="flex-grow px-2 sm:px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 py-4">
+      <main className="flex-grow">
         <div className="flex flex-col gap-8">
           <h1 className="font-bold text-xl">{title}</h1>
           {children}
