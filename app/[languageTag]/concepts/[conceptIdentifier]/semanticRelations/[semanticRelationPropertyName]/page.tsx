@@ -3,10 +3,11 @@ import modelSet from "@/app/modelSet";
 import { Pages } from "@/app/Pages";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
-import { Concept } from "@/lib/models/Concept";
 import { LanguageTag } from "@/lib/models/LanguageTag";
-import { MappingProperty } from "@/lib/models/MappingProperty";
-import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
+import {
+  semanticRelationProperties,
+  semanticRelationPropertiesByName,
+} from "@/lib/models/semanticRelationProperties";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
 import { identifierToString } from "@/lib/utilities/identifierToString";
@@ -28,18 +29,10 @@ export default function ConceptSemanticRelationsPage({
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
-  const mappingProperty = MappingProperty.byName(semanticRelationPropertyName);
-  const semanticRelationProperty = SemanticRelationProperty.byName(
-    semanticRelationPropertyName,
-  );
-  let semanticRelations: readonly Concept[];
-  if (mappingProperty !== null) {
-    semanticRelations = concept.mappingRelations(mappingProperty);
-  } else if (semanticRelationProperty !== null) {
-    semanticRelations = concept.semanticRelations(semanticRelationProperty);
-  } else {
-    throw new RangeError();
-  }
+  const semanticRelationProperty =
+    semanticRelationPropertiesByName[semanticRelationPropertyName]!;
+
+  const semanticRelations = concept.semanticRelations(semanticRelationProperty);
 
   return (
     <Layout
@@ -47,7 +40,7 @@ export default function ConceptSemanticRelationsPage({
       title={`Concept: ${
         concept.prefLabel(languageTag)?.literalForm.value ??
         identifierToString(concept.identifier)
-      }: ${mappingProperty?.label ?? semanticRelationProperty!.label} concepts`}
+      }: ${semanticRelationProperty.label} concepts`}
     >
       <ConceptList concepts={semanticRelations} languageTag={languageTag} />
     </Layout>
@@ -67,8 +60,7 @@ export function generateMetadata({
     concept,
     languageTag,
     semanticRelationProperty:
-      MappingProperty.byName(semanticRelationPropertyName) ??
-      SemanticRelationProperty.byName(semanticRelationPropertyName)!,
+      semanticRelationPropertiesByName[semanticRelationPropertyName],
   }).metadata;
 }
 
@@ -87,21 +79,10 @@ export function generateStaticParams(): ConceptSemanticRelationsPageParams[] {
         identifierToString(concept.identifier),
       );
 
-      const semanticRelationCounts: { [index: string]: number } = {};
-      for (const mappingProperty of MappingProperty.values) {
-        semanticRelationCounts[mappingProperty.name] =
-          concept.mappingRelationsCount(mappingProperty);
-      }
-      for (const semanticRelationProperty of SemanticRelationProperty.values) {
-        semanticRelationCounts[semanticRelationProperty.name] =
-          concept.semanticRelationsCount(semanticRelationProperty);
-      }
-
-      for (const semanticRelationPropertyName of Object.keys(
-        semanticRelationCounts,
-      )) {
-        const semanticRelationCount =
-          semanticRelationCounts[semanticRelationPropertyName];
+      for (const semanticRelationProperty of semanticRelationProperties) {
+        const semanticRelationCount = concept.semanticRelationsCount(
+          semanticRelationProperty,
+        );
         if (semanticRelationCount <= configuration.relatedConceptsPerSection) {
           continue;
         }
@@ -110,7 +91,7 @@ export function generateStaticParams(): ConceptSemanticRelationsPageParams[] {
           staticParams.push({
             conceptIdentifier,
             languageTag,
-            semanticRelationPropertyName,
+            semanticRelationPropertyName: semanticRelationProperty.name,
           });
         }
       }

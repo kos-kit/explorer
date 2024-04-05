@@ -1,14 +1,18 @@
+import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
 import { Pages } from "@/app/Pages";
 import { LabelTable } from "@/lib/components/LabelTable";
 import { Layout } from "@/lib/components/Layout";
 import { Section } from "@/lib/components/Section";
 import { LanguageTag } from "@/lib/models/LanguageTag";
+import { MappingProperty } from "@/lib/models/MappingProperty";
+import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
+import { config } from "process";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -35,6 +39,18 @@ export default function ConceptPage({
       <Section title="Labels">
         <LabelTable model={concept} />
       </Section>
+      {MappingProperty.values.map((mappingProperty) => {
+        let mappingRelations = concept.mappingRelations(mappingProperty);
+        if (mappingRelations.length === 0) {
+          return null;
+        }
+        if (mappingRelations.length > configuration.relatedConceptsPerSection) {
+          mappingRelations = mappingRelations.slice(
+            0,
+            configuration.relatedConceptsPerSection,
+          );
+        }
+      })}
     </Layout>
   );
 }

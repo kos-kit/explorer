@@ -1,7 +1,7 @@
 import { skos } from "@/lib/vocabularies";
-import { PropertyEnum } from "./PropertyEnum";
+import { SemanticRelationProperty } from "./SemanticRelationProperty";
 
-export class MappingProperty extends PropertyEnum {
+export class MappingProperty extends SemanticRelationProperty {
   static readonly BROAD_MATCH = new MappingProperty(
     skos.broadMatch,
     "Broad match",
@@ -26,21 +26,4 @@ export class MappingProperty extends PropertyEnum {
     skos.relatedMatch,
     "Related match",
   );
-
-  static byName(name: string): MappingProperty | null {
-    for (const mappingProperty of MappingProperty.values) {
-      if (mappingProperty.name === name) {
-        return mappingProperty;
-      }
-    }
-    return null;
-  }
-
-  static readonly values: readonly MappingProperty[] = [
-    MappingProperty.BROAD_MATCH,
-    MappingProperty.CLOSE_MATCH,
-    MappingProperty.EXACT_MATCH,
-    MappingProperty.NARROW_MATCH,
-    MappingProperty.RELATED_MATCH,
-  ];
 }

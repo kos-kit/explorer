@@ -1,7 +1,7 @@
 import { skos } from "@/lib/vocabularies";
-import { PropertyEnum } from "./PropertyEnum";
+import { NamedNode } from "@rdfjs/types";
 
-export class SemanticRelationProperty extends PropertyEnum {
+export class SemanticRelationProperty {
   static readonly BROADER = new SemanticRelationProperty(
     skos.broader,
     "Broader",
@@ -27,20 +27,12 @@ export class SemanticRelationProperty extends PropertyEnum {
     "Related",
   );
 
-  static byName(name: string): SemanticRelationProperty | null {
-    for (const semanticRelationProperty of SemanticRelationProperty.values) {
-      if (semanticRelationProperty.name === name) {
-        return semanticRelationProperty;
-      }
-    }
-    return null;
-  }
+  readonly name: string;
 
-  static readonly values: readonly SemanticRelationProperty[] = [
-    SemanticRelationProperty.BROADER,
-    SemanticRelationProperty.BROADER_TRANSITIVE,
-    SemanticRelationProperty.NARROWER,
-    SemanticRelationProperty.NARROWER_TRANSITIVE,
-    SemanticRelationProperty.RELATED,
-  ];
+  protected constructor(
+    readonly identifier: NamedNode,
+    readonly label: string,
+  ) {
+    this.name = identifier.value.substring(skos[""].value.length);
+  }
 }
