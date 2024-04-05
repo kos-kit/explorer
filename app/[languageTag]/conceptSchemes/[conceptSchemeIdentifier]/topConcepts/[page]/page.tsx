@@ -1,6 +1,6 @@
 import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
-import { Pages } from "@/lib/Pages";
+import { Pages } from "@/app/Pages";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { PageSection } from "@/lib/components/PageSection";

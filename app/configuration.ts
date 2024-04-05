@@ -4,6 +4,7 @@ import { Configuration } from "@/lib/models/Configuration";
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {
   configuration.value = {
+    defaultLanguageTag: "en",
     conceptsPerPage: 25,
     relatedConceptsPerSection: 10,
   } satisfies Configuration;

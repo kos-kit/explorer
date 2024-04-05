@@ -1,5 +1,5 @@
 import modelSet from "@/app/modelSet";
-import { Pages } from "@/lib/Pages";
+import { Pages } from "@/app/Pages";
 import { PageTitle } from "@/lib/components/PageTitle";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";

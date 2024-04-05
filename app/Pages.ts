@@ -2,16 +2,15 @@ import { Metadata } from "next";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 import { Concept } from "@/lib/models/Concept";
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
-import { LanguageTag } from "./models/LanguageTag";
-import { filenamify } from "./utilities/filenamify";
+import { LanguageTag } from "@/lib/models/LanguageTag";
+import { filenamify } from "@/lib/utilities/filenamify";
+import modelSet from "./modelSet";
+import configuration from "./configuration";
 
 interface Page {
   readonly href: string;
   readonly metadata: Metadata;
 }
-
-// const description = "Exploring uses of schema.org types across the web";
-const titlePrefix = "SKOS: ";
 
 export class Pages {
   static concept({
@@ -28,12 +27,10 @@ export class Pages {
       },
       get metadata() {
         return {
-          // description,
-          title:
-            titlePrefix +
-            "Concept: " +
-            (concept.prefLabel(languageTag)?.literalForm.value ??
-              conceptIdentifierString),
+          title: `${Pages.root({ languageTag }).metadata.title}: Concept: ${
+            concept.prefLabel(languageTag)?.literalForm.value ??
+            conceptIdentifierString
+          }`,
         } satisfies Metadata;
       },
     };
@@ -56,13 +53,33 @@ export class Pages {
       },
       get metadata() {
         return {
-          // description,
-          title:
-            titlePrefix +
-            "Concept scheme: " +
-            (conceptScheme.prefLabel(languageTag)?.literalForm.value ??
-              conceptSchemeIdentifierString),
+          title: `${Pages.root({ languageTag }).metadata.title}: Concept Scheme: ${
+            conceptScheme.prefLabel(languageTag)?.literalForm.value ??
+            conceptSchemeIdentifierString
+          }`,
         } satisfies Metadata;
+      },
+    };
+  }
+
+  static root({ languageTag }: { languageTag: string | null }): Page {
+    const conceptSchemes = modelSet.conceptSchemes;
+
+    let title: string = "SKOS";
+    if (conceptSchemes.length === 1) {
+      const conceptScheme = conceptSchemes[0];
+      const prefLabel = conceptScheme.prefLabel(
+        languageTag ?? configuration.defaultLanguageTag,
+      );
+      if (prefLabel !== null) {
+        title = prefLabel.literalForm.value;
+      }
+    }
+
+    return {
+      href: "/",
+      metadata: {
+        title: title,
       },
     };
   }
@@ -80,6 +97,7 @@ export class Pages {
       conceptScheme,
       languageTag,
     });
+
     return {
       get href() {
         return conceptSchemePage.href + "/topConcepts/" + page;
