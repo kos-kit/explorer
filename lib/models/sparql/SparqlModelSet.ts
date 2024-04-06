@@ -1,12 +1,13 @@
 import { QueryEngine } from "@comunica/query-sparql";
 import { QueryStringContext } from "@comunica/types";
 import { ModelSet } from "@/lib/models/ModelSet";
-import { Concept } from "../Concept";
-import { ConceptScheme } from "../ConceptScheme";
-import { Identifier } from "../Identifier";
-import { SparqlConcept } from "./SparqlConcept";
+import { Concept } from "@/lib/models/Concept";
+import { ConceptScheme } from "@/lib/models//ConceptScheme";
+import { Identifier } from "@/lib/models//Identifier";
+import { SparqlConcept } from "@/lib/models/sparql/SparqlConcept";
 import { rdf, rdfs, skos } from "@/lib/vocabularies";
 import invariant from "ts-invariant";
+import { SparqlConceptScheme } from "@/lib/models/sparql/SparqlConceptScheme";
 
 export class SparqlModelSet implements ModelSet {
   constructor(
@@ -34,15 +35,18 @@ export class SparqlModelSet implements ModelSet {
     offset: number;
   }): Promise<readonly Concept[]> {
     const concepts: Concept[] = [];
-    for await (const bindings of await this.queryEngine.queryBindings(
-      `
+
+    const query = `
 SELECT ?concept
 WHERE {
-  ?concept (<${rdf.type.value}>/<${rdfs.subClassOf.value}>)* <${skos.Concept.value}> .
+  ?concept <${rdf.type.value}>/<${rdfs.subClassOf.value}>* <${skos.Concept.value}> .
 }
 LIMIT ${limit}
 OFFSET ${offset}
-`,
+`;
+
+    for await (const bindings of await this.queryEngine.queryBindings(
+      query,
       this.queryContext,
     )) {
       const conceptIdentifier = bindings.get("concept");
@@ -59,17 +63,20 @@ OFFSET ${offset}
         }),
       );
     }
+
     return concepts;
   }
 
   async conceptsCount(): Promise<number> {
-    for await (const bindings of await this.queryEngine.queryBindings(
-      `
-SELECT COUNT(?concept) AS ?count
+    const query = `
+SELECT (COUNT(?concept) AS ?count)
 WHERE {
-  ?concept (<${rdf.type.value}>/<${rdfs.subClassOf.value}>)* <${skos.Concept.value}> .
+  ?concept <${rdf.type.value}>/<${rdfs.subClassOf.value}>* <${skos.Concept.value}> .
 }
-`,
+    `;
+
+    for await (const bindings of await this.queryEngine.queryBindings(
+      query,
       this.queryContext,
     )) {
       const count = bindings.get("count");
@@ -80,11 +87,47 @@ WHERE {
   }
 
   conceptSchemeByIdentifier(identifier: Identifier): Promise<ConceptScheme> {
-    throw new Error("Method not implemented.");
+    return new Promise((resolve) =>
+      resolve(
+        new SparqlConceptScheme({
+          identifier,
+          queryContext: this.queryContext,
+          queryEngine: this.queryEngine,
+        }),
+      ),
+    );
   }
 
-  conceptSchemes(): Promise<readonly ConceptScheme[]> {
-    throw new Error("Method not implemented.");
+  async conceptSchemes(): Promise<readonly ConceptScheme[]> {
+    const conceptSchemes: ConceptScheme[] = [];
+
+    const query = `
+SELECT ?conceptScheme
+WHERE {
+  ?conceptScheme <${rdf.type.value}>/<${rdfs.subClassOf.value}>* <${skos.ConceptScheme.value}> .
+}
+`;
+
+    for await (const bindings of await this.queryEngine.queryBindings(
+      query,
+      this.queryContext,
+    )) {
+      const conceptSchemeIdentifier = bindings.get("conceptScheme");
+      invariant(
+        conceptSchemeIdentifier &&
+          (conceptSchemeIdentifier.termType === "BlankNode" ||
+            conceptSchemeIdentifier.termType === "NamedNode"),
+      );
+      conceptSchemes.push(
+        new SparqlConceptScheme({
+          identifier: conceptSchemeIdentifier,
+          queryContext: this.queryContext,
+          queryEngine: this.queryEngine,
+        }),
+      );
+    }
+
+    return conceptSchemes;
   }
 
   languageTags(): Promise<readonly string[]> {
