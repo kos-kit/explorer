@@ -5,8 +5,8 @@ import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty"
 import { NoteProperty } from "@/lib/models/NoteProperty";
 
 export const behavesLikeUnescoThesaurusConcept10018 = (concept: Concept) => {
-  it("should be in the single concept scheme", () => {
-    const inSchemes = concept.inSchemes;
+  it("should be in the single concept scheme", async () => {
+    const inSchemes = await concept.inSchemes();
     expect(inSchemes).toHaveLength(1);
     expect(
       inSchemes[0].identifier.equals(
@@ -15,25 +15,26 @@ export const behavesLikeUnescoThesaurusConcept10018 = (concept: Concept) => {
     );
   });
 
-  it("should have a modified date", () => {
-    expect(concept.modified!.value).toStrictEqual("2019-12-15T13:44:31Z");
+  it("should have a modified date", async () => {
+    expect((await concept.modified())!.value).toStrictEqual(
+      "2019-12-15T13:44:31Z",
+    );
   });
 
-  it("should have multiple alt labels", () => {
+  it("should have multiple alt labels", async () => {
+    const altLabels = await concept.altLabels();
     expect(
-      concept.altLabels.find(
-        (altLabel) => altLabel.literalForm.language === "ar",
-      )!.literalForm.value,
+      altLabels.find((altLabel) => altLabel.literalForm.language === "ar")!
+        .literalForm.value,
     ).toStrictEqual("تقييم التأثير على البيئة");
     expect(
-      concept.altLabels.find(
-        (altLabel) => altLabel.literalForm.language === "es",
-      )!.literalForm.value,
+      altLabels.find((altLabel) => altLabel.literalForm.language === "es")!
+        .literalForm.value,
     ).toStrictEqual("Valoración del impacto ambiental");
   });
 
-  it("should be in the single concept scheme", () => {
-    const inSchemes = concept.inSchemes;
+  it("should be in the single concept scheme", async () => {
+    const inSchemes = await concept.inSchemes();
     expect(inSchemes).toHaveLength(1);
     expect(
       inSchemes[0].identifier.equals(
@@ -42,16 +43,16 @@ export const behavesLikeUnescoThesaurusConcept10018 = (concept: Concept) => {
     );
   });
 
-  it("should have multiple prefLabels", () => {
-    expect(concept.prefLabel("en")!.literalForm.value).toStrictEqual(
+  it("should have multiple prefLabels", async () => {
+    expect((await concept.prefLabel("en"))!.literalForm.value).toStrictEqual(
       "Environmental impact assessment",
     );
-    expect(concept.prefLabel("fr")!.literalForm.value).toStrictEqual(
+    expect((await concept.prefLabel("fr"))!.literalForm.value).toStrictEqual(
       "Évaluation de l'impact sur l'environnement",
     );
   });
 
-  it("should have known semantic relations", () => {
+  it("should have known semantic relations", async () => {
     for (const { semanticRelationProperty, conceptNumbers } of [
       {
         semanticRelationProperty: SemanticRelationProperty.BROADER,
@@ -63,9 +64,9 @@ export const behavesLikeUnescoThesaurusConcept10018 = (concept: Concept) => {
       },
     ]) {
       expect(
-        concept.semanticRelationsCount(semanticRelationProperty),
+        await concept.semanticRelationsCount(semanticRelationProperty),
       ).toStrictEqual(conceptNumbers.length);
-      const semanticRelations = concept.semanticRelations(
+      const semanticRelations = await concept.semanticRelations(
         semanticRelationProperty,
       );
       expect(semanticRelations).toHaveLength(conceptNumbers.length);

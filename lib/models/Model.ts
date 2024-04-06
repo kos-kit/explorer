@@ -2,8 +2,8 @@ import { Literal, NamedNode } from "@rdfjs/types";
 import { LanguageTag } from "./LanguageTag";
 
 export interface Model {
-  license(languageTag: LanguageTag): Literal | NamedNode | null;
-  readonly modified: Literal | null;
-  rights(languageTag: LanguageTag): Literal | null;
-  rightsHolder(languageTag: LanguageTag): Literal | null;
+  license(languageTag: LanguageTag): Promise<Literal | NamedNode | null>;
+  modified(): Promise<Literal | null>;
+  rights(languageTag: LanguageTag): Promise<Literal | null>;
+  rightsHolder(languageTag: LanguageTag): Promise<Literal | null>;
 }

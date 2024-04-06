@@ -4,8 +4,8 @@ import { DataFactory } from "n3";
 import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
 
 export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
-  it("should be in the single concept scheme", () => {
-    const inSchemes = concept.topConceptOf;
+  it("should be in the single concept scheme", async () => {
+    const inSchemes = await concept.topConceptOf();
     expect(inSchemes).toHaveLength(1);
     expect(
       inSchemes[0].identifier.equals(
@@ -14,21 +14,23 @@ export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
     );
   });
 
-  it("should have a modified date", () => {
-    expect(concept.modified!.value).toStrictEqual("2019-12-15T13:26:49Z");
+  it("should have a modified date", async () => {
+    expect((await concept.modified())!.value).toStrictEqual(
+      "2019-12-15T13:26:49Z",
+    );
   });
 
-  it("should have multiple prefLabels", () => {
-    expect(concept.prefLabel("en")!.literalForm.value).toStrictEqual(
+  it("should have multiple prefLabels", async () => {
+    expect((await concept.prefLabel("en"))!.literalForm.value).toStrictEqual(
       "Right to education",
     );
-    expect(concept.prefLabel("fr")!.literalForm.value).toStrictEqual(
+    expect((await concept.prefLabel("fr"))!.literalForm.value).toStrictEqual(
       "Droit à l'éducation",
     );
   });
 
-  it("should be a top concept of the single concept scheme", () => {
-    const topConceptOf = concept.topConceptOf;
+  it("should be a top concept of the single concept scheme", async () => {
+    const topConceptOf = await concept.topConceptOf();
     expect(topConceptOf).toHaveLength(1);
     expect(
       topConceptOf[0].identifier.equals(
@@ -37,7 +39,7 @@ export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
     );
   });
 
-  it("should have known semantic relations", () => {
+  it("should have known semantic relations", async () => {
     for (const { semanticRelationProperty, conceptNumbers } of [
       {
         semanticRelationProperty: SemanticRelationProperty.NARROWER,
@@ -49,9 +51,9 @@ export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
       },
     ]) {
       expect(
-        concept.semanticRelationsCount(semanticRelationProperty),
+        await concept.semanticRelationsCount(semanticRelationProperty),
       ).toStrictEqual(conceptNumbers.length);
-      const semanticRelations = concept.semanticRelations(
+      const semanticRelations = await concept.semanticRelations(
         semanticRelationProperty,
       );
       expect(semanticRelations).toHaveLength(conceptNumbers.length);
