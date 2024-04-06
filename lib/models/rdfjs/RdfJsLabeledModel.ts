@@ -12,16 +12,20 @@ export abstract class RdfJsLabeledModel
   extends RdfJsModel
   implements LabeledModel
 {
-  get altLabels(): readonly Label[] {
-    return [...this.labels(skos.altLabel, skosxl.altLabel)];
+  altLabels(): Promise<readonly Label[]> {
+    return new Promise((resolve) =>
+      resolve([...this.labels(skos.altLabel, skosxl.altLabel)]),
+    );
   }
 
-  get hiddenLabels(): readonly Label[] {
-    return [...this.labels(skos.hiddenLabel, skosxl.hiddenLabel)];
+  hiddenLabels(): Promise<readonly Label[]> {
+    return new Promise((resolve) =>
+      resolve([...this.labels(skos.hiddenLabel, skosxl.hiddenLabel)]),
+    );
   }
 
-  prefLabel(languageTag: LanguageTag): Label | null {
-    for (const prefLabel of this.prefLabels) {
+  async prefLabel(languageTag: LanguageTag): Promise<Label | null> {
+    for (const prefLabel of await this.prefLabels()) {
       if (prefLabel.literalForm.language === languageTag) {
         return prefLabel;
       }
@@ -63,7 +67,9 @@ export abstract class RdfJsLabeledModel
     });
   }
 
-  get prefLabels(): readonly Label[] {
-    return [...this.labels(skos.prefLabel, skosxl.prefLabel)];
+  prefLabels(): Promise<readonly Label[]> {
+    return new Promise((resolve) =>
+      resolve([...this.labels(skos.prefLabel, skosxl.prefLabel)]),
+    );
   }
 }

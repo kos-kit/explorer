@@ -9,6 +9,5 @@ export interface ConceptScheme extends LabeledModel {
     limit: number;
     offset: number;
   }): Promise<readonly Concept[]>;
-
-  topConceptsCount: Promise<number>;
+  topConceptsCount(): Promise<number>;
 }

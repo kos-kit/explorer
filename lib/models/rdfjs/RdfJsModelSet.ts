@@ -8,14 +8,18 @@ import { identifierToString } from "@/lib/utilities/identifierToString";
 import { Concept } from "@/lib/models/Concept";
 import { RdfJsConcept } from "@/lib/models/rdfjs/RdfJsConcept";
 import { getRdfInstances } from "./getRdfInstances";
-import { Memoize } from "typescript-memoize";
 import { paginateIterable } from "@/lib/utilities/paginateIterable";
+import { LanguageTag } from "@/lib/models/LanguageTag";
 
 export class RdfJsModelSet implements ModelSet {
   constructor(private readonly dataset: DatasetCore) {}
 
-  conceptByIdentifier(identifier: Identifier): Concept {
-    return new RdfJsConcept({ dataset: this.dataset, identifier: identifier });
+  conceptByIdentifier(identifier: Identifier): Promise<Concept> {
+    return new Promise((resolve) =>
+      resolve(
+        new RdfJsConcept({ dataset: this.dataset, identifier: identifier }),
+      ),
+    );
   }
 
   private *conceptIdentifiers(): Iterable<Identifier> {
@@ -32,31 +36,39 @@ export class RdfJsModelSet implements ModelSet {
   }: {
     limit: number;
     offset: number;
-  }): Iterable<Concept> {
-    return paginateIterable(this._concepts(), { limit, offset });
+  }): Promise<readonly Concept[]> {
+    return new Promise((resolve) => {
+      const result: Concept[] = [];
+      for (const conceptIdentifier of paginateIterable(
+        this.conceptIdentifiers(),
+        { limit, offset },
+      )) {
+        result.push(
+          new RdfJsConcept({
+            dataset: this.dataset,
+            identifier: conceptIdentifier,
+          }),
+        );
+      }
+      resolve(result);
+    });
   }
 
-  private *_concepts(): Iterable<Concept> {
-    for (const identifier of this.conceptIdentifiers()) {
-      yield new RdfJsConcept({
-        dataset: this.dataset,
-        identifier,
-      });
-    }
+  conceptsCount(): Promise<number> {
+    return new Promise((resolve) => {
+      let count = 0;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for (const _ of this.conceptIdentifiers()) {
+        count++;
+      }
+      resolve(count);
+    });
   }
 
-  @Memoize()
-  get conceptsCount(): number {
-    let count = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    for (const _ of this.conceptIdentifiers()) {
-      count++;
-    }
-    return count;
-  }
-
-  conceptSchemeByIdentifier(identifier: Identifier): ConceptScheme {
-    for (const conceptScheme of this.conceptSchemes) {
+  async conceptSchemeByIdentifier(
+    identifier: Identifier,
+  ): Promise<ConceptScheme> {
+    for (const conceptScheme of await this.conceptSchemes()) {
       if (conceptScheme.identifier.equals(identifier)) {
         return conceptScheme;
       }
@@ -64,8 +76,8 @@ export class RdfJsModelSet implements ModelSet {
     throw new RangeError(identifierToString(identifier));
   }
 
-  get conceptSchemes(): readonly ConceptScheme[] {
-    return [...this._conceptSchemes()];
+  conceptSchemes(): Promise<readonly ConceptScheme[]> {
+    return new Promise((resolve) => resolve([...this._conceptSchemes()]));
   }
 
   private *_conceptSchemes(): Iterable<ConceptScheme> {
@@ -81,5 +93,7 @@ export class RdfJsModelSet implements ModelSet {
     }
   }
 
-  languageTags = ["en"];
+  languageTags(): Promise<readonly LanguageTag[]> {
+    return Promise.resolve(["en"]);
+  }
 }
