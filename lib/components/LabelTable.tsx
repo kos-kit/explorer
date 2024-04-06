@@ -2,11 +2,11 @@ import { LabeledModel } from "../models/LabeledModel";
 
 export function LabelTable({ model }: { model: LabeledModel }) {
   return (
-    <table className="border-separate border-spacing-x-2 lg:border-spacing-x-8">
+    <table className="w-full">
       <thead>
         <th className="font-normal">&nbsp;</th>
-        <th className="font-normal">Language</th>
-        <th className="font-normal">Type</th>
+        <th className="font-normal text-left underline">Language</th>
+        <th className="font-normal text-left underline">Type</th>
       </thead>
       <tbody>
         {[

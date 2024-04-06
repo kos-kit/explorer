@@ -7,6 +7,7 @@ import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
 import { LanguageTag } from "@/lib/models/LanguageTag";
+import { noteProperties } from "@/lib/models/noteProperties";
 import { semanticRelationProperties } from "@/lib/models/semanticRelationProperties";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
@@ -39,6 +40,25 @@ export default function ConceptPage({
       <Section title="Labels">
         <LabelTable model={concept} />
       </Section>
+      {noteProperties.map((noteProperty) => {
+        const notes = concept.notes(languageTag, noteProperty);
+        if (notes.length === 0) {
+          return null;
+        }
+        return (
+          <Section key={noteProperty.name} title={`${noteProperty.label}s`}>
+            <table className="w-full">
+              <tbody>
+                {notes.map((note, noteI) => (
+                  <tr key={noteI}>
+                    <td>{note.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Section>
+        );
+      })}
       {semanticRelationProperties.map((semanticRelationProperty) => {
         const semanticRelations = concept.semanticRelations(
           semanticRelationProperty,

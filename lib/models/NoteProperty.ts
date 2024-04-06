@@ -7,7 +7,7 @@ export class NoteProperty {
     "Change note",
   );
 
-  static readonly DEFINITION = new NoteProperty(skos.definition, "definition");
+  static readonly DEFINITION = new NoteProperty(skos.definition, "Definition");
 
   static readonly EDITORIAL_NOTE = new NoteProperty(
     skos.editorialNote,
