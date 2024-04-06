@@ -5,6 +5,8 @@ import { skos } from "@/lib/vocabularies";
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { RdfJsConceptScheme } from "@/lib/models/rdfjs/RdfJsConceptScheme";
 import { SemanticRelationProperty } from "../SemanticRelationProperty";
+import { LanguageTag } from "../LanguageTag";
+import { NoteProperty } from "../NoteProperty";
 
 export class RdfJsConcept extends RdfJsLabeledModel implements Concept {
   get inSchemes(): readonly ConceptScheme[] {
@@ -12,6 +14,16 @@ export class RdfJsConcept extends RdfJsLabeledModel implements Concept {
       ...this.filterAndMapObjects(skos.inScheme, (term) =>
         term.termType === "BlankNode" || term.termType === "NamedNode"
           ? new RdfJsConceptScheme({ dataset: this.dataset, identifier: term })
+          : null,
+      ),
+    ];
+  }
+
+  notes(languageTag: LanguageTag, property: NoteProperty): readonly Literal[] {
+    return [
+      ...this.filterAndMapObjects(property.identifier, (term) =>
+        term.termType === "Literal" && term.language === languageTag
+          ? term
           : null,
       ),
     ];
