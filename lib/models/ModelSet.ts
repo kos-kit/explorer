@@ -4,12 +4,15 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { Concept } from "@/lib/models/Concept";
 
 export interface ModelSet {
-  conceptByIdentifier(identifier: Identifier): Concept;
-  concepts(kwds: { limit: number; offset: number }): Iterable<Concept>;
-  readonly conceptsCount: number;
+  conceptByIdentifier(identifier: Identifier): Promise<Concept>;
+  concepts(kwds: {
+    limit: number;
+    offset: number;
+  }): Promise<readonly Concept[]>;
+  conceptsCount(): Promise<number>;
 
-  conceptSchemeByIdentifier(identifier: Identifier): ConceptScheme;
-  readonly conceptSchemes: readonly ConceptScheme[];
+  conceptSchemeByIdentifier(identifier: Identifier): Promise<ConceptScheme>;
+  conceptSchemes(): Promise<readonly ConceptScheme[]>;
 
-  readonly languageTags: readonly LanguageTag[];
+  languageTags(): Promise<readonly LanguageTag[]>;
 }
