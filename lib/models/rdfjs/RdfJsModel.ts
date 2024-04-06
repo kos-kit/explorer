@@ -106,10 +106,12 @@ export abstract class RdfJsModel {
       )) {
         switch (quad.object.termType) {
           case "NamedNode":
-            return quad.object;
+            resolve(quad.object);
+            return;
           case "Literal":
             if (quad.object.language === languageTag) {
-              return quad.object;
+              resolve(quad.object);
+              return;
             } else if (quad.object.language.length === 0) {
               untaggedLiteralValue = quad.object;
             }
@@ -134,14 +136,15 @@ export abstract class RdfJsModel {
   }
 
   rights(languageTag: LanguageTag): Promise<Literal | null> {
-    return new Promise(() => {
+    return new Promise((resolve) => {
       for (const predicate of rightsPredicates) {
         const value = this.languageTaggedLiteralObject(languageTag, predicate);
         if (value !== null) {
-          return value;
+          resolve(value);
+          return;
         }
       }
-      return null;
+      resolve(null);
     });
   }
 

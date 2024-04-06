@@ -1,7 +1,9 @@
 import { Label } from "@/lib/models/Label";
 import { LabeledModel } from "@/lib/models/LabeledModel";
 
-export const behavesLikeLabeledModel = (model: LabeledModel) => {
+export const behavesLikeLabeledModel = (
+  lazyModel: () => Promise<LabeledModel>,
+) => {
   const expectLabels = (labels: readonly Label[]) => {
     expect(labels).toBeDefined();
     for (const label of labels) {
@@ -10,16 +12,19 @@ export const behavesLikeLabeledModel = (model: LabeledModel) => {
   };
 
   it("should get altLabels", async () => {
+    const model = await lazyModel();
     expectLabels(await model.altLabels());
   });
 
   it("should get hiddenLabels", async () => {
+    const model = await lazyModel();
     expectLabels(await model.hiddenLabels());
   });
 
   it("should get prefLabels", async () => {
+    const model = await lazyModel();
     const prefLabels = await model.prefLabels();
-    expect(model.prefLabels).not.toHaveLength(0);
+    expect(prefLabels).not.toHaveLength(0);
     expectLabels(prefLabels);
   });
 };

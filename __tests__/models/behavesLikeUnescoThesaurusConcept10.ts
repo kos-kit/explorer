@@ -3,8 +3,11 @@ import { behavesLikeConcept } from "./behavesLikeConcept";
 import { DataFactory } from "n3";
 import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
 
-export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
+export const behavesLikeUnescoThesaurusConcept10 = (
+  lazyConcept: () => Promise<Concept>,
+) => {
   it("should be in the single concept scheme", async () => {
+    const concept = await lazyConcept();
     const inSchemes = await concept.topConceptOf();
     expect(inSchemes).toHaveLength(1);
     expect(
@@ -15,12 +18,14 @@ export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
   });
 
   it("should have a modified date", async () => {
+    const concept = await lazyConcept();
     expect((await concept.modified())!.value).toStrictEqual(
       "2019-12-15T13:26:49Z",
     );
   });
 
   it("should have multiple prefLabels", async () => {
+    const concept = await lazyConcept();
     expect((await concept.prefLabel("en"))!.literalForm.value).toStrictEqual(
       "Right to education",
     );
@@ -30,6 +35,7 @@ export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
   });
 
   it("should be a top concept of the single concept scheme", async () => {
+    const concept = await lazyConcept();
     const topConceptOf = await concept.topConceptOf();
     expect(topConceptOf).toHaveLength(1);
     expect(
@@ -40,6 +46,7 @@ export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
   });
 
   it("should have known semantic relations", async () => {
+    const concept = await lazyConcept();
     for (const { semanticRelationProperty, conceptNumbers } of [
       {
         semanticRelationProperty: SemanticRelationProperty.NARROWER,
@@ -70,5 +77,5 @@ export const behavesLikeUnescoThesaurusConcept10 = (concept: Concept) => {
     }
   });
 
-  behavesLikeConcept(concept);
+  behavesLikeConcept(lazyConcept);
 };

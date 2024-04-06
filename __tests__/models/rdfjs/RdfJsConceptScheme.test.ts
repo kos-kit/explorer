@@ -1,10 +1,11 @@
-import { behavesLikeConceptScheme } from "../behavesLikeConceptScheme";
 import { testRdfJsModelSet } from "./testRdfJsModelSet";
-import { ConceptScheme } from "@/lib/models/ConceptScheme";
+import { DataFactory } from "n3";
+import { behavesLikeUnescoThesaurusConceptScheme } from "../behavesLikeUnescoThesaurusConceptScheme";
 
 describe("RdfJsConceptScheme", () => {
-  const sut: ConceptScheme = testRdfJsModelSet.conceptSchemes[0];
-  expect(sut).toBeDefined();
-
-  behavesLikeConceptScheme(sut);
+  behavesLikeUnescoThesaurusConceptScheme(() =>
+    testRdfJsModelSet.conceptSchemeByIdentifier(
+      DataFactory.namedNode("http://vocabularies.unesco.org/thesaurus"),
+    ),
+  );
 });

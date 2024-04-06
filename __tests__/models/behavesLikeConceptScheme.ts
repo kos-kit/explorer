@@ -1,8 +1,12 @@
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { behavesLikeLabeledModel } from "./behavesLikeLabeledModel";
 
-export const behavesLikeConceptScheme = (conceptScheme: ConceptScheme) => {
+export const behavesLikeConceptScheme = (
+  lazyConceptScheme: () => Promise<ConceptScheme>,
+) => {
   it("should get top concepts", async () => {
+    const conceptScheme = await lazyConceptScheme();
+
     const firstConcepts = await conceptScheme.topConcepts({
       limit: 10,
       offset: 0,
@@ -25,8 +29,9 @@ export const behavesLikeConceptScheme = (conceptScheme: ConceptScheme) => {
   });
 
   it("should get top concepts count", async () => {
-    expect(await conceptScheme.topConceptsCount).toStrictEqual(585);
+    const conceptScheme = await lazyConceptScheme();
+    expect(await conceptScheme.topConceptsCount()).toStrictEqual(585);
   });
 
-  behavesLikeLabeledModel(conceptScheme);
+  behavesLikeLabeledModel(lazyConceptScheme);
 };
