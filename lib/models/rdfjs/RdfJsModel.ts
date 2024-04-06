@@ -5,8 +5,11 @@ import { LanguageTag } from "../LanguageTag";
 
 const rightsPredicates = [dcterms.rights, dc11.rights];
 
+/**
+ * Abstract base class for RDF/JS Dataset-backed models.
+ */
 export abstract class RdfJsModel {
-  readonly dataset: DatasetCore;
+  protected readonly dataset: DatasetCore;
   readonly identifier: Identifier;
 
   constructor({

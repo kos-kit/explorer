@@ -5,40 +5,43 @@ import { RdfJsModel } from "@/lib/models/rdfjs/RdfJsModel";
 import { RdfJsLabel } from "@/lib/models/rdfjs/RdfJsLabel";
 import { skos, skosxl } from "@/lib/vocabularies";
 import { mapTermToIdentifier } from "./mapTermToIdentifier";
-import { LanguageTag } from "../LanguageTag";
-import { LiteralLabel } from "../LiteralLabel";
+import { LanguageTag } from "@/lib/models/LanguageTag";
+import { LiteralLabel } from "@/lib/models/LiteralLabel";
 
 export abstract class RdfJsLabeledModel
   extends RdfJsModel
   implements LabeledModel
 {
-  altLabels(): Promise<readonly Label[]> {
+  altLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
     return new Promise((resolve) =>
-      resolve([...this.labels(skos.altLabel, skosxl.altLabel)]),
+      resolve([...this.labels(languageTag, skos.altLabel, skosxl.altLabel)]),
     );
   }
 
-  hiddenLabels(): Promise<readonly Label[]> {
+  hiddenLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
     return new Promise((resolve) =>
-      resolve([...this.labels(skos.hiddenLabel, skosxl.hiddenLabel)]),
+      resolve([
+        ...this.labels(languageTag, skos.hiddenLabel, skosxl.hiddenLabel),
+      ]),
     );
   }
 
   async prefLabel(languageTag: LanguageTag): Promise<Label | null> {
-    for (const prefLabel of await this.prefLabels()) {
-      if (prefLabel.literalForm.language === languageTag) {
-        return prefLabel;
-      }
+    for (const prefLabel of await this.prefLabels(languageTag)) {
+      return prefLabel;
     }
     return null;
   }
 
   private *labels(
+    languageTag: LanguageTag,
     skosPredicate: NamedNode,
     skosXlPredicate: NamedNode,
   ): Iterable<Label> {
     yield* this.filterAndMapObjects(skosPredicate, (term) =>
-      term.termType === "Literal" ? new LiteralLabel(term) : null,
+      term.termType === "Literal" && term.language === languageTag
+        ? new LiteralLabel(term)
+        : null,
     );
 
     // Any resource in the range of a skosxl: label predicate is considered a skosxl:Label
@@ -67,9 +70,9 @@ export abstract class RdfJsLabeledModel
     });
   }
 
-  prefLabels(): Promise<readonly Label[]> {
+  prefLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
     return new Promise((resolve) =>
-      resolve([...this.labels(skos.prefLabel, skosxl.prefLabel)]),
+      resolve([...this.labels(languageTag, skos.prefLabel, skosxl.prefLabel)]),
     );
   }
 }

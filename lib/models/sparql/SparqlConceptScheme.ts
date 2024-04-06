@@ -1,41 +1,35 @@
 import { Concept } from "@/lib/models/Concept";
-import { SparqlModel } from "@/lib/models/sparql/SparqlModel";
-import { Literal, NamedNode } from "@rdfjs/types";
-import { ConceptScheme } from "../ConceptScheme";
-import { Label } from "../Label";
+import { DatasetCore, Quad } from "@rdfjs/types";
+import { ConceptScheme } from "@/lib/models/ConceptScheme";
+import { RdfJsConceptScheme } from "@/lib/models/rdfjs/RdfJsConceptScheme";
+import { SparqlConcept } from "@/lib/models/sparql/SparqlConcept";
+import { SparqlLabeledModel } from "@/lib/models/sparql/SparqlLabeledModel";
 
-export class SparqlConceptScheme extends SparqlModel implements ConceptScheme {
-  topConcepts(kwds: {
+export class SparqlConceptScheme
+  extends SparqlLabeledModel<RdfJsConceptScheme>
+  implements ConceptScheme
+{
+  protected createRdfJsModel(
+    dataset: DatasetCore<Quad, Quad>,
+  ): RdfJsConceptScheme {
+    return new RdfJsConceptScheme({ dataset, identifier: this.identifier });
+  }
+
+  async topConcepts(kwds: {
     limit: number;
     offset: number;
   }): Promise<readonly Concept[]> {
-    throw new Error("Method not implemented.");
+    return (await (await this.getOrCreateRdfJsModel()).topConcepts(kwds)).map(
+      (conceptScheme) =>
+        new SparqlConcept({
+          identifier: conceptScheme.identifier,
+          queryContext: this.queryContext,
+          queryEngine: this.queryEngine,
+        }),
+    );
   }
-  topConceptsCount(): Promise<number> {
-    throw new Error("Method not implemented.");
-  }
-  altLabels(): Promise<readonly Label[]> {
-    throw new Error("Method not implemented.");
-  }
-  hiddenLabels(): Promise<readonly Label[]> {
-    throw new Error("Method not implemented.");
-  }
-  prefLabel(languageTag: string): Promise<Label | null> {
-    throw new Error("Method not implemented.");
-  }
-  prefLabels(): Promise<readonly Label[]> {
-    throw new Error("Method not implemented.");
-  }
-  license(languageTag: string): Promise<Literal | NamedNode<string> | null> {
-    throw new Error("Method not implemented.");
-  }
-  modified(): Promise<Literal | null> {
-    throw new Error("Method not implemented.");
-  }
-  rights(languageTag: string): Promise<Literal | null> {
-    throw new Error("Method not implemented.");
-  }
-  rightsHolder(languageTag: string): Promise<Literal | null> {
-    throw new Error("Method not implemented.");
+
+  async topConceptsCount(): Promise<number> {
+    return (await this.getOrCreateRdfJsModel()).topConceptsCount();
   }
 }
