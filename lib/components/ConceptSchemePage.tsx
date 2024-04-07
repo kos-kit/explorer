@@ -3,7 +3,7 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import configuration from "@/app/configuration";
-import { LabelSections, LabelTable } from "@/lib/components/LabelSections";
+import { LabelSections } from "@/lib/components/LabelSections";
 import { Section } from "@/lib/components/Section";
 import { Layout } from "@/lib/components/Layout";
 import { displayLabel } from "@/lib/utilities/displayLabel";
