@@ -27,15 +27,18 @@ export const behavesLikeUnescoThesaurusConcept10018 = (
 
   it("should have multiple alt labels", async () => {
     const concept = await lazyConcept();
-    const altLabels = await concept.altLabels();
-    expect(
-      altLabels.find((altLabel) => altLabel.literalForm.language === "ar")!
-        .literalForm.value,
-    ).toStrictEqual("تقييم التأثير على البيئة");
-    expect(
-      altLabels.find((altLabel) => altLabel.literalForm.language === "es")!
-        .literalForm.value,
-    ).toStrictEqual("Valoración del impacto ambiental");
+
+    const arAltLabels = await concept.altLabels("ar");
+    expect(arAltLabels).toHaveLength(1);
+    expect(arAltLabels[0].literalForm.value).toStrictEqual(
+      "تقييم التأثير على البيئة",
+    );
+
+    const esAltLabels = await concept.altLabels("es");
+    expect(esAltLabels).toHaveLength(1);
+    expect(esAltLabels[0].literalForm.value).toStrictEqual(
+      "Valoración del impacto ambiental",
+    );
   });
 
   it("should be in the single concept scheme", async () => {

@@ -18,7 +18,7 @@ export class RdfJsConceptScheme
     // ConceptScheme -> Concept statement
     for (const quad of this.dataset.match(
       this.identifier,
-      skos.topConceptOf,
+      skos.hasTopConcept,
       null,
     )) {
       const conceptIdentifier = mapTermToIdentifier(quad.object);

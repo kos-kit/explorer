@@ -4,6 +4,7 @@ import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { RdfJsConceptScheme } from "@/lib/models/rdfjs/RdfJsConceptScheme";
 import { SparqlConcept } from "@/lib/models/sparql/SparqlConcept";
 import { SparqlLabeledModel } from "@/lib/models/sparql/SparqlLabeledModel";
+import { skos, skosxl } from "@/lib/vocabularies";
 
 export class SparqlConceptScheme
   extends SparqlLabeledModel<RdfJsConceptScheme>
@@ -13,6 +14,20 @@ export class SparqlConceptScheme
     dataset: DatasetCore<Quad, Quad>,
   ): RdfJsConceptScheme {
     return new RdfJsConceptScheme({ dataset, identifier: this.identifier });
+  }
+
+  protected get rdfJsDatasetQueryString(): string {
+    return `
+CONSTRUCT {
+  <${this.identifier.value}> ?p ?o .
+  ?o <${skosxl.literalForm.value}> ?literalForm .
+  ?concept <${skos.topConceptOf.value}> <${this.identifier.value}> .
+} WHERE {
+  <${this.identifier.value}> ?p ?o .
+  OPTIONAL { ?o <${skosxl.literalForm.value}> ?literalForm . }
+  OPTIONAL { ?concept <${skos.topConceptOf.value}> <${this.identifier.value}> }
+}
+`;
   }
 
   async topConcepts(kwds: {

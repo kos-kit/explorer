@@ -26,13 +26,6 @@ export abstract class RdfJsLabeledModel
     );
   }
 
-  async prefLabel(languageTag: LanguageTag): Promise<Label | null> {
-    for (const prefLabel of await this.prefLabels(languageTag)) {
-      return prefLabel;
-    }
-    return null;
-  }
-
   private *labels(
     languageTag: LanguageTag,
     skosPredicate: NamedNode,
@@ -68,6 +61,13 @@ export abstract class RdfJsLabeledModel
 
       return null;
     });
+  }
+
+  async prefLabel(languageTag: LanguageTag): Promise<Label | null> {
+    for (const prefLabel of await this.prefLabels(languageTag)) {
+      return prefLabel;
+    }
+    return null;
   }
 
   prefLabels(languageTag: LanguageTag): Promise<readonly Label[]> {

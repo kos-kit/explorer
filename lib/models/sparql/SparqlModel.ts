@@ -47,7 +47,8 @@ export abstract class SparqlModel<RdfJsModelT extends RdfJsModel>
     )) {
       store.addQuad(quad);
     }
-    return this.createRdfJsModel(store);
+    this._rdfJsModel = this.createRdfJsModel(store);
+    return this._rdfJsModel;
   }
 
   async license(
@@ -63,8 +64,7 @@ export abstract class SparqlModel<RdfJsModelT extends RdfJsModel>
   protected get rdfJsDatasetQueryString(): string {
     return `
 CONSTRUCT WHERE {
-  VALUES ?s { <${this.identifier.value}> }
-  ?s ?p ?o .
+  <${this.identifier.value}> ?p ?o .
 }
 `;
   }

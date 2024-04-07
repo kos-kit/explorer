@@ -27,10 +27,12 @@ export abstract class SparqlLabeledModel<RdfJsModelT extends RdfJsLabeledModel>
 
   protected get rdfJsDatasetQueryString(): string {
     return `
-CONSTRUCT WHERE {
-  VALUES ?s { <${this.identifier.value}> }
-  ?s ?p ?o .
-  OPTIONAL { ?o <${skosxl.literalForm.value}> ?literalForm }
+CONSTRUCT {
+  <${this.identifier.value}> ?p ?o .
+  ?o <${skosxl.literalForm.value}> ?literalForm .
+} WHERE {  
+  <${this.identifier.value}> ?p ?o .
+  OPTIONAL { ?o <${skosxl.literalForm.value}> ?literalForm . }
 }
 `;
   }
