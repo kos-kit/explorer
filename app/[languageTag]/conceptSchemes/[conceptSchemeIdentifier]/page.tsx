@@ -1,5 +1,5 @@
+import { PageMetadata } from "@/app/PageMetadata";
 import modelSet from "@/app/modelSet";
-import { Pages } from "@/app/PageHrefs";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
@@ -13,12 +13,12 @@ interface ConceptSchemePageParams {
   languageTag: LanguageTag;
 }
 
-export default function ConceptSchemePage({
+export default async function ConceptSchemePage({
   params: { conceptSchemeIdentifier, languageTag },
 }: {
   params: ConceptSchemePageParams;
 }) {
-  const conceptScheme = modelSet.conceptSchemeByIdentifier(
+  const conceptScheme = await modelSet.conceptSchemeByIdentifier(
     stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
   );
 
@@ -30,25 +30,29 @@ export default function ConceptSchemePage({
   );
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params: { conceptSchemeIdentifier, languageTag },
 }: {
   params: ConceptSchemePageParams;
-}): Metadata {
-  const conceptScheme = modelSet.conceptSchemeByIdentifier(
-    stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
-  );
-
-  return Pages.conceptScheme({ conceptScheme, languageTag }).metadata;
+}): Promise<Metadata> {
+  return PageMetadata.conceptScheme({
+    conceptScheme: await modelSet.conceptSchemeByIdentifier(
+      stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
+    ),
+    languageTag,
+  });
 }
 
-export function generateStaticParams(): ConceptSchemePageParams[] {
+export async function generateStaticParams(): Promise<
+  ConceptSchemePageParams[]
+> {
   const staticParams: ConceptSchemePageParams[] = [];
 
-  const conceptSchemes = modelSet.conceptSchemes;
+  const conceptSchemes = await modelSet.conceptSchemes();
   if (conceptSchemes.length > 1) {
+    const languageTags = await modelSet.languageTags();
     for (const conceptScheme of conceptSchemes) {
-      for (const languageTag of modelSet.languageTags) {
+      for (const languageTag of languageTags) {
         staticParams.push({
           conceptSchemeIdentifier: filenamify(
             identifierToString(conceptScheme.identifier),

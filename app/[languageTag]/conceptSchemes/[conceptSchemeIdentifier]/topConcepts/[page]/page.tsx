@@ -1,6 +1,6 @@
 import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
-import { Pages } from "@/app/PageHrefs";
+import { PageHrefs, Pages } from "@/app/PageHrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
@@ -14,6 +14,7 @@ import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
 import { displayLabel } from "@/lib/utilities/displayLabel";
+import { PageMetadata } from "@/app/PageMetadata";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -43,7 +44,8 @@ export default async function ConceptSchemeTopConceptsPage({
             (await Pages.conceptScheme({ conceptScheme, languageTag })).href
           }
         >
-          Concept Scheme: {displayLabel({ languageTag, model: conceptScheme })}
+          Concept Scheme:{" "}
+          {await displayLabel({ languageTag, model: conceptScheme })}
         </Link>
       }
     >
@@ -72,13 +74,11 @@ export default async function ConceptSchemeTopConceptsPage({
             itemsPerPage={configuration.conceptsPerPage}
             itemsTotal={topConceptsCount}
             pageHref={(page) =>
-              (
-                await Pages.conceptSchemeTopConcepts({
-                  conceptScheme,
-                  languageTag,
-                  page,
-                })
-              ).href
+              PageHrefs.conceptSchemeTopConcepts({
+                conceptSchemeIdentifier: conceptScheme.identifier,
+                languageTag,
+                page,
+              })
             }
           />
         </div>
@@ -87,27 +87,29 @@ export default async function ConceptSchemeTopConceptsPage({
   );
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params: { conceptSchemeIdentifier, languageTag, page },
 }: {
   params: ConceptSchemeTopConceptsPageParams;
-}): Metadata {
-  const conceptScheme = modelSet.conceptSchemeByIdentifier(
-    stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
-  );
-
-  return Pages.conceptSchemeTopConcepts({
-    conceptScheme,
+}): Promise<Metadata> {
+  return PageMetadata.conceptSchemeTopConcepts({
+    conceptScheme: await modelSet.conceptSchemeByIdentifier(
+      stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
+    ),
     languageTag,
     page: parseInt(page),
-  }).metadata;
+  });
 }
 
-export function generateStaticParams(): ConceptSchemeTopConceptsPageParams[] {
+export async function generateStaticParams(): Promise<
+  ConceptSchemeTopConceptsPageParams[]
+> {
   const staticParams: ConceptSchemeTopConceptsPageParams[] = [];
 
-  for (const conceptScheme of modelSet.conceptSchemes) {
-    const topConceptsCount = conceptScheme.topConceptsCount;
+  const languageTags = await modelSet.languageTags();
+
+  for (const conceptScheme of await modelSet.conceptSchemes()) {
+    const topConceptsCount = await conceptScheme.topConceptsCount();
     if (topConceptsCount <= configuration.relatedConceptsPerSection) {
       // Top concepts will fit on the concept scheme page, no need for this page.
       continue;
@@ -117,7 +119,7 @@ export function generateStaticParams(): ConceptSchemeTopConceptsPageParams[] {
       itemsTotal: topConceptsCount,
     });
     // Top concepts will spill over from the concept scheme page to this one.
-    for (const languageTag of modelSet.languageTags) {
+    for (const languageTag of languageTags) {
       for (let page = 0; page < pageCount_; page++) {
         staticParams.push({
           conceptSchemeIdentifier: filenamify(

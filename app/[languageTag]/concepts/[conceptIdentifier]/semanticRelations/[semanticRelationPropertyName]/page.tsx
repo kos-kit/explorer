@@ -1,6 +1,6 @@
+import { PageMetadata } from "@/app/PageMetadata";
 import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
-import { Pages } from "@/app/PageHrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { LanguageTag } from "@/lib/models/LanguageTag";
@@ -40,28 +40,26 @@ export default async function ConceptSemanticRelationsPage({
   return (
     <Layout
       languageTag={languageTag}
-      title={`Concept: ${displayLabel({ languageTag, model: concept })}: ${semanticRelationProperty.label} concepts`}
+      title={`Concept: ${await displayLabel({ languageTag, model: concept })}: ${semanticRelationProperty.label} concepts`}
     >
       <ConceptList concepts={semanticRelations} languageTag={languageTag} />
     </Layout>
   );
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params: { conceptIdentifier, languageTag, semanticRelationPropertyName },
 }: {
   params: ConceptSemanticRelationsPageParams;
-}): Metadata {
-  const concept = modelSet.conceptByIdentifier(
-    stringToIdentifier(defilenamify(conceptIdentifier)),
-  );
-
-  return Pages.conceptSemanticRelations({
-    concept,
+}): Promise<Metadata> {
+  return PageMetadata.conceptSemanticRelations({
+    concept: await modelSet.conceptByIdentifier(
+      stringToIdentifier(defilenamify(conceptIdentifier)),
+    ),
     languageTag,
     semanticRelationProperty:
       semanticRelationPropertiesByName[semanticRelationPropertyName],
-  }).metadata;
+  });
 }
 
 export async function generateStaticParams(): Promise<
