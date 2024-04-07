@@ -4,17 +4,17 @@ import { Literal, NamedNode } from "@rdfjs/types";
 import { Link } from "@/lib/components/Link";
 import { Fragment } from "react";
 
-export function Footer({ languageTag }: { languageTag: LanguageTag }) {
+export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let license: Literal | NamedNode | null = null;
   let rights: Literal | null = null;
   let rightsHolder: Literal | null = null;
 
-  const conceptSchemes = modelSet.conceptSchemes;
+  const conceptSchemes = await modelSet.conceptSchemes();
   if (conceptSchemes.length === 1) {
     const conceptScheme = conceptSchemes[0];
-    license = conceptScheme.license(languageTag);
-    rights = conceptScheme.rights(languageTag);
-    rightsHolder = conceptScheme.rightsHolder(languageTag);
+    license = await conceptScheme.license(languageTag);
+    rights = await conceptScheme.rights(languageTag);
+    rightsHolder = await conceptScheme.rightsHolder(languageTag);
   }
 
   if (license === null && rights === null && rightsHolder === null) {
