@@ -20,12 +20,14 @@ export class SparqlConceptScheme
     return `
 CONSTRUCT {
   <${this.identifier.value}> ?p ?o .
-  ?o <${skosxl.literalForm.value}> ?literalForm .
+  <${this.identifier.value}> ?p ?label . ?label <${skosxl.literalForm.value}> ?literalForm .
   ?concept <${skos.topConceptOf.value}> <${this.identifier.value}> .
 } WHERE {
-  <${this.identifier.value}> ?p ?o .
-  OPTIONAL { ?o <${skosxl.literalForm.value}> ?literalForm . }
-  OPTIONAL { ?concept <${skos.topConceptOf.value}> <${this.identifier.value}> }
+  { <${this.identifier.value}> ?p ?o . }
+  UNION
+  { <${this.identifier.value}> ?p ?label . ?label <${skosxl.literalForm.value}> ?literalForm . }
+  UNION
+  { ?concept <${skos.topConceptOf.value}> <${this.identifier.value}> . }
 }
 `;
   }

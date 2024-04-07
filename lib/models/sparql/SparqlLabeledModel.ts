@@ -29,10 +29,11 @@ export abstract class SparqlLabeledModel<RdfJsModelT extends RdfJsLabeledModel>
     return `
 CONSTRUCT {
   <${this.identifier.value}> ?p ?o .
-  ?o <${skosxl.literalForm.value}> ?literalForm .
+  <${this.identifier.value}> ?p ?label . ?label <${skosxl.literalForm.value}> ?literalForm .
 } WHERE {  
-  <${this.identifier.value}> ?p ?o .
-  OPTIONAL { ?o <${skosxl.literalForm.value}> ?literalForm . }
+  { <${this.identifier.value}> ?p ?o . }
+  UNION
+  { <${this.identifier.value}> ?p ?label . ?label <${skosxl.literalForm.value}> ?literalForm . }
 }
 `;
   }
