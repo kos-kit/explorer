@@ -1,4 +1,4 @@
-import { Pages } from "@/app/Pages";
+import { Pages } from "@/app/PageHrefs";
 import { ListBulletIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { Link } from "@/lib/components/Link";
 import { LanguageTag } from "@/lib/models/LanguageTag";

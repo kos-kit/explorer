@@ -1,5 +1,5 @@
 import modelSet from "@/app/modelSet";
-import { Pages } from "@/app/Pages";
+import { Pages } from "@/app/PageHrefs";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";

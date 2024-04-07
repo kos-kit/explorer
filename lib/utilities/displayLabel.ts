@@ -1,9 +1,9 @@
 import { LabeledModel } from "@/lib/models/LabeledModel";
 
-export function displayLabel({
+export async function displayLabel({
   languageTag,
   model,
 }: {
   languageTag: string;
   model: LabeledModel;
-}): string {}
+}): Promise<string> {}

@@ -1,6 +1,6 @@
 import { Link } from "@/lib/components/Link";
 import { identifierToString } from "@/lib/utilities/identifierToString";
-import { Pages } from "@/app/Pages";
+import { Pages } from "@/app/PageHrefs";
 import { Concept } from "@/lib/models/Concept";
 import { LanguageTag } from "../models/LanguageTag";
 
