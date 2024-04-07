@@ -1,10 +1,11 @@
 import { Link } from "@/lib/components/Link";
 import { identifierToString } from "@/lib/utilities/identifierToString";
-import { Pages } from "@/app/PageHrefs";
+import { PageHrefs } from "@/app/PageHrefs";
 import { Concept } from "@/lib/models/Concept";
 import { LanguageTag } from "../models/LanguageTag";
+import { displayLabel } from "../utilities/displayLabel";
 
-export function ConceptList({
+export async function ConceptList({
   concepts,
   languageTag,
 }: {
@@ -13,14 +14,20 @@ export function ConceptList({
 }) {
   return (
     <ul className="list-disc list-inside">
-      {concepts.map((concept) => (
-        <li key={identifierToString(concept.identifier)}>
-          <Link href={Pages.concept({ concept, languageTag }).href}>
-            {concept.prefLabel(languageTag)?.literalForm.value ??
-              identifierToString(concept.identifier)}
-          </Link>
-        </li>
-      ))}
+      {await Promise.all(
+        concepts.map(async (concept) => (
+          <li key={identifierToString(concept.identifier)}>
+            <Link
+              href={PageHrefs.concept({
+                conceptIdentifier: concept.identifier,
+                languageTag,
+              })}
+            >
+              {await displayLabel({ languageTag, model: concept })}
+            </Link>
+          </li>
+        )),
+      )}
     </ul>
   );
 }

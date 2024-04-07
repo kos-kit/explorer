@@ -40,9 +40,10 @@ export default async function ConceptSchemeTopConceptsPage({
       languageTag={languageTag}
       title={
         <Link
-          href={
-            (await Pages.conceptScheme({ conceptScheme, languageTag })).href
-          }
+          href={PageHrefs.conceptScheme({
+            conceptSchemeIdentifier: conceptScheme.identifier,
+            languageTag,
+          })}
         >
           Concept Scheme:{" "}
           {await displayLabel({ languageTag, model: conceptScheme })}

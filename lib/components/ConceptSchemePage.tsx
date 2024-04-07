@@ -3,7 +3,7 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import configuration from "@/app/configuration";
-import { LabelTable } from "@/lib/components/LabelTable";
+import { LabelSections, LabelTable } from "@/lib/components/LabelSections";
 import { Section } from "@/lib/components/Section";
 import { Layout } from "@/lib/components/Layout";
 import { displayLabel } from "@/lib/utilities/displayLabel";
@@ -28,9 +28,7 @@ export async function ConceptSchemePage({
         </span>
       }
     >
-      <Section title="Labels">
-        <LabelTable model={conceptScheme} />
-      </Section>
+      <LabelSections languageTag={languageTag} model={conceptScheme} />
       {topConceptsCount > 0 ? (
         <Section title="Top concepts">
           <div className="flex flex-col gap-2">
