@@ -15,6 +15,7 @@ import { displayLabel } from "@/lib/utilities/displayLabel";
 import { filenamify } from "@/lib/utilities/filenamify";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
+import { xsd } from "@/lib/vocabularies";
 import { Metadata } from "next";
 import React from "react";
 
@@ -31,6 +32,8 @@ export default async function ConceptPage({
   const concept = await modelSet.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
+
+  const notations = await concept.notations();
 
   return (
     <Layout
@@ -59,6 +62,20 @@ export default async function ConceptPage({
           );
         }),
       )}
+      {notations.length > 0 ? (
+        <Section title="Notations">
+          <ul className="list-disc list-inside">
+            {notations.map((notation, notationI) => (
+              <li key={notationI}>
+                {notation.value}
+                {!notation.datatype.equals(xsd.string)
+                  ? ` ${notation.datatype.value} `
+                  : ""}
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
       {await Promise.all(
         semanticRelationProperties.map(async (semanticRelationProperty) => {
           const semanticRelations = await concept.semanticRelations(
