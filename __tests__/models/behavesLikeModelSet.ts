@@ -2,10 +2,10 @@ import { ModelSet } from "@/lib/models/ModelSet";
 
 export const behavesLikeModelSet = (modelSet: ModelSet) => {
   it("should get concepts", async () => {
-    const firstConcepts = await modelSet.concepts({ limit: 10, offset: 0 });
+    const firstConcepts = await modelSet.conceptsPage({ limit: 10, offset: 0 });
     expect(firstConcepts).toHaveLength(10);
 
-    const nextConcepts = await modelSet.concepts({ limit: 10, offset: 10 });
+    const nextConcepts = await modelSet.conceptsPage({ limit: 10, offset: 10 });
     expect(nextConcepts).toHaveLength(10);
     for (const nextConcept of nextConcepts) {
       expect(
@@ -18,7 +18,10 @@ export const behavesLikeModelSet = (modelSet: ModelSet) => {
   });
 
   it("should get a concept by its identifier", async () => {
-    for (const concept of await modelSet.concepts({ limit: 1, offset: 0 })) {
+    for (const concept of await modelSet.conceptsPage({
+      limit: 1,
+      offset: 0,
+    })) {
       expect(
         concept.identifier.equals(
           (await modelSet.conceptByIdentifier(concept.identifier)).identifier,

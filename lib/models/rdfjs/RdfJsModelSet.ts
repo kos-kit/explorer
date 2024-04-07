@@ -1,5 +1,4 @@
 import { DatasetCore } from "@rdfjs/types";
-import { ModelSet } from "@/lib/models/ModelSet";
 import { ConceptScheme } from "@/lib/models/ConceptScheme";
 import { RdfJsConceptScheme } from "@/lib/models/rdfjs/RdfJsConceptScheme";
 import { skos } from "@/lib/vocabularies";
@@ -10,9 +9,12 @@ import { RdfJsConcept } from "@/lib/models/rdfjs/RdfJsConcept";
 import { getRdfInstances } from "./getRdfInstances";
 import { paginateIterable } from "@/lib/utilities/paginateIterable";
 import { LanguageTag } from "@/lib/models/LanguageTag";
+import { AbstractModelSet } from "@/lib/models/AbstractModelSet";
 
-export class RdfJsModelSet implements ModelSet {
-  constructor(private readonly dataset: DatasetCore) {}
+export class RdfJsModelSet extends AbstractModelSet {
+  constructor(private readonly dataset: DatasetCore) {
+    super();
+  }
 
   conceptByIdentifier(identifier: Identifier): Promise<Concept> {
     return new Promise((resolve) =>
@@ -30,7 +32,7 @@ export class RdfJsModelSet implements ModelSet {
     });
   }
 
-  concepts({
+  conceptsPage({
     limit,
     offset,
   }: {

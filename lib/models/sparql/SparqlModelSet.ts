@@ -1,6 +1,5 @@
 import { QueryEngine } from "@comunica/query-sparql";
 import { QueryStringContext } from "@comunica/types";
-import { ModelSet } from "@/lib/models/ModelSet";
 import { Concept } from "@/lib/models/Concept";
 import { ConceptScheme } from "@/lib/models//ConceptScheme";
 import { Identifier } from "@/lib/models//Identifier";
@@ -8,12 +7,15 @@ import { SparqlConcept } from "@/lib/models/sparql/SparqlConcept";
 import { rdf, rdfs, skos } from "@/lib/vocabularies";
 import invariant from "ts-invariant";
 import { SparqlConceptScheme } from "@/lib/models/sparql/SparqlConceptScheme";
+import { AbstractModelSet } from "@/lib/models/AbstractModelSet";
 
-export class SparqlModelSet implements ModelSet {
+export class SparqlModelSet extends AbstractModelSet {
   constructor(
     private readonly queryContext: QueryStringContext,
     private readonly queryEngine: QueryEngine,
-  ) {}
+  ) {
+    super();
+  }
 
   conceptByIdentifier(identifier: Identifier): Promise<Concept> {
     return new Promise((resolve) =>
@@ -27,7 +29,7 @@ export class SparqlModelSet implements ModelSet {
     );
   }
 
-  async concepts({
+  async conceptsPage({
     limit,
     offset,
   }: {

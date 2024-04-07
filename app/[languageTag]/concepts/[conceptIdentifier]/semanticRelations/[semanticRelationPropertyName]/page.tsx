@@ -72,7 +72,7 @@ export async function generateStaticParams(): Promise<
   let conceptsOffset = 0;
   const languageTags = await modelSet.languageTags();
   while (conceptsOffset < conceptsCount) {
-    for (const concept of await modelSet.concepts({
+    for (const concept of await modelSet.conceptsPage({
       limit: conceptsLimit,
       offset: conceptsOffset,
     })) {

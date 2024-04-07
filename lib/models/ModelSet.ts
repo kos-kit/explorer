@@ -5,7 +5,8 @@ import { Concept } from "@/lib/models/Concept";
 
 export interface ModelSet {
   conceptByIdentifier(identifier: Identifier): Promise<Concept>;
-  concepts(kwds: {
+  concepts(): AsyncGenerator<Concept>;
+  conceptsPage(kwds: {
     limit: number;
     offset: number;
   }): Promise<readonly Concept[]>;
