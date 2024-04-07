@@ -67,37 +67,27 @@ export async function generateStaticParams(): Promise<
 > {
   const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
-  const conceptsCount = await modelSet.conceptsCount();
-  const conceptsLimit = 100;
-  let conceptsOffset = 0;
   const languageTags = await modelSet.languageTags();
-  while (conceptsOffset < conceptsCount) {
-    for (const concept of await modelSet.conceptsPage({
-      limit: conceptsLimit,
-      offset: conceptsOffset,
-    })) {
-      const conceptIdentifier = filenamify(
-        identifierToString(concept.identifier),
+  for await (const concept of modelSet.concepts()) {
+    const conceptIdentifier = filenamify(
+      identifierToString(concept.identifier),
+    );
+
+    for (const semanticRelationProperty of semanticRelationProperties) {
+      const semanticRelationCount = await concept.semanticRelationsCount(
+        semanticRelationProperty,
       );
-
-      for (const semanticRelationProperty of semanticRelationProperties) {
-        const semanticRelationCount = await concept.semanticRelationsCount(
-          semanticRelationProperty,
-        );
-        if (semanticRelationCount <= configuration.relatedConceptsPerSection) {
-          continue;
-        }
-
-        for (const languageTag of languageTags) {
-          staticParams.push({
-            conceptIdentifier,
-            languageTag,
-            semanticRelationPropertyName: semanticRelationProperty.name,
-          });
-        }
+      if (semanticRelationCount <= configuration.relatedConceptsPerSection) {
+        continue;
       }
 
-      conceptsOffset++;
+      for (const languageTag of languageTags) {
+        staticParams.push({
+          conceptIdentifier,
+          languageTag,
+          semanticRelationPropertyName: semanticRelationProperty.name,
+        });
+      }
     }
   }
 
