@@ -13,6 +13,7 @@ import { pageCount } from "@/lib/utilities/pageCount";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
+import { displayLabel } from "@/lib/utilities/displayLabel";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -20,27 +21,29 @@ interface ConceptSchemeTopConceptsPageParams {
   page: string;
 }
 
-export default function ConceptSchemeTopConceptsPage({
+export default async function ConceptSchemeTopConceptsPage({
   params: { conceptSchemeIdentifier, languageTag, page },
 }: {
   params: ConceptSchemeTopConceptsPageParams;
 }) {
-  const conceptScheme = modelSet.conceptSchemeByIdentifier(
+  const conceptScheme = await modelSet.conceptSchemeByIdentifier(
     stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
   );
 
   const pageInt = parseInt(page);
 
-  const topConceptsCount = conceptScheme.topConceptsCount;
+  const topConceptsCount = await conceptScheme.topConceptsCount();
 
   return (
     <Layout
       languageTag={languageTag}
       title={
-        <Link href={Pages.conceptScheme({ conceptScheme, languageTag }).href}>
-          Concept Scheme:{" "}
-          {conceptScheme.prefLabel(languageTag)?.literalForm.value ??
-            identifierToString(conceptScheme.identifier)}
+        <Link
+          href={
+            (await Pages.conceptScheme({ conceptScheme, languageTag })).href
+          }
+        >
+          Concept Scheme: {displayLabel({ languageTag, model: conceptScheme })}
         </Link>
       }
     >
@@ -57,12 +60,10 @@ export default function ConceptSchemeTopConceptsPage({
         }
       >
         <ConceptList
-          concepts={[
-            ...conceptScheme.topConcepts({
-              limit: configuration.conceptsPerPage,
-              offset: parseInt(page) * configuration.conceptsPerPage,
-            }),
-          ]}
+          concepts={await conceptScheme.topConcepts({
+            limit: configuration.conceptsPerPage,
+            offset: parseInt(page) * configuration.conceptsPerPage,
+          })}
           languageTag={languageTag}
         />
         <div className="flex justify-center">
@@ -71,11 +72,13 @@ export default function ConceptSchemeTopConceptsPage({
             itemsPerPage={configuration.conceptsPerPage}
             itemsTotal={topConceptsCount}
             pageHref={(page) =>
-              Pages.conceptSchemeTopConcepts({
-                conceptScheme,
-                languageTag,
-                page,
-              }).href
+              (
+                await Pages.conceptSchemeTopConcepts({
+                  conceptScheme,
+                  languageTag,
+                  page,
+                })
+              ).href
             }
           />
         </div>

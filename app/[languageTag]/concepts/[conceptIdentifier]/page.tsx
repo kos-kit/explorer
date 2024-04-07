@@ -10,121 +10,84 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { noteProperties } from "@/lib/models/noteProperties";
 import { semanticRelationProperties } from "@/lib/models/semanticRelationProperties";
 import { defilenamify } from "@/lib/utilities/defilenamify";
+import { displayLabel } from "@/lib/utilities/displayLabel";
 import { filenamify } from "@/lib/utilities/filenamify";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
+import React from "react";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
   languageTag: LanguageTag;
 }
 
-export default function ConceptPage({
+export default async function ConceptPage({
   params: { conceptIdentifier, languageTag },
 }: {
   params: ConceptPageParams;
 }) {
-  const concept = modelSet.conceptByIdentifier(
+  const concept = await modelSet.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
+  );
+
+  const sections: (React.ReactElement | null)[] = await Promise.all(
+    noteProperties.map(async (noteProperty) => {
+      const notes = await concept.notes(languageTag, noteProperty);
+      if (notes.length === 0) {
+        return null;
+      }
+      return (
+        <Section key={noteProperty.name} title={`${noteProperty.label}s`}>
+          <table className="w-full">
+            <tbody>
+              {notes.map((note, noteI) => (
+                <tr key={noteI}>
+                  <td>{note.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Section>
+      );
+    }),
   );
 
   return (
     <Layout
       languageTag={languageTag}
-      title={`Concept: ${
-        concept.prefLabel(languageTag)?.literalForm.value ??
-        identifierToString(concept.identifier)
-      }`}
+      title={`Concept: ${displayLabel({ languageTag, model: concept })}`}
     >
       <Section title="Labels">
         <LabelTable model={concept} />
       </Section>
-      {noteProperties.map((noteProperty) => {
-        const notes = concept.notes(languageTag, noteProperty);
-        if (notes.length === 0) {
-          return null;
-        }
-        return (
-          <Section key={noteProperty.name} title={`${noteProperty.label}s`}>
-            <table className="w-full">
-              <tbody>
-                {notes.map((note, noteI) => (
-                  <tr key={noteI}>
-                    <td>{note.value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </Section>
-        );
-      })}
-      {semanticRelationProperties.map((semanticRelationProperty) => {
-        const semanticRelations = concept.semanticRelations(
-          semanticRelationProperty,
-        );
-        if (semanticRelations.length === 0) {
-          return null;
-        }
-        return (
-          <Section
-            key={semanticRelationProperty.name}
-            title={`${semanticRelationProperty.label} concepts`}
-          >
-            <ConceptList
-              concepts={
-                semanticRelations.length <=
-                configuration.relatedConceptsPerSection
-                  ? semanticRelations
-                  : semanticRelations.slice(
-                      0,
-                      configuration.relatedConceptsPerSection,
-                    )
-              }
-              languageTag={languageTag}
-            />
-            {semanticRelations.length >
-            configuration.relatedConceptsPerSection ? (
-              <Link
-                href={
-                  Pages.conceptSemanticRelations({
-                    concept,
-                    languageTag,
-                    semanticRelationProperty,
-                  }).href
-                }
-              >
-                More
-              </Link>
-            ) : null}
-          </Section>
-        );
-      })}
+      {sections}
     </Layout>
   );
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params: { conceptIdentifier, languageTag },
 }: {
   params: ConceptPageParams;
-}): Metadata {
-  const concept = modelSet.conceptByIdentifier(
+}): Promise<Metadata> {
+  const concept = await modelSet.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
-  return Pages.concept({ concept, languageTag }).metadata;
+  return (await Pages.concept({ concept, languageTag })).metadata;
 }
 
-export function generateStaticParams(): ConceptPageParams[] {
+export async function generateStaticParams(): Promise<ConceptPageParams[]> {
   const staticParams: ConceptPageParams[] = [];
 
-  const conceptsCount = modelSet.conceptsCount;
+  const conceptsCount = await modelSet.conceptsCount();
   const limit = 100;
+  const languageTags = await modelSet.languageTags();
   let offset = 0;
   while (offset < conceptsCount) {
-    for (const concept of modelSet.concepts({ limit, offset })) {
-      for (const languageTag of modelSet.languageTags) {
+    for (const concept of await modelSet.concepts({ limit, offset })) {
+      for (const languageTag of languageTags) {
         staticParams.push({
           conceptIdentifier: filenamify(identifierToString(concept.identifier)),
           languageTag,

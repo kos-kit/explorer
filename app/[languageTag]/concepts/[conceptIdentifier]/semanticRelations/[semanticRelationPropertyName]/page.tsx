@@ -9,6 +9,7 @@ import {
   semanticRelationPropertiesByName,
 } from "@/lib/models/semanticRelationProperties";
 import { defilenamify } from "@/lib/utilities/defilenamify";
+import { displayLabel } from "@/lib/utilities/displayLabel";
 import { filenamify } from "@/lib/utilities/filenamify";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
@@ -20,27 +21,26 @@ interface ConceptSemanticRelationsPageParams {
   semanticRelationPropertyName: string;
 }
 
-export default function ConceptSemanticRelationsPage({
+export default async function ConceptSemanticRelationsPage({
   params: { conceptIdentifier, languageTag, semanticRelationPropertyName },
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
-  const concept = modelSet.conceptByIdentifier(
+  const concept = await modelSet.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
   const semanticRelationProperty =
     semanticRelationPropertiesByName[semanticRelationPropertyName]!;
 
-  const semanticRelations = concept.semanticRelations(semanticRelationProperty);
+  const semanticRelations = await concept.semanticRelations(
+    semanticRelationProperty,
+  );
 
   return (
     <Layout
       languageTag={languageTag}
-      title={`Concept: ${
-        concept.prefLabel(languageTag)?.literalForm.value ??
-        identifierToString(concept.identifier)
-      }: ${semanticRelationProperty.label} concepts`}
+      title={`Concept: ${displayLabel({ languageTag, model: concept })}: ${semanticRelationProperty.label} concepts`}
     >
       <ConceptList concepts={semanticRelations} languageTag={languageTag} />
     </Layout>
@@ -64,14 +64,17 @@ export function generateMetadata({
   }).metadata;
 }
 
-export function generateStaticParams(): ConceptSemanticRelationsPageParams[] {
+export async function generateStaticParams(): Promise<
+  ConceptSemanticRelationsPageParams[]
+> {
   const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
-  const conceptsCount = modelSet.conceptsCount;
+  const conceptsCount = await modelSet.conceptsCount();
   const conceptsLimit = 100;
   let conceptsOffset = 0;
+  const languageTags = await modelSet.languageTags();
   while (conceptsOffset < conceptsCount) {
-    for (const concept of modelSet.concepts({
+    for (const concept of await modelSet.concepts({
       limit: conceptsLimit,
       offset: conceptsOffset,
     })) {
@@ -80,14 +83,14 @@ export function generateStaticParams(): ConceptSemanticRelationsPageParams[] {
       );
 
       for (const semanticRelationProperty of semanticRelationProperties) {
-        const semanticRelationCount = concept.semanticRelationsCount(
+        const semanticRelationCount = await concept.semanticRelationsCount(
           semanticRelationProperty,
         );
         if (semanticRelationCount <= configuration.relatedConceptsPerSection) {
           continue;
         }
 
-        for (const languageTag of modelSet.languageTags) {
+        for (const languageTag of languageTags) {
           staticParams.push({
             conceptIdentifier,
             languageTag,

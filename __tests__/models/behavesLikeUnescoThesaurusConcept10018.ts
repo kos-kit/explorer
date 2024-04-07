@@ -54,10 +54,16 @@ export const behavesLikeUnescoThesaurusConcept10018 = (
 
   it("should have multiple prefLabels", async () => {
     const concept = await lazyConcept();
-    expect((await concept.prefLabel("en"))!.literalForm.value).toStrictEqual(
+
+    const enPrefLabels = await concept.prefLabels("en");
+    expect(enPrefLabels).toHaveLength(1);
+    expect(enPrefLabels[0].literalForm.value).toStrictEqual(
       "Environmental impact assessment",
     );
-    expect((await concept.prefLabel("fr"))!.literalForm.value).toStrictEqual(
+
+    const frPrefLabels = await concept.prefLabels("fr");
+    expect(frPrefLabels).toHaveLength(1);
+    expect(frPrefLabels[0].literalForm.value).toStrictEqual(
       "Évaluation de l'impact sur l'environnement",
     );
   });

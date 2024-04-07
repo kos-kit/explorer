@@ -6,6 +6,7 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { filenamify } from "@/lib/utilities/filenamify";
 import modelSet from "./modelSet";
 import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
+import { displayLabel } from "@/lib/utilities/displayLabel";
 
 interface Page {
   readonly href: string;
@@ -13,39 +14,38 @@ interface Page {
 }
 
 export class Pages {
-  static concept({
+  static async concept({
     concept,
     languageTag,
   }: {
     concept: Concept;
     languageTag: LanguageTag;
-  }): Page {
+  }): Promise<Page> {
     const conceptIdentifierString = identifierToString(concept.identifier);
+    const rootPage = await Pages.root({ languageTag });
     return {
       get href() {
         return `/${languageTag}/concepts/${filenamify(conceptIdentifierString)}`;
       },
       get metadata() {
         return {
-          title: `${Pages.root({ languageTag }).metadata.title}: Concept: ${
-            concept.prefLabel(languageTag)?.literalForm.value ??
-            conceptIdentifierString
-          }`,
+          title: `${rootPage.metadata.title}: Concept: ${displayLabel({ languageTag, model: concept })}`,
         } satisfies Metadata;
       },
     };
   }
 
-  static conceptScheme({
+  static async conceptScheme({
     conceptScheme,
     languageTag,
   }: {
     conceptScheme: ConceptScheme;
     languageTag: LanguageTag;
-  }): Page {
+  }): Promise<Page> {
     const conceptSchemeIdentifierString = identifierToString(
       conceptScheme.identifier,
     );
+    const rootPage = await Pages.root({ languageTag });
 
     return {
       get href() {
@@ -53,16 +53,13 @@ export class Pages {
       },
       get metadata() {
         return {
-          title: `${Pages.root({ languageTag }).metadata.title}: Concept Scheme: ${
-            conceptScheme.prefLabel(languageTag)?.literalForm.value ??
-            conceptSchemeIdentifierString
-          }`,
+          title: `${rootPage.metadata.title}: Concept Scheme: ${displayLabel({ languageTag, model: conceptScheme })}`,
         } satisfies Metadata;
       },
     };
   }
 
-  static conceptSchemeTopConcepts({
+  static async conceptSchemeTopConcepts({
     conceptScheme,
     languageTag,
     page,
@@ -71,7 +68,7 @@ export class Pages {
     languageTag: LanguageTag;
     page: number;
   }) {
-    const conceptSchemePage = Pages.conceptScheme({
+    const conceptSchemePage = await Pages.conceptScheme({
       conceptScheme,
       languageTag,
     });
@@ -88,7 +85,7 @@ export class Pages {
     };
   }
 
-  static conceptSemanticRelations({
+  static async conceptSemanticRelations({
     concept,
     languageTag,
     semanticRelationProperty,
@@ -97,7 +94,7 @@ export class Pages {
     languageTag: LanguageTag;
     semanticRelationProperty: SemanticRelationProperty;
   }) {
-    const conceptPage = Pages.concept({
+    const conceptPage = await Pages.concept({
       concept,
       languageTag,
     });
@@ -118,15 +115,19 @@ export class Pages {
     };
   }
 
-  static root({ languageTag }: { languageTag: LanguageTag }): Page {
-    const conceptSchemes = modelSet.conceptSchemes;
+  static async root({
+    languageTag,
+  }: {
+    languageTag: LanguageTag;
+  }): Promise<Page> {
+    const conceptSchemes = await modelSet.conceptSchemes();
 
     let title: string = "SKOS";
     if (conceptSchemes.length === 1) {
       const conceptScheme = conceptSchemes[0];
-      const prefLabel = conceptScheme.prefLabel(languageTag);
-      if (prefLabel !== null) {
-        title = prefLabel.literalForm.value;
+      const prefLabels = await conceptScheme.prefLabels(languageTag);
+      if (prefLabels.length > 0) {
+        title = prefLabels[0].literalForm.value;
       }
     }
 

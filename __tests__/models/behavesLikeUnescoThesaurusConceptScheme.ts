@@ -23,12 +23,16 @@ export const behavesLikeUnescoThesaurusConceptScheme = (
 
   it("should have multiple prefLabels", async () => {
     const conceptScheme = await lazyConceptScheme();
-    expect(
-      (await conceptScheme.prefLabel("en"))!.literalForm.value,
-    ).toStrictEqual("UNESCO Thesaurus");
-    expect(
-      (await conceptScheme.prefLabel("fr"))!.literalForm.value,
-    ).toStrictEqual("Thésaurus de l'UNESCO");
+
+    const enPrefLabels = await conceptScheme.prefLabels("en");
+    expect(enPrefLabels).toHaveLength(1);
+    expect(enPrefLabels[0].literalForm.value).toStrictEqual("UNESCO Thesaurus");
+
+    const frPrefLabels = await conceptScheme.prefLabels("fr");
+    expect(frPrefLabels).toHaveLength(1);
+    expect(frPrefLabels[0].literalForm.value).toStrictEqual(
+      "Thésaurus de l'UNESCO",
+    );
   });
 
   it("should have rights", async () => {
