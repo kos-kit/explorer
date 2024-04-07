@@ -21,7 +21,7 @@ export async function LabelSections({
     }
     sections.push(
       <Section title={`${type} labels`}>
-        <ul>
+        <ul className="list-disc list-inside">
           {labels.map((label, labelI) => (
             <li key={labelI}>{label.literalForm.value}</li>
           ))}
