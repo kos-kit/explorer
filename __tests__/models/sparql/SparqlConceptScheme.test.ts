@@ -1,10 +1,10 @@
-import { testRdfJsModelSet } from "./testRdfJsModelSet";
+import { testSparqlModelSet } from "./testSparqlModelSet";
 import { DataFactory } from "n3";
 import { behavesLikeUnescoThesaurusConceptScheme } from "../behavesLikeUnescoThesaurusConceptScheme";
 
-describe("RdfJsConceptScheme", () => {
+describe("SparqlConceptScheme", () => {
   behavesLikeUnescoThesaurusConceptScheme(() =>
-    testRdfJsModelSet.conceptSchemeByIdentifier(
+    testSparqlModelSet.conceptSchemeByIdentifier(
       DataFactory.namedNode("http://vocabularies.unesco.org/thesaurus"),
     ),
   );

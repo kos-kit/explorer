@@ -8,14 +8,20 @@ import { LanguageTag } from "./LanguageTag";
 
 export interface Concept extends LabeledModel {
   readonly identifier: Identifier;
-  readonly inSchemes: readonly ConceptScheme[];
 
-  readonly notations: readonly Literal[];
+  inSchemes(): Promise<readonly ConceptScheme[]>;
 
-  notes(languageTag: LanguageTag, property: NoteProperty): readonly Literal[];
+  notations(): Promise<readonly Literal[]>;
 
-  semanticRelations(property: SemanticRelationProperty): readonly Concept[];
-  semanticRelationsCount(property: SemanticRelationProperty): number;
+  notes(
+    languageTag: LanguageTag,
+    property: NoteProperty,
+  ): Promise<readonly Literal[]>;
 
-  readonly topConceptOf: readonly ConceptScheme[];
+  semanticRelations(
+    property: SemanticRelationProperty,
+  ): Promise<readonly Concept[]>;
+  semanticRelationsCount(property: SemanticRelationProperty): Promise<number>;
+
+  topConceptOf(): Promise<readonly ConceptScheme[]>;
 }

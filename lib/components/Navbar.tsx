@@ -1,16 +1,18 @@
-import { Pages } from "@/app/Pages";
+import { PageHrefs } from "@/app/PageHrefs";
 import { ListBulletIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { Link } from "@/lib/components/Link";
 import { LanguageTag } from "@/lib/models/LanguageTag";
+import { PageMetadata } from "@/app/PageMetadata";
 
-export function Navbar({ languageTag }: { languageTag: LanguageTag }) {
-  const title: string = Pages.root({ languageTag }).metadata.title as string;
+export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
+  const title: string = (await PageMetadata.root({ languageTag }))
+    .title as string;
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap justify-between">
         <Link
-          href={Pages.root({ languageTag }).href}
+          href={PageHrefs.root}
           className="flex space-x-3 rtl:space-x-reverse"
         >
           <ListBulletIcon className="h-8 w-8" />

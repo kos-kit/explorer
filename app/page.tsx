@@ -2,8 +2,8 @@ import configuration from "./configuration";
 import modelSet from "./modelSet";
 import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
 
-export default function RootPage() {
-  const conceptSchemes = [...modelSet.conceptSchemes];
+export default async function RootPage() {
+  const conceptSchemes = await modelSet.conceptSchemes();
   if (conceptSchemes.length === 1) {
     return (
       <ConceptSchemePage

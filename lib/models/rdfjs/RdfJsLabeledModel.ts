@@ -5,36 +5,36 @@ import { RdfJsModel } from "@/lib/models/rdfjs/RdfJsModel";
 import { RdfJsLabel } from "@/lib/models/rdfjs/RdfJsLabel";
 import { skos, skosxl } from "@/lib/vocabularies";
 import { mapTermToIdentifier } from "./mapTermToIdentifier";
-import { LanguageTag } from "../LanguageTag";
-import { LiteralLabel } from "../LiteralLabel";
+import { LanguageTag } from "@/lib/models/LanguageTag";
+import { LiteralLabel } from "@/lib/models/LiteralLabel";
 
 export abstract class RdfJsLabeledModel
   extends RdfJsModel
   implements LabeledModel
 {
-  get altLabels(): readonly Label[] {
-    return [...this.labels(skos.altLabel, skosxl.altLabel)];
+  altLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
+    return new Promise((resolve) =>
+      resolve([...this.labels(languageTag, skos.altLabel, skosxl.altLabel)]),
+    );
   }
 
-  get hiddenLabels(): readonly Label[] {
-    return [...this.labels(skos.hiddenLabel, skosxl.hiddenLabel)];
-  }
-
-  prefLabel(languageTag: LanguageTag): Label | null {
-    for (const prefLabel of this.prefLabels) {
-      if (prefLabel.literalForm.language === languageTag) {
-        return prefLabel;
-      }
-    }
-    return null;
+  hiddenLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
+    return new Promise((resolve) =>
+      resolve([
+        ...this.labels(languageTag, skos.hiddenLabel, skosxl.hiddenLabel),
+      ]),
+    );
   }
 
   private *labels(
+    languageTag: LanguageTag,
     skosPredicate: NamedNode,
     skosXlPredicate: NamedNode,
   ): Iterable<Label> {
     yield* this.filterAndMapObjects(skosPredicate, (term) =>
-      term.termType === "Literal" ? new LiteralLabel(term) : null,
+      term.termType === "Literal" && term.language === languageTag
+        ? new LiteralLabel(term)
+        : null,
     );
 
     // Any resource in the range of a skosxl: label predicate is considered a skosxl:Label
@@ -63,7 +63,16 @@ export abstract class RdfJsLabeledModel
     });
   }
 
-  get prefLabels(): readonly Label[] {
-    return [...this.labels(skos.prefLabel, skosxl.prefLabel)];
+  async prefLabel(languageTag: LanguageTag): Promise<Label | null> {
+    for (const prefLabel of await this.prefLabels(languageTag)) {
+      return prefLabel;
+    }
+    return null;
+  }
+
+  prefLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
+    return new Promise((resolve) =>
+      resolve([...this.labels(languageTag, skos.prefLabel, skosxl.prefLabel)]),
+    );
   }
 }

@@ -8,17 +8,21 @@ import { LanguageTag } from "./LanguageTag";
 export class LiteralLabel implements Label {
   constructor(readonly literalForm: Literal) {}
 
-  license(_languageTag: LanguageTag): Literal | NamedNode<string> | null {
-    return null;
+  license(
+    _languageTag: LanguageTag,
+  ): Promise<Literal | NamedNode<string> | null> {
+    return Promise.resolve(null);
   }
 
-  modified: Literal | null = null;
-
-  rights(_languageTag: LanguageTag): Literal | null {
-    return null;
+  modified(): Promise<Literal | null> {
+    return Promise.resolve(null);
   }
 
-  rightsHolder(_languageTag: LanguageTag): Literal | null {
-    return null;
+  rights(_languageTag: LanguageTag): Promise<Literal | null> {
+    return Promise.resolve(null);
+  }
+
+  rightsHolder(_languageTag: LanguageTag): Promise<Literal | null> {
+    return Promise.resolve(null);
   }
 }

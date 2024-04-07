@@ -5,8 +5,11 @@ import { LanguageTag } from "../LanguageTag";
 
 const rightsPredicates = [dcterms.rights, dc11.rights];
 
+/**
+ * Abstract base class for RDF/JS Dataset-backed models.
+ */
 export abstract class RdfJsModel {
-  readonly dataset: DatasetCore;
+  protected readonly dataset: DatasetCore;
   readonly identifier: Identifier;
 
   constructor({
@@ -18,24 +21,6 @@ export abstract class RdfJsModel {
   }) {
     this.dataset = dataset;
     this.identifier = identifier;
-  }
-
-  protected findAndMapObject<T>(
-    property: NamedNode,
-    callback: (value: Term) => NonNullable<T> | null,
-  ): NonNullable<T> | null {
-    for (const quad of this.dataset.match(
-      this.identifier,
-      property,
-      null,
-      null,
-    )) {
-      const mappedObject: T | null = callback(quad.object);
-      if (mappedObject !== null) {
-        return mappedObject as NonNullable<T>;
-      }
-    }
-    return null;
   }
 
   protected countObjects(
@@ -58,6 +43,24 @@ export abstract class RdfJsModel {
       }
     }
     return count;
+  }
+
+  protected findAndMapObject<T>(
+    property: NamedNode,
+    callback: (value: Term) => NonNullable<T> | null,
+  ): NonNullable<T> | null {
+    for (const quad of this.dataset.match(
+      this.identifier,
+      property,
+      null,
+      null,
+    )) {
+      const mappedObject: T | null = callback(quad.object);
+      if (mappedObject !== null) {
+        return mappedObject as NonNullable<T>;
+      }
+    }
+    return null;
   }
 
   protected *filterAndMapObjects<T>(
@@ -95,49 +98,64 @@ export abstract class RdfJsModel {
     return untaggedLiteralValue;
   }
 
-  license(languageTag: LanguageTag): Literal | NamedNode | null {
-    let untaggedLiteralValue: Literal | null = null;
+  license(languageTag: LanguageTag): Promise<Literal | NamedNode | null> {
+    return new Promise((resolve) => {
+      let untaggedLiteralValue: Literal | null = null;
 
-    for (const quad of this.dataset.match(
-      this.identifier,
-      dcterms.license,
-      null,
-    )) {
-      switch (quad.object.termType) {
-        case "NamedNode":
-          return quad.object;
-        case "Literal":
-          if (quad.object.language === languageTag) {
-            return quad.object;
-          } else if (quad.object.language.length === 0) {
-            untaggedLiteralValue = quad.object;
-          }
-          break;
-        default:
-          break;
+      for (const quad of this.dataset.match(
+        this.identifier,
+        dcterms.license,
+        null,
+      )) {
+        switch (quad.object.termType) {
+          case "NamedNode":
+            resolve(quad.object);
+            return;
+          case "Literal":
+            if (quad.object.language === languageTag) {
+              resolve(quad.object);
+              return;
+            } else if (quad.object.language.length === 0) {
+              untaggedLiteralValue = quad.object;
+            }
+            break;
+          default:
+            break;
+        }
       }
-    }
 
-    return untaggedLiteralValue;
+      resolve(untaggedLiteralValue);
+    });
   }
 
-  get modified(): Literal | null {
-    return this.findAndMapObject(dcterms.modified, (term) =>
-      term.termType === "Literal" ? term : null,
+  modified(): Promise<Literal | null> {
+    return new Promise((resolve) =>
+      resolve(
+        this.findAndMapObject(dcterms.modified, (term) =>
+          term.termType === "Literal" ? term : null,
+        ),
+      ),
     );
   }
 
-  rights(languageTag: LanguageTag): Literal | null {
-    for (const predicate of rightsPredicates) {
-      const value = this.languageTaggedLiteralObject(languageTag, predicate);
-      if (value !== null) {
-        return value;
+  rights(languageTag: LanguageTag): Promise<Literal | null> {
+    return new Promise((resolve) => {
+      for (const predicate of rightsPredicates) {
+        const value = this.languageTaggedLiteralObject(languageTag, predicate);
+        if (value !== null) {
+          resolve(value);
+          return;
+        }
       }
-    }
-    return null;
+      resolve(null);
+    });
   }
 
-  rightsHolder(languageTag: LanguageTag): Literal | null {
-    return this.languageTaggedLiteralObject(languageTag, dcterms.rightsHolder);
+  rightsHolder(languageTag: LanguageTag): Promise<Literal | null> {
+    return new Promise((resolve) =>
+      resolve(
+        this.languageTaggedLiteralObject(languageTag, dcterms.rightsHolder),
+      ),
+    );
   }
 }

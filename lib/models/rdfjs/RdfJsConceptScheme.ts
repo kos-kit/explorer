@@ -7,7 +7,6 @@ import { RdfJsConcept } from "@/lib/models/rdfjs/RdfJsConcept";
 import { mapTermToIdentifier } from "@/lib/models/rdfjs/mapTermToIdentifier";
 import { paginateIterable } from "@/lib/utilities/paginateIterable";
 import { Identifier } from "@/lib/models/Identifier";
-import { Memoize } from "typescript-memoize";
 
 export class RdfJsConceptScheme
   extends RdfJsLabeledModel
@@ -19,7 +18,7 @@ export class RdfJsConceptScheme
     // ConceptScheme -> Concept statement
     for (const quad of this.dataset.match(
       this.identifier,
-      skos.topConceptOf,
+      skos.hasTopConcept,
       null,
     )) {
       const conceptIdentifier = mapTermToIdentifier(quad.object);
@@ -55,26 +54,32 @@ export class RdfJsConceptScheme
   }: {
     limit: number;
     offset: number;
-  }): Iterable<Concept> {
-    return paginateIterable(this._topConcepts(), { limit, offset });
+  }): Promise<readonly Concept[]> {
+    return new Promise((resolve) => {
+      const result: Concept[] = [];
+      for (const conceptIdentifier of paginateIterable(
+        this.topConceptIdentifiers(),
+        { limit, offset },
+      )) {
+        result.push(
+          new RdfJsConcept({
+            dataset: this.dataset,
+            identifier: conceptIdentifier,
+          }),
+        );
+      }
+      resolve(result);
+    });
   }
 
-  private *_topConcepts(): Iterable<Concept> {
-    for (const conceptIdentifier of this.topConceptIdentifiers()) {
-      yield new RdfJsConcept({
-        dataset: this.dataset,
-        identifier: conceptIdentifier,
-      });
-    }
-  }
-
-  @Memoize()
-  get topConceptsCount(): number {
-    let count = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    for (const _ of this.topConceptIdentifiers()) {
-      count++;
-    }
-    return count;
+  topConceptsCount(): Promise<number> {
+    return new Promise((resolve) => {
+      let count = 0;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for (const _ of this.topConceptIdentifiers()) {
+        count++;
+      }
+      resolve(count);
+    });
   }
 }

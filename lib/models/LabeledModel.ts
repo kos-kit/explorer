@@ -3,8 +3,7 @@ import { Model } from "@/lib/models/Model";
 import { LanguageTag } from "./LanguageTag";
 
 export interface LabeledModel extends Model {
-  readonly altLabels: readonly Label[];
-  readonly hiddenLabels: readonly Label[];
-  prefLabel(languageTag: LanguageTag): Label | null;
-  readonly prefLabels: readonly Label[];
+  altLabels(languageTag: LanguageTag): Promise<readonly Label[]>;
+  hiddenLabels(languageTag: LanguageTag): Promise<readonly Label[]>;
+  prefLabels(languageTag: LanguageTag): Promise<readonly Label[]>;
 }
