@@ -9,8 +9,14 @@ export const behavesLikeSearchEngine = (
       limit: 10,
       offset: 0,
       languageTag: "en",
-      query: "Family size",
+      query: "right to education",
     });
-    console.log(results);
+    expect(results).not.toHaveLength(0);
+    const result = results.find(
+      (result) =>
+        result.identifier ===
+        "<http://vocabularies.unesco.org/thesaurus/concept10>",
+    );
+    expect(result).toBeDefined();
   });
 };
