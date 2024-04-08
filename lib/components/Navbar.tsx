@@ -4,15 +4,11 @@ import { Link } from "@/lib/components/Link";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { PageMetadata } from "@/app/PageMetadata";
 import { SearchBox } from "./SearchBox";
-import { SearchEngine } from "../search/SearchEngine";
+import searchEngine from "@/app/searchEngine";
 
-export async function Navbar({
-  languageTag,
-  searchEngine,
-}: {
-  languageTag: LanguageTag;
-  searchEngine: SearchEngine;
-}) {
+export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
+  const searchEngine_ = await searchEngine();
+
   const title: string = (await PageMetadata.root({ languageTag }))
     .title as string;
 
@@ -32,7 +28,7 @@ export async function Navbar({
           <div className="relative block">
             <SearchBox
               languageTag={languageTag}
-              searchEngineJson={searchEngine.toJson()}
+              searchEngineJson={searchEngine_.toJson()}
             />
             {/* <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
               <MagnifyingGlassIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
