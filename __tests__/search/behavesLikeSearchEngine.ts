@@ -18,5 +18,8 @@ export const behavesLikeSearchEngine = (
         "<http://vocabularies.unesco.org/thesaurus/concept10>",
     );
     expect(result).toBeDefined();
+    expect(result!.prefLabel).toStrictEqual("Right to education");
+    expect(result!.score).toBeGreaterThan(0);
+    expect(result!.type).toEqual("Concept");
   });
 };

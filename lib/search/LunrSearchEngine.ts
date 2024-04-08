@@ -3,14 +3,13 @@ import { ModelSet } from "@/lib/models/ModelSet";
 import { SearchEngine } from "@/lib/search/SearchEngine";
 import { SearchResult } from "@/lib/search/SearchResult";
 import { LanguageTag } from "@/lib/models/LanguageTag";
-import { SearchResultType } from "./SearchResultType";
 import { LabeledModel } from "@/lib/models/LabeledModel";
 import { Identifier } from "@/lib/models/Identifier";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 
 interface LunrSearchEngineIndex {
+  readonly documents: Record<string, Record<string, string>>; // type -> identifier -> prefLabel
   readonly index: Index;
-  readonly searchResultsByIdentifier: Record<string, SearchResult>;
 }
 
 export class LunrSearchEngine implements SearchEngine {
@@ -32,12 +31,14 @@ export class LunrSearchEngine implements SearchEngine {
       type IndexDocument = {
         readonly identifier: string;
         readonly joinedLabels: string;
+        readonly prefLabel: string;
+        readonly type: SearchResult["type"];
       };
 
-      const toIndexObjects = async (
+      const toIndexDocument = async (
         model: LabeledModel & { identifier: Identifier },
-        type: SearchResultType,
-      ): Promise<[IndexDocument, SearchResult] | null> => {
+        type: SearchResult["type"],
+      ): Promise<IndexDocument | null> => {
         const prefLabels = await model.prefLabels(languageTag);
         if (prefLabels.length === 0) {
           return null;
@@ -47,27 +48,17 @@ export class LunrSearchEngine implements SearchEngine {
 
         const identifierString = identifierToString(model.identifier);
 
-        return [
-          {
-            identifier: identifierString,
-            joinedLabels: [altLabels, hiddenLabels, prefLabels]
-              .flatMap((labels) =>
-                labels.map((label) => label.literalForm.value),
-              )
-              .join(" "),
-          },
-          {
-            identifier: identifierString,
-            prefLabel: prefLabels[0].literalForm.value,
-            score: 0,
-            type,
-          },
-        ];
+        return {
+          identifier: identifierString,
+          joinedLabels: [altLabels, hiddenLabels, prefLabels]
+            .flatMap((labels) => labels.map((label) => label.literalForm.value))
+            .join(" "),
+          prefLabel: prefLabels[0].literalForm.value,
+          type,
+        };
       };
 
-      const indexObjectPromises: Promise<
-        [IndexDocument, SearchResult] | null
-      >[] = [];
+      const indexDocumentPromises: Promise<IndexDocument | null>[] = [];
 
       if (conceptsLimit != null) {
         // Don't index all concepts in the set, in testing
@@ -75,39 +66,47 @@ export class LunrSearchEngine implements SearchEngine {
           limit: conceptsLimit,
           offset: 0,
         })) {
-          indexObjectPromises.push(toIndexObjects(concept, "Concept"));
+          indexDocumentPromises.push(toIndexDocument(concept, "Concept"));
         }
       } else {
         // Index all concepts in the set
         for await (const concept of await modelSet.concepts()) {
-          indexObjectPromises.push(toIndexObjects(concept, "Concept"));
+          indexDocumentPromises.push(toIndexDocument(concept, "Concept"));
         }
       }
 
       // Index concept schemes
-      indexObjectPromises.push(
+      indexDocumentPromises.push(
         ...(await modelSet.conceptSchemes()).map((conceptScheme) =>
-          toIndexObjects(conceptScheme, "ConceptScheme"),
+          toIndexDocument(conceptScheme, "ConceptScheme"),
         ),
       );
 
-      const indexObjects = await Promise.all(indexObjectPromises);
+      const indexDocuments = await Promise.all(indexDocumentPromises);
 
-      const searchResultsByIdentifier: Record<string, SearchResult> = {};
+      const compactIndexDocuments: Record<string, Record<string, string>> = {};
       indicesByLanguageTag[languageTag] = {
+        documents: compactIndexDocuments,
         index: lunr(function () {
           this.ref("identifier");
           this.field("joinedLabels");
-          for (const indexObject of indexObjects) {
-            if (indexObject === null) {
+          for (const indexDocument of indexDocuments) {
+            if (indexDocument === null) {
               continue;
             }
-            const [indexDocument, searchResult] = indexObject;
             this.add(indexDocument);
-            searchResultsByIdentifier[searchResult.identifier] = searchResult;
+
+            let compactIndexDocumentsByIdentifier =
+              compactIndexDocuments[indexDocument.type];
+            if (!compactIndexDocumentsByIdentifier) {
+              compactIndexDocumentsByIdentifier = compactIndexDocuments[
+                indexDocument.type
+              ] = {};
+            }
+            compactIndexDocumentsByIdentifier[indexDocument.identifier] =
+              indexDocument.prefLabel;
           }
         }),
-        searchResultsByIdentifier,
       };
     }
 
@@ -139,11 +138,24 @@ export class LunrSearchEngine implements SearchEngine {
           continue;
         }
 
-        results.push({
-          ...index.searchResultsByIdentifier[lunrResult.ref],
-          score: lunrResult.score,
-        });
-        if (results.length === limit) {
+        for (const documentType of Object.keys(index.documents)) {
+          const documentPrefLabel =
+            index.documents[documentType][lunrResult.ref];
+
+          if (!documentPrefLabel) {
+            continue;
+          }
+
+          results.push({
+            identifier: lunrResult.ref,
+            prefLabel: documentPrefLabel,
+            score: lunrResult.score,
+            type: documentType as SearchResult["type"],
+          });
+          if (results.length === limit) {
+            resolve(results);
+            return;
+          }
           break;
         }
       }
