@@ -1,10 +1,18 @@
 import { PageHrefs } from "@/app/PageHrefs";
-import { ListBulletIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { ListBulletIcon } from "@heroicons/react/24/solid";
 import { Link } from "@/lib/components/Link";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { PageMetadata } from "@/app/PageMetadata";
+import { SearchBox } from "./SearchBox";
+import { SearchEngine } from "../search/SearchEngine";
 
-export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
+export async function Navbar({
+  languageTag,
+  searchEngine,
+}: {
+  languageTag: LanguageTag;
+  searchEngine: SearchEngine;
+}) {
   const title: string = (await PageMetadata.root({ languageTag }))
     .title as string;
 
@@ -22,7 +30,11 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
         </Link>
         <div className="flex">
           <div className="relative block">
-            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <SearchBox
+              languageTag={languageTag}
+              searchEngineJson={searchEngine.toJson()}
+            />
+            {/* <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
               <MagnifyingGlassIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               <span className="sr-only">Search icon</span>
             </div>
@@ -31,7 +43,7 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
               className="block w-full min-w-64 p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Search..."
               type="text"
-            />
+            /> */}
           </div>
         </div>
       </div>

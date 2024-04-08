@@ -115,6 +115,20 @@ export class LunrSearchEngine implements SearchEngine {
     return new LunrSearchEngine(indicesByLanguageTag);
   }
 
+  static fromJson(json: { [index: string]: any }) {
+    const indicesByLanguageTag: Record<string, LunrSearchEngineIndex> = {};
+    const lunrIndexCompactor = new LunrIndexCompactor();
+    for (const languageTag of Object.keys(json.indicesByLanguageTag)) {
+      indicesByLanguageTag[languageTag] = {
+        documents: json.indicesByLanguageTag[languageTag].documents,
+        index: lunrIndexCompactor.expandLunrIndex(
+          json.indicesByLanguageTag[languageTag].index,
+        ),
+      };
+    }
+    return new LunrSearchEngine(indicesByLanguageTag);
+  }
+
   search({
     languageTag,
     limit,
@@ -163,20 +177,6 @@ export class LunrSearchEngine implements SearchEngine {
       }
       resolve(results);
     });
-  }
-
-  static fromJson(clientJson: { [index: string]: any }) {
-    const indicesByLanguageTag: Record<string, LunrSearchEngineIndex> = {};
-    const lunrIndexCompactor = new LunrIndexCompactor();
-    for (const languageTag of Object.keys(clientJson.indicesByLanguageTag)) {
-      indicesByLanguageTag[languageTag] = {
-        documents: clientJson.indicesByLanguageTag[languageTag].documents,
-        index: lunrIndexCompactor.expandLunrIndex(
-          clientJson.indicesByLanguageTag[languageTag].index,
-        ),
-      };
-    }
-    return new LunrSearchEngine(indicesByLanguageTag);
   }
 
   toJson(): { [index: string]: any; type: SearchEngineType } {
