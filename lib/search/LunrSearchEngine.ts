@@ -7,6 +7,7 @@ import { LabeledModel } from "@/lib/models/LabeledModel";
 import { Identifier } from "@/lib/models/Identifier";
 import { identifierToString } from "@/lib/utilities/identifierToString";
 import { SearchEngineType } from "./SearchEngineType";
+import { LunrIndexCompactor } from "./LunrIndexCompactor";
 
 interface LunrSearchEngineIndex {
   readonly documents: Record<string, Record<string, string>>; // type -> identifier -> prefLabel
@@ -166,21 +167,27 @@ export class LunrSearchEngine implements SearchEngine {
 
   static fromClientJson(clientJson: { [index: string]: any }) {
     const indicesByLanguageTag: Record<string, LunrSearchEngineIndex> = {};
+    const lunrIndexCompactor = new LunrIndexCompactor();
     for (const languageTag of Object.keys(clientJson.indicesByLanguageTag)) {
       indicesByLanguageTag[languageTag] = {
         documents: clientJson.indicesByLanguageTag[languageTag].documents,
-        index: Index.load(clientJson.indicesByLanguageTag[languageTag].index),
+        index: lunrIndexCompactor.expandLunrIndex(
+          clientJson.indicesByLanguageTag[languageTag].index,
+        ),
       };
     }
     return new LunrSearchEngine(indicesByLanguageTag);
   }
 
   toClientJson(): { [index: string]: any; type: SearchEngineType } {
+    const lunrIndexCompactor = new LunrIndexCompactor();
     const indicesByLanguageTag: Record<string, any> = {};
     for (const languageTag of Object.keys(this.indicesByLanguageTag)) {
       indicesByLanguageTag[languageTag] = {
         documents: this.indicesByLanguageTag[languageTag].documents,
-        index: this.indicesByLanguageTag[languageTag].index.toJSON(),
+        index: lunrIndexCompactor.compactLunrIndex(
+          this.indicesByLanguageTag[languageTag].index,
+        ),
       };
     }
     return {
