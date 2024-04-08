@@ -165,7 +165,7 @@ export class LunrSearchEngine implements SearchEngine {
     });
   }
 
-  static fromClientJson(clientJson: { [index: string]: any }) {
+  static fromJson(clientJson: { [index: string]: any }) {
     const indicesByLanguageTag: Record<string, LunrSearchEngineIndex> = {};
     const lunrIndexCompactor = new LunrIndexCompactor();
     for (const languageTag of Object.keys(clientJson.indicesByLanguageTag)) {
@@ -179,7 +179,7 @@ export class LunrSearchEngine implements SearchEngine {
     return new LunrSearchEngine(indicesByLanguageTag);
   }
 
-  toClientJson(): { [index: string]: any; type: SearchEngineType } {
+  toJson(): { [index: string]: any; type: SearchEngineType } {
     const lunrIndexCompactor = new LunrIndexCompactor();
     const indicesByLanguageTag: Record<string, any> = {};
     for (const languageTag of Object.keys(this.indicesByLanguageTag)) {

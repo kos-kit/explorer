@@ -10,5 +10,5 @@ export interface SearchEngine {
     query: string;
   }): Promise<readonly SearchResult[]>;
 
-  toClientJson(): { [index: string]: any; type: SearchEngineType };
+  toJson(): { [index: string]: any; type: SearchEngineType };
 }

@@ -1,5 +1,5 @@
 import { SearchEngine } from "@/lib/search/SearchEngine";
-import { createSearchEngineFromClientJson } from "@/lib/search/createSearchEngineFromClientJson";
+import { createSearchEngineFromJson } from "@/lib/search/createSearchEngineFromJson";
 
 export const behavesLikeSearchEngine = (
   lazySearchEngine: () => Promise<SearchEngine>,
@@ -32,8 +32,8 @@ export const behavesLikeSearchEngine = (
   it("should serialize to and from client JSON", async () => {
     const serverSearchEngine = await lazySearchEngine();
     await expectUnescoThesaurusConcept10Result(serverSearchEngine);
-    const clientSearchEngine = createSearchEngineFromClientJson(
-      serverSearchEngine.toClientJson(),
+    const clientSearchEngine = createSearchEngineFromJson(
+      serverSearchEngine.toJson(),
     );
     await expectUnescoThesaurusConcept10Result(clientSearchEngine);
   });
