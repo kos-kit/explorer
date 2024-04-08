@@ -24,13 +24,13 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
             {title}
           </span>
         </Link>
-        <div className="flex">
-          <div className="relative block">
-            <SearchBox
-              languageTag={languageTag}
-              searchEngineJson={searchEngine_.toJson()}
-            />
-            {/* <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+        <div className="flex justify-end min-w-64">
+          {/* <div className="relative block"> */}
+          <SearchBox
+            languageTag={languageTag}
+            searchEngineJson={searchEngine_.toJson()}
+          />
+          {/* <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
               <MagnifyingGlassIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
               <span className="sr-only">Search icon</span>
             </div>
@@ -40,7 +40,7 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
               placeholder="Search..."
               type="text"
             /> */}
-          </div>
+          {/* </div> */}
         </div>
       </div>
     </nav>

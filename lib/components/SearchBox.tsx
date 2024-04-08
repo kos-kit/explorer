@@ -31,6 +31,11 @@ export function SearchBox({
   );
 
   return (
-    <Select<SearchResult> loadOptions={loadOptions} placeholder="Search..." />
+    <Select<SearchResult>
+      loadOptions={loadOptions}
+      placeholder="Search..."
+      getOptionLabel={(option) => option.prefLabel}
+      getOptionValue={(option) => option.identifier}
+    />
   );
 }

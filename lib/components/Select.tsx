@@ -5,13 +5,11 @@ import {
   DropdownIndicatorProps,
   GroupBase,
   MultiValueRemoveProps,
-  OptionsOrGroups,
   components,
 } from "react-select";
-import ReactSelect from "react-select/async";
+import ReactSelect, { AsyncProps } from "react-select/async";
 import clsx from "clsx";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { ReactNode } from "react";
 
 // Styling adapted from https://www.jussivirtanen.fi/writing/styling-react-select-with-tailwind
 const DropdownIndicator = <
@@ -89,23 +87,12 @@ const noOptionsMessageStyles =
 
 export function Select<
   Option = unknown,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   IsMulti extends boolean = false,
   Group extends GroupBase<Option> = GroupBase<Option>,
->({
-  loadOptions,
-  placeholder,
-}: {
-  loadOptions?: (
-    inputValue: string,
-    callback: (options: OptionsOrGroups<Option, Group>) => void,
-  ) => Promise<OptionsOrGroups<Option, Group>> | void;
-  placeholder?: ReactNode;
-}) {
+>(props: AsyncProps<Option, IsMulti, Group>) {
   return (
     <ReactSelect
       components={{ DropdownIndicator, ClearIndicator, MultiValueRemove }}
-      loadOptions={loadOptions}
       styles={{
         input: (base) => ({
           ...base,
@@ -152,8 +139,8 @@ export function Select<
           ),
         noOptionsMessage: () => noOptionsMessageStyles,
       }}
-      placeholder={placeholder}
       unstyled
+      {...props}
     />
   );
 }
