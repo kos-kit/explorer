@@ -6,6 +6,7 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { LabeledModel } from "@/lib/models/LabeledModel";
 import { Identifier } from "@/lib/models/Identifier";
 import { identifierToString } from "@/lib/utilities/identifierToString";
+import { SearchEngineType } from "./SearchEngineType";
 
 interface LunrSearchEngineIndex {
   readonly documents: Record<string, Record<string, string>>; // type -> identifier -> prefLabel
@@ -161,5 +162,16 @@ export class LunrSearchEngine implements SearchEngine {
       }
       resolve(results);
     });
+  }
+
+  static fromClientJson(clientJson: { [index: string]: any }) {
+    return new LunrSearchEngine(clientJson.indicesByLanguageTag);
+  }
+
+  toClientJson(): { [index: string]: any; type: SearchEngineType } {
+    return {
+      indicesByLanguageTag: this.indicesByLanguageTag,
+      type: "Lunr",
+    };
   }
 }
