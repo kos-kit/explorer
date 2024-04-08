@@ -165,12 +165,26 @@ export class LunrSearchEngine implements SearchEngine {
   }
 
   static fromClientJson(clientJson: { [index: string]: any }) {
-    return new LunrSearchEngine(clientJson.indicesByLanguageTag);
+    const indicesByLanguageTag: Record<string, LunrSearchEngineIndex> = {};
+    for (const languageTag of Object.keys(clientJson.indicesByLanguageTag)) {
+      indicesByLanguageTag[languageTag] = {
+        documents: clientJson.indicesByLanguageTag[languageTag].documents,
+        index: Index.load(clientJson.indicesByLanguageTag[languageTag].index),
+      };
+    }
+    return new LunrSearchEngine(indicesByLanguageTag);
   }
 
   toClientJson(): { [index: string]: any; type: SearchEngineType } {
+    const indicesByLanguageTag: Record<string, any> = {};
+    for (const languageTag of Object.keys(this.indicesByLanguageTag)) {
+      indicesByLanguageTag[languageTag] = {
+        documents: this.indicesByLanguageTag[languageTag].documents,
+        index: this.indicesByLanguageTag[languageTag].index.toJSON(),
+      };
+    }
     return {
-      indicesByLanguageTag: this.indicesByLanguageTag,
+      indicesByLanguageTag,
       type: "Lunr",
     };
   }
