@@ -52,6 +52,9 @@ export const behavesLikeModelSet = (modelSet: ModelSet) => {
   });
 
   it("should get language tags", async () => {
-    expect(await modelSet.languageTags()).not.toHaveLength(0);
+    const languageTags = await modelSet.languageTags();
+    expect(languageTags).not.toHaveLength(0);
+    expect(languageTags).toContain("en");
+    expect(languageTags).toContain("fr");
   });
 };

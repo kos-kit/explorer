@@ -9,20 +9,22 @@ export abstract class SparqlLabeledModel<RdfJsModelT extends RdfJsLabeledModel>
   extends SparqlModel<RdfJsModelT>
   implements LabeledModel
 {
-  async altLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
-    return (await this.getOrCreateRdfJsModel()).altLabels(languageTag);
+  async altLabels(kwds?: {
+    languageTag?: LanguageTag;
+  }): Promise<readonly Label[]> {
+    return (await this.getOrCreateRdfJsModel()).altLabels(kwds);
   }
 
-  async hiddenLabels(languageTag: string): Promise<readonly Label[]> {
-    return (await this.getOrCreateRdfJsModel()).altLabels(languageTag);
+  async hiddenLabels(kwds?: {
+    languageTag?: LanguageTag;
+  }): Promise<readonly Label[]> {
+    return (await this.getOrCreateRdfJsModel()).altLabels(kwds);
   }
 
-  async prefLabel(languageTag: string): Promise<Label | null> {
-    return (await this.getOrCreateRdfJsModel()).prefLabel(languageTag);
-  }
-
-  async prefLabels(languageTag: string): Promise<readonly Label[]> {
-    return (await this.getOrCreateRdfJsModel()).prefLabels(languageTag);
+  async prefLabels(kwds?: {
+    languageTag?: LanguageTag;
+  }): Promise<readonly Label[]> {
+    return (await this.getOrCreateRdfJsModel()).prefLabels(kwds);
   }
 
   protected get rdfJsDatasetQueryString(): string {

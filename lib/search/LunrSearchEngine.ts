@@ -41,12 +41,12 @@ export class LunrSearchEngine implements SearchEngine {
         model: LabeledModel & { identifier: Identifier },
         type: SearchResult["type"],
       ): Promise<IndexDocument | null> => {
-        const prefLabels = await model.prefLabels(languageTag);
+        const prefLabels = await model.prefLabels({ languageTag });
         if (prefLabels.length === 0) {
           return null;
         }
-        const altLabels = await model.altLabels(languageTag);
-        const hiddenLabels = await model.hiddenLabels(languageTag);
+        const altLabels = await model.altLabels({ languageTag });
+        const hiddenLabels = await model.hiddenLabels({ languageTag });
 
         const identifierString = identifierToString(model.identifier);
 

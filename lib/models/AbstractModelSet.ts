@@ -2,8 +2,12 @@ import { ModelSet } from "@/lib/models/ModelSet";
 import { Concept } from "./Concept";
 import { ConceptScheme } from "./ConceptScheme";
 import { Identifier } from "./Identifier";
+import { LanguageTag } from "./LanguageTag";
+import { LabeledModel } from "./LabeledModel";
 
 export abstract class AbstractModelSet implements ModelSet {
+  protected cachedLanguageTags: readonly LanguageTag[] | null = null;
+
   abstract conceptByIdentifier(identifier: Identifier): Promise<Concept>;
 
   async *concepts(): AsyncGenerator<Concept, any, unknown> {
@@ -31,5 +35,31 @@ export abstract class AbstractModelSet implements ModelSet {
 
   abstract conceptSchemes(): Promise<readonly ConceptScheme[]>;
 
-  abstract languageTags(): Promise<readonly string[]>;
+  async languageTags(): Promise<readonly string[]> {
+    if (this.cachedLanguageTags !== null) {
+      return this.cachedLanguageTags;
+    }
+
+    // Sample models in the set for their labels' language tags
+    const sampleLabeledModels: LabeledModel[] = [];
+    sampleLabeledModels.push(...(await this.conceptSchemes()));
+    sampleLabeledModels.push(
+      ...(await this.conceptsPage({ limit: 100, offset: 0 })),
+    );
+
+    const sampleLanguageTags: Set<LanguageTag> = new Set();
+    for (const sampleLabeledModel of sampleLabeledModels) {
+      for (const sampleLabels of [
+        await sampleLabeledModel.prefLabels(),
+        await sampleLabeledModel.altLabels(),
+      ]) {
+        for (const sampleLabel of sampleLabels) {
+          sampleLanguageTags.add(sampleLabel.literalForm.language);
+        }
+      }
+    }
+
+    this.cachedLanguageTags = [...sampleLanguageTags];
+    return this.cachedLanguageTags;
+  }
 }

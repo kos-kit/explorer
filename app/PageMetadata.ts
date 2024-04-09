@@ -14,7 +14,7 @@ export class PageMetadata {
     concept: Concept;
     languageTag: LanguageTag;
   }): Promise<Metadata> {
-    const rootPageMetadata = await PageMetadata.root({ languageTag });
+    const rootPageMetadata = await PageMetadata.languageTag({ languageTag });
     return {
       title: `${rootPageMetadata.title}: Concept: ${await displayLabel({ languageTag, model: concept })}`,
     } satisfies Metadata;
@@ -27,7 +27,7 @@ export class PageMetadata {
     conceptScheme: ConceptScheme;
     languageTag: LanguageTag;
   }): Promise<Metadata> {
-    const rootPageMetadata = await PageMetadata.root({ languageTag });
+    const rootPageMetadata = await PageMetadata.languageTag({ languageTag });
     return {
       title: `${rootPageMetadata.title}: Concept Scheme: ${await displayLabel({ languageTag, model: conceptScheme })}`,
     } satisfies Metadata;
@@ -70,7 +70,7 @@ export class PageMetadata {
     } satisfies Metadata;
   }
 
-  static async root({
+  static async languageTag({
     languageTag,
   }: {
     languageTag: LanguageTag;
@@ -80,7 +80,7 @@ export class PageMetadata {
     let title: string = "SKOS";
     if (conceptSchemes.length === 1) {
       const conceptScheme = conceptSchemes[0];
-      const prefLabels = await conceptScheme.prefLabels(languageTag);
+      const prefLabels = await conceptScheme.prefLabels({ languageTag });
       if (prefLabels.length > 0) {
         title = prefLabels[0].literalForm.value;
       }

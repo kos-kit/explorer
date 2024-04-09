@@ -10,7 +10,7 @@ export async function displayLabel({
   model: LabeledModel & { readonly identifier: Identifier };
 }): Promise<string> {
   for (const languageTag_ of [languageTag, ""]) {
-    const prefLabels = await model.prefLabels(languageTag_);
+    const prefLabels = await model.prefLabels({ languageTag: languageTag_ });
     if (prefLabels.length > 0) {
       return prefLabels[0].literalForm.value;
     }

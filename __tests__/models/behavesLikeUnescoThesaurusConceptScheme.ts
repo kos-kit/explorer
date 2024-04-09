@@ -24,11 +24,11 @@ export const behavesLikeUnescoThesaurusConceptScheme = (
   it("should have multiple prefLabels", async () => {
     const conceptScheme = await lazyConceptScheme();
 
-    const enPrefLabels = await conceptScheme.prefLabels("en");
+    const enPrefLabels = await conceptScheme.prefLabels({ languageTag: "en" });
     expect(enPrefLabels).toHaveLength(1);
     expect(enPrefLabels[0].literalForm.value).toStrictEqual("UNESCO Thesaurus");
 
-    const frPrefLabels = await conceptScheme.prefLabels("fr");
+    const frPrefLabels = await conceptScheme.prefLabels({ languageTag: "fr" });
     expect(frPrefLabels).toHaveLength(1);
     expect(frPrefLabels[0].literalForm.value).toStrictEqual(
       "Thésaurus de l'UNESCO",

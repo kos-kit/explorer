@@ -28,13 +28,13 @@ export const behavesLikeUnescoThesaurusConcept10018 = (
   it("should have multiple alt labels", async () => {
     const concept = await lazyConcept();
 
-    const arAltLabels = await concept.altLabels("ar");
+    const arAltLabels = await concept.altLabels({ languageTag: "ar" });
     expect(arAltLabels).toHaveLength(1);
     expect(arAltLabels[0].literalForm.value).toStrictEqual(
       "تقييم التأثير على البيئة",
     );
 
-    const esAltLabels = await concept.altLabels("es");
+    const esAltLabels = await concept.altLabels({ languageTag: "es" });
     expect(esAltLabels).toHaveLength(1);
     expect(esAltLabels[0].literalForm.value).toStrictEqual(
       "Valoración del impacto ambiental",
@@ -55,13 +55,13 @@ export const behavesLikeUnescoThesaurusConcept10018 = (
   it("should have multiple prefLabels", async () => {
     const concept = await lazyConcept();
 
-    const enPrefLabels = await concept.prefLabels("en");
+    const enPrefLabels = await concept.prefLabels({ languageTag: "en" });
     expect(enPrefLabels).toHaveLength(1);
     expect(enPrefLabels[0].literalForm.value).toStrictEqual(
       "Environmental impact assessment",
     );
 
-    const frPrefLabels = await concept.prefLabels("fr");
+    const frPrefLabels = await concept.prefLabels({ languageTag: "fr" });
     expect(frPrefLabels).toHaveLength(1);
     expect(frPrefLabels[0].literalForm.value).toStrictEqual(
       "Évaluation de l'impact sur l'environnement",
