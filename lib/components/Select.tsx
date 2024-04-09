@@ -21,7 +21,7 @@ const DropdownIndicator = <
 ) => {
   return (
     <components.DropdownIndicator {...props}>
-      <ChevronDownIcon />
+      <ChevronDownIcon className="h-5 w-5" />
     </components.DropdownIndicator>
   );
 };
@@ -35,7 +35,7 @@ const ClearIndicator = <
 ) => {
   return (
     <components.ClearIndicator {...props}>
-      <XMarkIcon />
+      <XMarkIcon className="h-5 w-5" />
     </components.ClearIndicator>
   );
 };
@@ -49,13 +49,13 @@ const MultiValueRemove = <
 ) => {
   return (
     <components.MultiValueRemove {...props}>
-      <XMarkIcon />
+      <XMarkIcon className="h-5 w-5" />
     </components.MultiValueRemove>
   );
 };
 
 const controlStyles = {
-  base: "border rounded-lg bg-white hover:cursor-pointer",
+  base: "border rounded-lg bg-white hover:cursor-pointer min-w-64",
   focus: "border-primary-600 ring-1 ring-primary-500",
   nonFocus: "border-gray-300 hover:border-gray-400",
 };
