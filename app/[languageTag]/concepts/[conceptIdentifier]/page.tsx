@@ -137,19 +137,14 @@ export async function generateMetadata({
 export async function generateStaticParams(): Promise<ConceptPageParams[]> {
   const staticParams: ConceptPageParams[] = [];
 
-  const conceptsCount = await modelSet.conceptsCount();
   const languageTags = await modelSet.languageTags();
-  const limit = 100;
-  let offset = 0;
-  while (offset < conceptsCount) {
-    for (const concept of await modelSet.concepts({ limit, offset })) {
-      for (const languageTag of languageTags) {
-        staticParams.push({
-          conceptIdentifier: filenamify(identifierToString(concept.identifier)),
-          languageTag,
-        });
-      }
-      offset++;
+
+  for await (const concept of modelSet.concepts()) {
+    for (const languageTag of languageTags) {
+      staticParams.push({
+        conceptIdentifier: filenamify(identifierToString(concept.identifier)),
+        languageTag,
+      });
     }
   }
 
