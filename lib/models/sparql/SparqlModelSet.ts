@@ -131,8 +131,4 @@ WHERE {
 
     return conceptSchemes;
   }
-
-  languageTags(): Promise<readonly string[]> {
-    return Promise.resolve(["en"]);
-  }
 }

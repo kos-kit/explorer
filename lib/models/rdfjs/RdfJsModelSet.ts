@@ -94,8 +94,4 @@ export class RdfJsModelSet extends AbstractModelSet {
       });
     }
   }
-
-  languageTags(): Promise<readonly LanguageTag[]> {
-    return Promise.resolve(["en"]);
-  }
 }
