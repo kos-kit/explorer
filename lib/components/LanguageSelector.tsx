@@ -1,14 +1,25 @@
+"use client";
+
 // Adapted from https://simplelocalize.io/blog/posts/create-language-selector-with-nextjs-and-tailwind/
 
 import React, { useEffect, useState } from "react";
-import "node_modules/flag-icons/css/flag-icons.min.css";
-import styles from "./LanguageSelector.module.scss";
+import "@/node_modules/flag-icons/css/flag-icons.min.css";
 import { LanguageTag } from "@/lib/models/LanguageTag";
+import { usePathname } from "next/navigation";
+import languageTagLookup from "language-tags";
 
 function FlagIcon({ countryCode }: { countryCode: string }) {
   return (
     <span
-      className={`fi fis ${styles.fiCircle} inline-block mr-2 fi-${countryCode}`}
+      className={`fi fis inline-block mr-2 fi-${countryCode}`}
+      style={{
+        width: `20px !important`,
+        height: `20px !important`,
+        fontSize: `20px !important`,
+        borderRadius: "100%",
+        border: "none",
+        boxShadow: "inset 0 0 0 2px rgba(0, 0, 0, .06)",
+      }}
     />
   );
 }
@@ -25,19 +36,28 @@ function languageTagCountryCode(languageTag: LanguageTag): string {
 }
 
 function languageTagLabel(languageTag: LanguageTag): string {
+  const lookup = languageTagLookup(languageTag);
+  for (const description of lookup.descriptions()) {
+    return `${description} (${languageTag})`;
+  }
+  for (const subtag of lookup.subtags()) {
+    for (const description of subtag.descriptions()) {
+      return `${description} (${languageTag})`;
+    }
+  }
   return languageTag;
 }
 
 export function LanguageSelector({
   availableLanguageTags,
-  currentLanguageTag,
-  onChange,
 }: {
   availableLanguageTags: readonly LanguageTag[];
-  currentLanguageTag: LanguageTag;
-  onChange: (newLanguageTag: LanguageTag) => void;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const pathnameSplit = pathname.split("/");
+  const currentLanguageTag = pathnameSplit[1];
 
   useEffect(() => {
     const handleWindowClick = (event: any) => {
@@ -52,6 +72,10 @@ export function LanguageSelector({
       window.removeEventListener("click", handleWindowClick);
     };
   }, []);
+
+  if (pathname === "/") {
+    return null;
+  }
 
   return (
     <div className="flex items-center z-40">
@@ -92,7 +116,7 @@ export function LanguageSelector({
             aria-labelledby="language-selector"
           >
             <div className="py-1 grid grid-cols-2 gap-2" role="none">
-              {availableLanguageTags.map((languageTag) => (
+              {availableLanguageTags.map((languageTag, languageTagI) => (
                 <button
                   key={languageTag}
                   onClick={() => onChange(languageTag)}
@@ -100,7 +124,7 @@ export function LanguageSelector({
                     currentLanguageTag === languageTag
                       ? "bg-gray-100 text-gray-900"
                       : "text-gray-700"
-                  } block px-4 py-2 text-sm text-left items-center inline-flex hover:bg-gray-100 ${index % 2 === 0 ? "rounded-r" : "rounded-l"}`}
+                  } block px-4 py-2 text-sm text-left items-center inline-flex hover:bg-gray-100 ${languageTagI % 2 === 0 ? "rounded-r" : "rounded-l"}`}
                   role="menuitem"
                 >
                   <FlagIcon countryCode={languageTagCountryCode(languageTag)} />
