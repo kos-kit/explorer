@@ -36,10 +36,11 @@ export default async function searchEngine(): Promise<SearchEngine> {
     console.info("recreated search engine from JSON at", jsonFilePath);
   } else {
     console.info("creating search engine");
-    searchEngine = await LunrSearchEngine.create(modelSet, {
-      conceptsLimit: 10,
-    });
+    searchEngine = await LunrSearchEngine.create(modelSet);
+    console.info("created search engine");
+    console.info("writing search engine JSON to", jsonFilePath);
     await fs.writeFile(jsonFilePath, JSON.stringify(searchEngine.toJson()));
+    console.info("wrote search engine JSON to", jsonFilePath);
   }
 
   searchEngineGlobalRef.value = searchEngine;

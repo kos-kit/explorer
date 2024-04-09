@@ -7,7 +7,9 @@ import { SearchBox } from "./SearchBox";
 import searchEngine from "@/app/searchEngine";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
-  const searchEngine_ = await searchEngine();
+  const searchEngineJson = JSON.parse(
+    JSON.stringify((await searchEngine()).toJson()),
+  );
 
   const title: string = (await PageMetadata.root({ languageTag }))
     .title as string;
@@ -28,7 +30,7 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
           {/* <div className="relative block"> */}
           <SearchBox
             languageTag={languageTag}
-            searchEngineJson={searchEngine_.toJson()}
+            searchEngineJson={searchEngineJson}
           />
           {/* <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
               <MagnifyingGlassIcon className="w-4 h-4 text-gray-500 dark:text-gray-400" />
