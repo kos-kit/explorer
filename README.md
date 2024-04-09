@@ -1,1 +1,1 @@
-# skos-app
+# @kos-kit/explorer

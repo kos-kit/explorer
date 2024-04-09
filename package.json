@@ -45,7 +45,7 @@
     "ts-invariant": "^0.10.3",
     "typescript": "^5"
   },
-  "name": "skos-app",
+  "name": "@kos-kit/explorer",
   "private": true,
   "resolutions": {
     "wrap-ansi": "7.0.0",
