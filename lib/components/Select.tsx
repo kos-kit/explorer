@@ -2,7 +2,6 @@
 
 import {
   ClearIndicatorProps,
-  DropdownIndicatorProps,
   GroupBase,
   MultiValueRemoveProps,
   components,
