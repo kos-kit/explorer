@@ -1,0 +1,6 @@
+services:
+  explorer:
+    build: .
+    env_file:
+      - .env
+    image: kos-kit/explorer

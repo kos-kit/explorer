@@ -1,0 +1,17 @@
+/build/
+/data/
+/docker-compose.yml
+/Dockerfile
+/.dockerignore
+**/.DS_Store
+/.git/
+/.github/
+**/.gitignore
+/LICENSE
+*.log
+/.next/
+/node_modules/
+/out/
+/script/
+/setup.cfg
+/__tests__/
