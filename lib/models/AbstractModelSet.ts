@@ -2,8 +2,11 @@ import { ModelSet } from "@/lib/models/ModelSet";
 import { Concept } from "./Concept";
 import { ConceptScheme } from "./ConceptScheme";
 import { Identifier } from "./Identifier";
+import { LanguageTag } from "./LanguageTag";
 
 export abstract class AbstractModelSet implements ModelSet {
+  protected cachedLanguageTags: readonly LanguageTag[] | null = null;
+
   abstract conceptByIdentifier(identifier: Identifier): Promise<Concept>;
 
   async *concepts(): AsyncGenerator<Concept, any, unknown> {
@@ -31,5 +34,9 @@ export abstract class AbstractModelSet implements ModelSet {
 
   abstract conceptSchemes(): Promise<readonly ConceptScheme[]>;
 
-  abstract languageTags(): Promise<readonly string[]>;
+  async languageTags(): Promise<readonly string[]> {
+    if (this.cachedLanguageTags !== null) {
+      return this.cachedLanguageTags;
+    }
+  }
 }

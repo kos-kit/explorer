@@ -12,27 +12,44 @@ export abstract class RdfJsLabeledModel
   extends RdfJsModel
   implements LabeledModel
 {
-  altLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
-    return new Promise((resolve) =>
-      resolve([...this.labels(languageTag, skos.altLabel, skosxl.altLabel)]),
-    );
-  }
-
-  hiddenLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
+  altLabels(kwds?: { languageTag?: LanguageTag }): Promise<readonly Label[]> {
     return new Promise((resolve) =>
       resolve([
-        ...this.labels(languageTag, skos.hiddenLabel, skosxl.hiddenLabel),
+        ...this.labels({
+          languageTag: kwds?.languageTag,
+          skosPredicate: skos.altLabel,
+          skosXlPredicate: skosxl.altLabel,
+        }),
       ]),
     );
   }
 
-  private *labels(
-    languageTag: LanguageTag,
-    skosPredicate: NamedNode,
-    skosXlPredicate: NamedNode,
-  ): Iterable<Label> {
+  hiddenLabels(kwds?: {
+    languageTag?: LanguageTag;
+  }): Promise<readonly Label[]> {
+    return new Promise((resolve) =>
+      resolve([
+        ...this.labels({
+          languageTag: kwds?.languageTag,
+          skosPredicate: skos.hiddenLabel,
+          skosXlPredicate: skosxl.hiddenLabel,
+        }),
+      ]),
+    );
+  }
+
+  private *labels({
+    languageTag,
+    skosPredicate,
+    skosXlPredicate,
+  }: {
+    languageTag?: LanguageTag;
+    skosPredicate: NamedNode;
+    skosXlPredicate: NamedNode;
+  }): Iterable<Label> {
     yield* this.filterAndMapObjects(skosPredicate, (term) =>
-      term.termType === "Literal" && term.language === languageTag
+      term.termType === "Literal" &&
+      (!languageTag || term.language === languageTag)
         ? new LiteralLabel(term)
         : null,
     );
@@ -50,29 +67,34 @@ export abstract class RdfJsLabeledModel
         null,
         null,
       )) {
-        if (literalFormQuad.object.termType === "Literal") {
-          return new RdfJsLabel({
-            dataset: this.dataset,
-            identifier: labelIdentifier,
-            literalForm: literalFormQuad.object,
-          });
+        if (literalFormQuad.object.termType !== "Literal") {
+          continue;
         }
+
+        if (languageTag && literalFormQuad.object.language !== languageTag) {
+          continue;
+        }
+
+        return new RdfJsLabel({
+          dataset: this.dataset,
+          identifier: labelIdentifier,
+          literalForm: literalFormQuad.object,
+        });
       }
 
       return null;
     });
   }
 
-  async prefLabel(languageTag: LanguageTag): Promise<Label | null> {
-    for (const prefLabel of await this.prefLabels(languageTag)) {
-      return prefLabel;
-    }
-    return null;
-  }
-
-  prefLabels(languageTag: LanguageTag): Promise<readonly Label[]> {
+  prefLabels(kwds?: { languageTag?: LanguageTag }): Promise<readonly Label[]> {
     return new Promise((resolve) =>
-      resolve([...this.labels(languageTag, skos.prefLabel, skosxl.prefLabel)]),
+      resolve([
+        ...this.labels({
+          languageTag: kwds?.languageTag,
+          skosPredicate: skos.prefLabel,
+          skosXlPredicate: skosxl.prefLabel,
+        }),
+      ]),
     );
   }
 }

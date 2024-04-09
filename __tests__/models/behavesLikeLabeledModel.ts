@@ -13,17 +13,17 @@ export const behavesLikeLabeledModel = (
 
   it("should get altLabels", async () => {
     const model = await lazyModel();
-    expectLabels(await model.altLabels("en"));
+    expectLabels(await model.altLabels({ languageTag: "en" }));
   });
 
   it("should get hiddenLabels", async () => {
     const model = await lazyModel();
-    expectLabels(await model.hiddenLabels("en"));
+    expectLabels(await model.hiddenLabels({ languageTag: "en" }));
   });
 
   it("should get prefLabels", async () => {
     const model = await lazyModel();
-    const prefLabels = await model.prefLabels("en");
+    const prefLabels = await model.prefLabels({ languageTag: "en" });
     expect(prefLabels).not.toHaveLength(0);
     expectLabels(prefLabels);
   });

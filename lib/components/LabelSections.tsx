@@ -13,9 +13,9 @@ export async function LabelSections({
   const sections: React.ReactElement[] = [];
 
   for (const { labels, type } of [
-    { labels: await model.prefLabels(languageTag), type: "Preferred" },
-    { labels: await model.altLabels(languageTag), type: "Alternate" },
-    { labels: await model.hiddenLabels(languageTag), type: "Hidden" },
+    { labels: await model.prefLabels({ languageTag }), type: "Preferred" },
+    { labels: await model.altLabels({ languageTag }), type: "Alternate" },
+    { labels: await model.hiddenLabels({ languageTag }), type: "Hidden" },
   ]) {
     if (labels.length === 0 || (type == "Preferred" && labels.length === 1)) {
       continue;

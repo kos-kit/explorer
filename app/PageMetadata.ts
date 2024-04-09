@@ -80,7 +80,7 @@ export class PageMetadata {
     let title: string = "SKOS";
     if (conceptSchemes.length === 1) {
       const conceptScheme = conceptSchemes[0];
-      const prefLabels = await conceptScheme.prefLabels(languageTag);
+      const prefLabels = await conceptScheme.prefLabels({ languageTag });
       if (prefLabels.length > 0) {
         title = prefLabels[0].literalForm.value;
       }
