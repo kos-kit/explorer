@@ -11,7 +11,7 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
     JSON.stringify((await searchEngine()).toJson()),
   );
 
-  const title: string = (await PageMetadata.root({ languageTag }))
+  const title: string = (await PageMetadata.languageTag({ languageTag }))
     .title as string;
 
   return (

@@ -12,7 +12,7 @@ export class PageHrefs {
     conceptIdentifier: Identifier;
     languageTag: LanguageTag;
   }): string {
-    return `/${languageTag}/concepts/${filenamify(identifierToString(conceptIdentifier))}`;
+    return `${PageHrefs.languageTag({ languageTag })}/concepts/${filenamify(identifierToString(conceptIdentifier))}`;
   }
 
   static conceptScheme({
@@ -22,7 +22,7 @@ export class PageHrefs {
     conceptSchemeIdentifier: Identifier;
     languageTag: LanguageTag;
   }): string {
-    return `/${languageTag}/conceptSchemes/${filenamify(identifierToString(conceptSchemeIdentifier))}`;
+    return `${PageHrefs.languageTag({ languageTag })}/conceptSchemes/${filenamify(identifierToString(conceptSchemeIdentifier))}`;
   }
 
   static conceptSchemeTopConcepts({
@@ -34,11 +34,7 @@ export class PageHrefs {
     languageTag: LanguageTag;
     page: number;
   }) {
-    return (
-      PageHrefs.conceptScheme({ conceptSchemeIdentifier, languageTag }) +
-      "/topConcepts/" +
-      page
-    );
+    return `${PageHrefs.conceptScheme({ conceptSchemeIdentifier, languageTag })}/topConcepts/${page}`;
   }
 
   static conceptSemanticRelations({
@@ -51,6 +47,10 @@ export class PageHrefs {
     semanticRelationProperty: SemanticRelationProperty;
   }) {
     return `${PageHrefs.concept({ conceptIdentifier, languageTag })}/semanticRelations/${semanticRelationProperty.name}`;
+  }
+
+  static languageTag({ languageTag }: { languageTag: LanguageTag }) {
+    return `${PageHrefs.root}${languageTag}`;
   }
 
   static get root() {
