@@ -9,22 +9,22 @@ import {
 } from "react-select";
 import ReactSelect, { AsyncProps } from "react-select/async";
 import clsx from "clsx";
-import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 // Styling adapted from https://www.jussivirtanen.fi/writing/styling-react-select-with-tailwind
-const DropdownIndicator = <
-  Option = unknown,
-  IsMulti extends boolean = boolean,
-  Group extends GroupBase<Option> = GroupBase<Option>,
->(
-  props: DropdownIndicatorProps<Option, IsMulti, Group>,
-) => {
-  return (
-    <components.DropdownIndicator {...props}>
-      <ChevronDownIcon className="h-5 w-5" />
-    </components.DropdownIndicator>
-  );
-};
+// const DropdownIndicator = <
+//   Option = unknown,
+//   IsMulti extends boolean = boolean,
+//   Group extends GroupBase<Option> = GroupBase<Option>,
+// >(
+//   props: DropdownIndicatorProps<Option, IsMulti, Group>,
+// ) => {
+//   return (
+//     <components.DropdownIndicator {...props}>
+//       <ChevronDownIcon className="h-5 w-5" />
+//     </components.DropdownIndicator>
+//   );
+// };
 
 const ClearIndicator = <
   Option = unknown,
@@ -92,7 +92,11 @@ export function Select<
 >(props: AsyncProps<Option, IsMulti, Group>) {
   return (
     <ReactSelect
-      components={{ DropdownIndicator, ClearIndicator, MultiValueRemove }}
+      components={{
+        DropdownIndicator: null, //DropdownIndicator,
+        ClearIndicator,
+        MultiValueRemove,
+      }}
       styles={{
         input: (base) => ({
           ...base,
