@@ -8,7 +8,6 @@ import { Concept } from "@/lib/models/Concept";
 import { RdfJsConcept } from "@/lib/models/rdfjs/RdfJsConcept";
 import { getRdfInstances } from "./getRdfInstances";
 import { paginateIterable } from "@/lib/utilities/paginateIterable";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { AbstractModelSet } from "@/lib/models/AbstractModelSet";
 
 export class RdfJsModelSet extends AbstractModelSet {
