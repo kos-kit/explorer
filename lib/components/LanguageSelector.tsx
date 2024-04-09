@@ -5,8 +5,8 @@
 import React, { useEffect, useState } from "react";
 import "@/node_modules/flag-icons/css/flag-icons.min.css";
 import { LanguageTag } from "@/lib/models/LanguageTag";
-import { usePathname } from "next/navigation";
-import languageTagLookup from "language-tags";
+import { usePathname, useRouter } from "next/navigation";
+import { getLangNameFromCode } from "language-name-map";
 
 function FlagIcon({ countryCode }: { countryCode: string }) {
   return (
@@ -36,16 +36,12 @@ function languageTagCountryCode(languageTag: LanguageTag): string {
 }
 
 function languageTagLabel(languageTag: LanguageTag): string {
-  const lookup = languageTagLookup(languageTag);
-  for (const description of lookup.descriptions()) {
-    return `${description} (${languageTag})`;
+  const langName = getLangNameFromCode(languageTag);
+  if (langName) {
+    return `${langName.native} (${languageTag})`;
+  } else {
+    return languageTag;
   }
-  for (const subtag of lookup.subtags()) {
-    for (const description of subtag.descriptions()) {
-      return `${description} (${languageTag})`;
-    }
-  }
-  return languageTag;
 }
 
 export function LanguageSelector({
@@ -55,6 +51,7 @@ export function LanguageSelector({
 }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
 
   const pathnameSplit = pathname.split("/");
   const currentLanguageTag = pathnameSplit[1];
@@ -76,6 +73,12 @@ export function LanguageSelector({
   if (pathname === "/") {
     return null;
   }
+
+  const onChange = (newLanguageTag: LanguageTag) => {
+    router.push(
+      `/${newLanguageTag}${pathnameSplit.length > 2 ? "/" + pathnameSplit.slice(2).join("/") : ""}`,
+    );
+  };
 
   return (
     <div className="flex items-center z-40">

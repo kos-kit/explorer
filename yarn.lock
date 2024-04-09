@@ -3596,6 +3596,11 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==
 
+"@types/language-name-map@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@types/language-name-map/-/language-name-map-0.3.3.tgz#3ed878760250bc48b5839cfc67d787cf248c3acd"
+  integrity sha512-yb7ehfm8ih6/Il8qsOekqlyBNzJMVtpb0swgLFTkwiEEVnSPWZxmyv8tcLYxWBNHwbYOzus4Drnc6jASCOAq1Q==
+
 "@types/lunr@^2.3.7":
   version "2.3.7"
   resolved "https://registry.yarnpkg.com/@types/lunr/-/lunr-2.3.7.tgz#378a98ecf7a9fafc42466f67f73173c34a6265a0"
@@ -6696,6 +6701,11 @@ kuler@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/kuler/-/kuler-2.0.0.tgz#e2c570a3800388fb44407e851531c1d670b061b3"
   integrity sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==
+
+language-name-map@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/language-name-map/-/language-name-map-0.3.0.tgz#a9cfc40180ba1c0e6876b4916cc9c0c04d0e711c"
+  integrity sha512-uoBHtfY6h4S2RoIpyqvQGhynX2hshQu/9S4ySbppGxG5VwEsiWZJ83xSjzx25Mb+Bmc+WxpQC0H54eNZVMWLuA==
 
 language-subtag-registry@^0.3.20:
   version "0.3.22"
