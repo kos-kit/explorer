@@ -22,7 +22,7 @@ export class LunrIndexCompactor {
       const id = item[0];
       const vectors = item[1];
       let prev: any = null;
-      const expanded = vectors.map((v, ii) => {
+      const expanded = vectors.map((v: any, ii: number) => {
         if (ii % 2 === 0) {
           if (v === null) {
             v = prev + 1;
@@ -42,7 +42,7 @@ export class LunrIndexCompactor {
           const matches: any = {};
 
           let docRef: any = null;
-          item[fieldIdx + 1].forEach((v, ii) => {
+          item[fieldIdx + 1].forEach((v: any, ii: number) => {
             if (ii % 2 === 0) {
               docRef = fieldVectors[v][0].slice(`${field}/`.length);
             } else {
@@ -79,7 +79,7 @@ export class LunrIndexCompactor {
       const id = item[0];
       const vectors = item[1];
       let prev: any = null;
-      const compacted = vectors.map((v: any, ii) => {
+      const compacted = vectors.map((v: any, ii: number) => {
         if (ii % 2 === 0) {
           if (prev !== null && v === prev + 1) {
             prev += 1;
@@ -124,7 +124,10 @@ export class LunrIndexCompactor {
       }),
     );
 
-    const indexes = Array.from(items.keys()).sort((a, b) => a - b);
+    const indexes = Array.from(items.keys()).sort(
+      // @ts-expect-error Unknown types
+      (a, b) => a - b,
+    );
 
     const compacted = Array.from(indexes, (k) => {
       const item = items.get(k);

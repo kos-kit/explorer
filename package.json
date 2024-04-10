@@ -7,6 +7,7 @@
     "@rdfjs/types": "^1.1.0",
     "base-x": "^3.0.9",
     "clsx": "^2.1.0",
+    "envalid": "^8.0.0",
     "flag-icons": "^7.2.1",
     "language-name-map": "^0.3.0",
     "lunr": "^2.3.9",
@@ -52,7 +53,7 @@
     "string-width": "4.1.0"
   },
   "scripts": {
-    "build": "next build",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=16384\" next build",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",

@@ -1,0 +1,16 @@
+author: Minor Gordon
+branding:
+  icon: loader
+description: Generate a static site for browsing and searching SKOS data
+inputs:
+  data_paths:
+    description: colon-separated paths to one or more RDF data files
+      or directories containing data files
+    required: true
+  next_base_path:
+    description: path prefix (Next.js basePath) the app will be deployed under
+    required: false
+name: Generate a static site for browsing and searching SKOS data
+runs:
+  image: Dockerfile
+  using: docker

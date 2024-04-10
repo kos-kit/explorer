@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: process.env.INPUT_NEXT_BASE_PATH,
+  output: "export",
+  staticPageGenerationTimeout: 600,
   webpack: (config, { isServer, webpack }) => {
     config.plugins.push(
       new webpack.IgnorePlugin({
@@ -9,8 +12,9 @@ const nextConfig = {
           }
           return false; // Don't ignore
         },
-      })
+      }),
     );
+
     return config;
   },
 };

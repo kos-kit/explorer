@@ -1,0 +1,6 @@
+services:
+  explorer:
+    build: .
+    image: kos-kit/explorer
+    volumes:
+      - ./data:/app/data:ro
