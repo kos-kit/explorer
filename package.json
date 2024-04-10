@@ -53,7 +53,7 @@
     "string-width": "4.1.0"
   },
   "scripts": {
-    "build": "NODE_OPTIONS=\"--max-old-space-size=16384\" next build",
+    "build": "node --max-old-space-size=8192 node_modules/next/dist/bin/next build",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
