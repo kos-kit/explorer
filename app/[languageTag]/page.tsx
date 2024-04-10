@@ -19,7 +19,9 @@ export default async function LanguageTagPage() {
       />
     );
   }
-  throw new RangeError("# of concept schemes: " + conceptSchemes.length);
+  throw new RangeError(
+    `TODO: generate concept scheme links for ${conceptSchemes.length} concept schemes`,
+  );
 }
 
 export async function generateMetadata({
