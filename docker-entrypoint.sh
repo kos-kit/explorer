@@ -2,5 +2,6 @@
 
 set -e
 
+cd /app
 yarn run build
-mv out _site
+
