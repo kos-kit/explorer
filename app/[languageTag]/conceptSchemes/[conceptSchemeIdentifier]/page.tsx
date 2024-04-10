@@ -48,20 +48,19 @@ export async function generateStaticParams(): Promise<
 > {
   const staticParams: ConceptSchemePageParams[] = [];
 
-  const conceptSchemes = await modelSet.conceptSchemes();
-  if (conceptSchemes.length > 1) {
-    const languageTags = await modelSet.languageTags();
-    for (const conceptScheme of conceptSchemes) {
-      for (const languageTag of languageTags) {
-        staticParams.push({
-          conceptSchemeIdentifier: filenamify(
-            identifierToString(conceptScheme.identifier),
-          ),
-          languageTag,
-        });
-      }
+  const languageTags = await modelSet.languageTags();
+  // If there's only one concept scheme the /[languageTag]/ page will show its ConceptPage,
+  // but we still have to generate another ConceptPage here because Next doesn't like an empty staticParams.
+  for (const conceptScheme of await modelSet.conceptSchemes()) {
+    for (const languageTag of languageTags) {
+      staticParams.push({
+        conceptSchemeIdentifier: filenamify(
+          identifierToString(conceptScheme.identifier),
+        ),
+        languageTag,
+      });
     }
-  } // Else the root page will be the concept scheme
+  }
 
   return staticParams;
 }
