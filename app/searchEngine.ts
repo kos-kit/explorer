@@ -29,11 +29,11 @@ export default async function searchEngine(): Promise<SearchEngine> {
 
   let searchEngine: SearchEngine;
   if (jsonFileContents) {
-    console.info("recreating search engine from JSON at", jsonFilePath);
+    console.debug("recreating search engine from JSON at", jsonFilePath);
     searchEngine = createSearchEngineFromJson(
       JSON.parse(jsonFileContents.toString()),
     );
-    console.info("recreated search engine from JSON at", jsonFilePath);
+    console.debug("recreated search engine from JSON at", jsonFilePath);
   } else {
     console.info("creating search engine");
     searchEngine = await LunrSearchEngine.create(modelSet);
