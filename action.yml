@@ -7,12 +7,6 @@ inputs:
     description: colon-separated paths to one or more RDF data files
       or directories containing data files
     required: true
-  site_directory_path:
-    default: _site
-    description:
-      Path to a directory where the generated static assets (CSS, HTML,
-      JavaScript) should be placed
-    required: false
 name: Generate a static site for browsing and searching SKOS data
 runs:
   image: Dockerfile
