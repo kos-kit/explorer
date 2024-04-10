@@ -12,30 +12,43 @@ if (!configuration.value) {
       if (value.length === 0) {
         throw new Error("not specified");
       }
-      return value.split(path.delimiter).map((filePath) => {
-        const filePathResolved = path.resolve(filePath);
-        const stat = fs.statSync(filePathResolved);
-        if (!stat.isFile()) {
-          throw new Error(`${filePathResolved} is not a file`);
+      return value.split(path.delimiter).flatMap((relativePath) => {
+        const absolutePath = path.resolve(relativePath);
+        const stat = fs.statSync(absolutePath);
+        if (stat.isFile()) {
+          return [absolutePath];
+        } else if (stat.isDirectory()) {
+          const filePaths: string[] = [];
+          for (const dirent of fs.readdirSync(absolutePath, {
+            withFileTypes: true,
+          })) {
+            if (!dirent.isFile()) {
+              continue;
+            }
+            filePaths.push(dirent.path);
+          }
+          return filePaths;
+        } else {
+          throw new Error(`${relativePath}`);
         }
-        return filePathResolved;
+        return absolutePath;
       });
     });
 
   const intValidator = envalid.makeExactValidator<number>(parseInt);
 
   const env = envalid.cleanEnv(process.env, {
-    CONCEPTS_PER_PAGE: intValidator({ default: 25 }),
-    DATA_FILE_PATHS: filePathArrayValidator(),
-    DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
-    RELATED_CONCEPTS_PER_SECTION: intValidator({ default: 10 }),
+    INPUT_CONCEPTS_PER_PAGE: intValidator({ default: 25 }),
+    DATA_PATHS: filePathArrayValidator(),
+    INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
+    INPUT_RELATED_CONCEPTS_PER_SECTION: intValidator({ default: 10 }),
   });
 
   configuration.value = {
-    dataFilePaths: env.DATA_FILE_PATHS,
-    defaultLanguageTag: env.DEFAULT_LANGUAGE_TAG,
-    conceptsPerPage: env.CONCEPTS_PER_PAGE,
-    relatedConceptsPerSection: env.RELATED_CONCEPTS_PER_SECTION,
+    dataFilePaths: env.DATA_PATHS,
+    defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
+    conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
+    relatedConceptsPerSection: env.INPUT_RELATED_CONCEPTS_PER_SECTION,
   } satisfies Configuration;
   // console.log("Configuration:", JSON.stringify(configuration.value));
 }

@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
   webpack: (config, { isServer, webpack }) => {
     config.plugins.push(
       new webpack.IgnorePlugin({
@@ -9,7 +10,7 @@ const nextConfig = {
           }
           return false; // Don't ignore
         },
-      })
+      }),
     );
     return config;
   },
