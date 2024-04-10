@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: process.env.INPUT_NEXT_BASE_PATH,
+  experimental: {
+    esmExternals: false,
+    cpus: 1,
+    workerThreads: false,
+  },
   output: "export",
-  staticPageGenerationTimeout: 600,
+  staticPageGenerationTimeout: 60 * 60, // in seconds
   webpack: (config, { isServer, webpack }) => {
     config.plugins.push(
       new webpack.IgnorePlugin({
