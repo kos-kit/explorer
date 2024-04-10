@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: process.env.INPUT_NEXT_BASE_PATH,
   output: "export",
   webpack: (config, { isServer, webpack }) => {
     config.plugins.push(
@@ -12,6 +13,7 @@ const nextConfig = {
         },
       }),
     );
+
     return config;
   },
 };
