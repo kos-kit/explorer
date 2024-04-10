@@ -3,15 +3,17 @@ import { ListBulletIcon } from "@heroicons/react/24/solid";
 import { Link } from "@/lib/components/Link";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { PageMetadata } from "@/app/PageMetadata";
-import { SearchBox } from "./SearchBox";
-import searchEngine from "@/app/searchEngine";
+// import { SearchBox } from "./SearchBox";
+// import searchEngine from "@/app/searchEngine";
 import { LanguageSelector } from "./LanguageSelector";
 import modelSet from "@/app/modelSet";
+// import { SearchEngineType } from "../search/SearchEngineType";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
-  const searchEngineJson = JSON.parse(
-    JSON.stringify((await searchEngine()).toJson()),
-  );
+  // const searchEngineJson = JSON.parse(
+  //   JSON.stringify((await searchEngine()).toJson()),
+  // );
+  // const searchEngineJson = { type: "Lunr" as SearchEngineType };
 
   const title: string = (await PageMetadata.languageTag({ languageTag }))
     .title as string;
@@ -29,10 +31,10 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
           </span>
         </Link>
         <div className="flex gap-4 justify-end">
-          <SearchBox
+          {/* <SearchBox
             languageTag={languageTag}
             searchEngineJson={searchEngineJson}
-          />
+          /> */}
           <LanguageSelector
             availableLanguageTags={await modelSet.languageTags()}
           />
