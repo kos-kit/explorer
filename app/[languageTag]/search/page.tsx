@@ -1,5 +1,4 @@
 import modelSet from "@/app/modelSet";
-import { SearchEngineType } from "@/lib/search/SearchEngineType";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import path from "node:path";
 import fs from "node:fs/promises";
@@ -8,92 +7,106 @@ import { createSearchEngineFromJson } from "@/lib/search/createSearchEngineFromJ
 import { LunrSearchEngine } from "@/lib/search/LunrSearchEngine";
 import { SearchPage as SearchPageClient } from "@/lib/components/SearchPage";
 import configuration from "@/app/configuration";
+import { Layout } from "@/lib/components/Layout";
+import { Metadata } from "next";
+import { PageMetadata } from "@/app/PageMetadata";
 
-interface SearchPageParams {
-  languageTag: LanguageTag;
-  searchEngineJson: { [index: string]: any; type: SearchEngineType };
-}
-
-export default function SearchPage({
+async function getSearchEngine({
   languageTag,
-  searchEngineJson,
-}: SearchPageParams) {
-  return (
-    <SearchPageClient
-      languageTag={languageTag}
-      searchEngineJson={searchEngineJson}
-    />
-  );
-}
-
-export async function generateStaticParams(): Promise<SearchPageParams[]> {
-  const staticParams: SearchPageParams[] = [];
-
-  const cacheDirPath = path.join(
+}: {
+  languageTag: LanguageTag;
+}): Promise<SearchEngine> {
+  const searchEngineJsonDirPath = path.join(
     configuration.cacheDirectoryPath,
     "search-engine",
   );
-  await fs.mkdir(cacheDirPath, { recursive: true });
 
-  for (const languageTag of await modelSet.languageTags()) {
-    const searchEngineJsonFilePath = path.join(
-      cacheDirPath,
-      `${languageTag}.json`,
-    );
+  const searchEngineJsonFilePath = path.join(
+    searchEngineJsonDirPath,
+    `${languageTag}.json`,
+  );
 
-    let searchEngineJsonFileContents: Buffer | undefined;
-    try {
-      searchEngineJsonFileContents = await fs.readFile(
-        searchEngineJsonFilePath,
-      );
-    } catch {
-      /* empty */
-    }
-
-    let searchEngine: SearchEngine;
-    if (searchEngineJsonFileContents) {
-      console.debug(
-        "recreating",
-        languageTag,
-        "search engine from JSON at",
-        searchEngineJsonFilePath,
-      );
-      searchEngine = createSearchEngineFromJson(
-        JSON.parse(searchEngineJsonFileContents.toString()),
-      );
-      console.debug(
-        "recreated",
-        languageTag,
-        "search engine from JSON at",
-        searchEngineJsonFilePath,
-      );
-    } else {
-      console.info("creating", languageTag, "search engine");
-      searchEngine = await LunrSearchEngine.create({ languageTag, modelSet });
-      console.info("created", languageTag, "search engine");
-      console.info(
-        "writing",
-        languageTag,
-        "search engine JSON to",
-        searchEngineJsonFilePath,
-      );
-      await fs.writeFile(
-        searchEngineJsonFilePath,
-        JSON.stringify(searchEngine.toJson()),
-      );
-      console.info(
-        "wrote",
-        languageTag,
-        "search engine JSON to",
-        searchEngineJsonFilePath,
-      );
-    }
-
-    staticParams.push({
-      searchEngineJson: searchEngine.toJson(),
-      languageTag,
-    });
+  let searchEngineJsonFileContents: Buffer | undefined;
+  try {
+    searchEngineJsonFileContents = await fs.readFile(searchEngineJsonFilePath);
+  } catch {
+    /* empty */
   }
 
-  return staticParams;
+  if (searchEngineJsonFileContents) {
+    console.debug(
+      "recreating",
+      languageTag,
+      "search engine from JSON at",
+      searchEngineJsonFilePath,
+    );
+    const searchEngine = createSearchEngineFromJson(
+      JSON.parse(searchEngineJsonFileContents.toString()),
+    );
+    console.debug(
+      "recreated",
+      languageTag,
+      "search engine from JSON at",
+      searchEngineJsonFilePath,
+    );
+    return searchEngine;
+  }
+
+  console.info("creating", languageTag, "search engine");
+  const searchEngine = await LunrSearchEngine.create({ languageTag, modelSet });
+  console.info("created", languageTag, "search engine");
+  console.info(
+    "writing",
+    languageTag,
+    "search engine JSON to",
+    searchEngineJsonFilePath,
+  );
+  await fs.mkdir(searchEngineJsonDirPath, { recursive: true });
+  await fs.writeFile(
+    searchEngineJsonFilePath,
+    JSON.stringify(searchEngine.toJson()),
+  );
+  console.info(
+    "wrote",
+    languageTag,
+    "search engine JSON to",
+    searchEngineJsonFilePath,
+  );
+  return searchEngine;
+}
+
+interface SearchPageParams {
+  languageTag: LanguageTag;
+}
+
+export default async function SearchPage({
+  params: { languageTag },
+}: {
+  params: SearchPageParams;
+}) {
+  return (
+    <Layout languageTag={languageTag}>
+      <SearchPageClient
+        languageTag={languageTag}
+        resultsPerPage={configuration.conceptsPerPage}
+        searchEngineJson={(await getSearchEngine({ languageTag })).toJson()}
+      />
+    </Layout>
+  );
+}
+
+export async function generateMetadata({
+  params: { languageTag },
+}: {
+  params: SearchPageParams;
+}): Promise<Metadata> {
+  return PageMetadata.search({
+    languageTag,
+  });
+}
+
+export async function generateStaticParams(): Promise<SearchPageParams[]> {
+  return (await modelSet.languageTags()).map((languageTag) => ({
+    languageTag,
+  }));
 }

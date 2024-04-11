@@ -6,6 +6,7 @@ import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";
 import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
+import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import { noteProperties } from "@/lib/models/noteProperties";
@@ -36,10 +37,10 @@ export default async function ConceptPage({
   const notations = await concept.notations();
 
   return (
-    <Layout
-      languageTag={languageTag}
-      title={`Concept: ${await displayLabel({ languageTag, model: concept })}`}
-    >
+    <Layout languageTag={languageTag}>
+      <PageTitleHeading>
+        Concept: ${await displayLabel({ languageTag, model: concept })}`
+      </PageTitleHeading>
       <LabelSections languageTag={languageTag} model={concept} />
       {await Promise.all(
         noteProperties.map(async (noteProperty) => {

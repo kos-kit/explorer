@@ -3,6 +3,7 @@ import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
+import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { LanguageTag } from "@/lib/models/LanguageTag";
 import {
   semanticRelationProperties,
@@ -38,10 +39,10 @@ export default async function ConceptSemanticRelationsPage({
   );
 
   return (
-    <Layout
-      languageTag={languageTag}
-      title={`Concept: ${await displayLabel({ languageTag, model: concept })}: ${semanticRelationProperty.label} concepts`}
-    >
+    <Layout languageTag={languageTag}>
+      <PageTitleHeading>
+        Concept: ${await displayLabel({ languageTag, model: concept })}
+      </PageTitleHeading>
       <ConceptList concepts={semanticRelations} languageTag={languageTag} />
     </Layout>
   );

@@ -15,6 +15,7 @@ import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
 import { displayLabel } from "@/lib/utilities/displayLabel";
 import { PageMetadata } from "@/app/PageMetadata";
+import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -36,9 +37,8 @@ export default async function ConceptSchemeTopConceptsPage({
   const topConceptsCount = await conceptScheme.topConceptsCount();
 
   return (
-    <Layout
-      languageTag={languageTag}
-      title={
+    <Layout languageTag={languageTag}>
+      <PageTitleHeading>
         <Link
           href={PageHrefs.conceptScheme({
             conceptSchemeIdentifier: conceptScheme.identifier,
@@ -48,8 +48,7 @@ export default async function ConceptSchemeTopConceptsPage({
           Concept Scheme:{" "}
           {await displayLabel({ languageTag, model: conceptScheme })}
         </Link>
-      }
-    >
+      </PageTitleHeading>
       <Section
         title={
           <span>

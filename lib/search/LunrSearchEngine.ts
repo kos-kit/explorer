@@ -155,6 +155,12 @@ export class LunrSearchEngine implements SearchEngine {
     });
   }
 
+  searchCount({ query }: { query: string }): Promise<number> {
+    return new Promise((resolve) => {
+      resolve(this.index.search(query).length);
+    });
+  }
+
   toJson(): { [index: string]: any; type: SearchEngineType } {
     const lunrIndexCompactor = new LunrIndexCompactor();
     return {

@@ -3,6 +3,7 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { filenamify } from "@/lib/utilities/filenamify";
 import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
 import { Identifier } from "@/lib/models/Identifier";
+import queryString from "query-string";
 
 export class PageHrefs {
   static concept({
@@ -60,10 +61,23 @@ export class PageHrefs {
   static search({
     languageTag,
     page,
+    query,
   }: {
     languageTag: LanguageTag;
     page?: number;
+    query?: string;
   }) {
-    return `${PageHrefs.languageTag({ languageTag })}/search`;
+    const searchParams: { [index: string]: string } = {};
+    if (page) {
+      searchParams.page = page.toString();
+    }
+    if (query) {
+      searchParams.query = query;
+    }
+
+    return queryString.stringifyUrl({
+      url: `${PageHrefs.languageTag({ languageTag })}/search`,
+      query: searchParams,
+    });
   }
 }

@@ -90,4 +90,14 @@ export class PageMetadata {
       title: title,
     } satisfies Metadata;
   }
+
+  static async search({
+    languageTag,
+  }: {
+    languageTag: LanguageTag;
+  }): Promise<Metadata> {
+    return {
+      title: `${(await PageMetadata.languageTag({ languageTag })).title}: search results`,
+    } satisfies Metadata;
+  }
 }
