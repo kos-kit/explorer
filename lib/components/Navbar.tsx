@@ -7,6 +7,8 @@ import { PageMetadata } from "@/app/PageMetadata";
 // import searchEngine from "@/app/searchEngine";
 import { LanguageSelector } from "./LanguageSelector";
 import modelSet from "@/app/modelSet";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { SearchForm } from "./SearchForm";
 // import { SearchEngineType } from "../search/SearchEngineType";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
@@ -31,10 +33,7 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
           </span>
         </Link>
         <div className="flex gap-4 justify-end">
-          {/* <SearchBox
-            languageTag={languageTag}
-            searchEngineJson={searchEngineJson}
-          /> */}
+          <SearchForm languageTag={languageTag} />
           <LanguageSelector
             availableLanguageTags={await modelSet.languageTags()}
           />

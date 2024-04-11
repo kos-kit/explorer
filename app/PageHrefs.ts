@@ -56,4 +56,14 @@ export class PageHrefs {
   static get root() {
     return "/";
   }
+
+  static search({
+    languageTag,
+    page,
+  }: {
+    languageTag: LanguageTag;
+    page?: number;
+  }) {
+    return `${PageHrefs.languageTag({ languageTag })}/search`;
+  }
 }
