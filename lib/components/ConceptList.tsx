@@ -4,6 +4,7 @@ import { PageHrefs } from "@/app/PageHrefs";
 import { Concept } from "@/lib/models/Concept";
 import { LanguageTag } from "../models/LanguageTag";
 import { displayLabel } from "../utilities/displayLabel";
+import configuration from "@/app/configuration";
 
 export async function ConceptList({
   concepts,
@@ -19,6 +20,7 @@ export async function ConceptList({
           <li key={identifierToString(concept.identifier)}>
             <Link
               href={PageHrefs.concept({
+                basePath: configuration.nextBasePath,
                 conceptIdentifier: concept.identifier,
                 languageTag,
               })}

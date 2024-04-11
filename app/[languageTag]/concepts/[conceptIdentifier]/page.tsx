@@ -106,6 +106,7 @@ export default async function ConceptPage({
               configuration.relatedConceptsPerSection ? (
                 <Link
                   href={PageHrefs.conceptSemanticRelations({
+                    basePath: configuration.nextBasePath,
                     conceptIdentifier: concept.identifier,
                     languageTag,
                     semanticRelationProperty,

@@ -6,6 +6,7 @@ import { PageMetadata } from "@/app/PageMetadata";
 import { LanguageSelector } from "./LanguageSelector";
 import modelSet from "@/app/modelSet";
 import { SearchForm } from "./SearchForm";
+import configuration from "@/app/configuration";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
   const title: string = (await PageMetadata.languageTag({ languageTag }))
@@ -15,7 +16,7 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap justify-between">
         <Link
-          href={PageHrefs.root}
+          href={PageHrefs.root({ basePath: configuration.nextBasePath })}
           className="flex space-x-3 rtl:space-x-reverse"
         >
           <ListBulletIcon className="h-8 w-8" />

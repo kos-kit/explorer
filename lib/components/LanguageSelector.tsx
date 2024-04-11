@@ -76,6 +76,7 @@ export function LanguageSelector({
 
   const onChange = (newLanguageTag: LanguageTag) => {
     router.push(
+      // Don't prepend basePath, the router will do that
       `/${newLanguageTag}${pathnameSplit.length > 2 ? "/" + pathnameSplit.slice(2).join("/") : ""}`,
     );
   };

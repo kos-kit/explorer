@@ -1,11 +1,15 @@
 import { PageHrefs } from "@/app/PageHrefs";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { LanguageTag } from "../models/LanguageTag";
+import configuration from "@/app/configuration";
 
 export function SearchForm({ languageTag }: { languageTag: LanguageTag }) {
   return (
     <form
-      action={PageHrefs.search({ languageTag })}
+      action={PageHrefs.search({
+        basePath: configuration.nextBasePath,
+        languageTag,
+      })}
       className="flex gap-1"
       method="GET"
     >

@@ -41,6 +41,7 @@ export default async function ConceptSchemeTopConceptsPage({
       <PageTitleHeading>
         <Link
           href={PageHrefs.conceptScheme({
+            basePath: configuration.nextBasePath,
             conceptSchemeIdentifier: conceptScheme.identifier,
             languageTag,
           })}
@@ -75,6 +76,7 @@ export default async function ConceptSchemeTopConceptsPage({
             itemsTotal={topConceptsCount}
             pageHref={(page) =>
               PageHrefs.conceptSchemeTopConcepts({
+                basePath: configuration.nextBasePath,
                 conceptSchemeIdentifier: conceptScheme.identifier,
                 languageTag,
                 page,

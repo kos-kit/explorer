@@ -39,6 +39,7 @@ export async function ConceptSchemePage({
             {topConceptsCount > configuration.relatedConceptsPerSection ? (
               <Link
                 href={PageHrefs.conceptSchemeTopConcepts({
+                  basePath: configuration.nextBasePath,
                   conceptSchemeIdentifier: conceptScheme.identifier,
                   languageTag,
                   page: 0,

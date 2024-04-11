@@ -7,62 +7,78 @@ import queryString from "query-string";
 
 export class PageHrefs {
   static concept({
+    basePath,
     conceptIdentifier,
     languageTag,
   }: {
+    basePath: string;
     conceptIdentifier: Identifier;
     languageTag: LanguageTag;
   }): string {
-    return `${PageHrefs.languageTag({ languageTag })}/concepts/${filenamify(identifierToString(conceptIdentifier))}`;
+    return `${PageHrefs.languageTag({ basePath, languageTag })}/concepts/${filenamify(identifierToString(conceptIdentifier))}`;
   }
 
   static conceptScheme({
+    basePath,
     conceptSchemeIdentifier,
     languageTag,
   }: {
+    basePath: string;
     conceptSchemeIdentifier: Identifier;
     languageTag: LanguageTag;
   }): string {
-    return `${PageHrefs.languageTag({ languageTag })}/conceptSchemes/${filenamify(identifierToString(conceptSchemeIdentifier))}`;
+    return `${PageHrefs.languageTag({ basePath, languageTag })}/conceptSchemes/${filenamify(identifierToString(conceptSchemeIdentifier))}`;
   }
 
   static conceptSchemeTopConcepts({
+    basePath,
     conceptSchemeIdentifier,
     languageTag,
     page,
   }: {
+    basePath: string;
     conceptSchemeIdentifier: Identifier;
     languageTag: LanguageTag;
     page: number;
   }) {
-    return `${PageHrefs.conceptScheme({ conceptSchemeIdentifier, languageTag })}/topConcepts/${page}`;
+    return `${PageHrefs.conceptScheme({ basePath, conceptSchemeIdentifier, languageTag })}/topConcepts/${page}`;
   }
 
   static conceptSemanticRelations({
+    basePath,
     conceptIdentifier,
     languageTag,
     semanticRelationProperty,
   }: {
+    basePath: string;
     conceptIdentifier: Identifier;
     languageTag: LanguageTag;
     semanticRelationProperty: SemanticRelationProperty;
   }) {
-    return `${PageHrefs.concept({ conceptIdentifier, languageTag })}/semanticRelations/${semanticRelationProperty.name}`;
+    return `${PageHrefs.concept({ basePath, conceptIdentifier, languageTag })}/semanticRelations/${semanticRelationProperty.name}`;
   }
 
-  static languageTag({ languageTag }: { languageTag: LanguageTag }) {
-    return `${PageHrefs.root}${languageTag}`;
+  static languageTag({
+    basePath,
+    languageTag,
+  }: {
+    basePath: string;
+    languageTag: LanguageTag;
+  }) {
+    return `${PageHrefs.root({ basePath })}${languageTag}`;
   }
 
-  static get root() {
-    return "/";
+  static root({ basePath }: { basePath: string }) {
+    return `${basePath}/`;
   }
 
   static search({
+    basePath,
     languageTag,
     page,
     query,
   }: {
+    basePath: string;
     languageTag: LanguageTag;
     page?: number;
     query?: string;
@@ -76,7 +92,7 @@ export class PageHrefs {
     }
 
     return queryString.stringifyUrl({
-      url: `${PageHrefs.languageTag({ languageTag })}/search`,
+      url: `${PageHrefs.languageTag({ basePath, languageTag })}/search`,
       query: searchParams,
     });
   }

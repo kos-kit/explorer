@@ -50,14 +50,16 @@ if (!configuration.value) {
     INPUT_CONCEPTS_PER_PAGE: intValidator({ default: 25 }),
     INPUT_DATA_PATHS: filePathArrayValidator(),
     INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
+    INPUT_NEXT_BASE_PATH: envalid.str({ default: "" }),
     INPUT_RELATED_CONCEPTS_PER_SECTION: intValidator({ default: 10 }),
   });
 
   configuration.value = {
     cacheDirectoryPath: env.INPUT_CACHE_DIRECTORY_PATH,
+    conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
     dataFilePaths: env.INPUT_DATA_PATHS,
     defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
-    conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
+    nextBasePath: env.INPUT_NEXT_BASE_PATH,
     relatedConceptsPerSection: env.INPUT_RELATED_CONCEPTS_PER_SECTION,
   } satisfies Configuration;
   // console.log("Configuration:", JSON.stringify(configuration.value));

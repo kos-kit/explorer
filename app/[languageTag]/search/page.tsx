@@ -69,6 +69,7 @@ export default async function SearchPage({
   return (
     <Layout languageTag={languageTag}>
       <SearchPageClient
+        basePath={configuration.nextBasePath}
         languageTag={languageTag}
         resultsPerPage={configuration.conceptsPerPage}
         searchEngineJson={searchEngineJson}

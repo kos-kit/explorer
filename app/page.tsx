@@ -4,6 +4,9 @@ import configuration from "./configuration";
 
 export default async function RootPage() {
   redirect(
-    PageHrefs.languageTag({ languageTag: configuration.defaultLanguageTag }),
+    PageHrefs.languageTag({
+      basePath: "", //configuration.nextBasePath,
+      languageTag: configuration.defaultLanguageTag,
+    }),
   );
 }

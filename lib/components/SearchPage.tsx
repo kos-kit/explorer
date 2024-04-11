@@ -38,20 +38,24 @@ function AnimatedSpinner() {
 }
 
 function searchResultHref({
+  basePath,
   languageTag,
   searchResult,
 }: {
+  basePath: string;
   languageTag: LanguageTag;
   searchResult: SearchResult;
 }): string {
   switch (searchResult.type) {
     case "Concept":
       return PageHrefs.concept({
+        basePath,
         conceptIdentifier: stringToIdentifier(searchResult.identifier),
         languageTag,
       });
     case "ConceptScheme":
       return PageHrefs.conceptScheme({
+        basePath,
         conceptSchemeIdentifier: stringToIdentifier(searchResult.identifier),
         languageTag,
       });
@@ -59,12 +63,14 @@ function searchResultHref({
 }
 
 interface SearchPageProps {
+  basePath: string;
   languageTag: LanguageTag;
   resultsPerPage: number;
   searchEngineJson: SearchEngineJson;
 }
 
 function SearchPageImpl({
+  basePath,
   languageTag,
   resultsPerPage,
   searchEngineJson,
@@ -144,7 +150,9 @@ function SearchPageImpl({
         {searchResults.map((searchResult, searchResultI) => (
           <li key={searchResultI}>
             {searchResult.type}:&nbsp;
-            <Link href={searchResultHref({ languageTag, searchResult })}>
+            <Link
+              href={searchResultHref({ basePath, languageTag, searchResult })}
+            >
               <b>{searchResult.prefLabel}</b>
             </Link>
           </li>
@@ -155,7 +163,12 @@ function SearchPageImpl({
         itemsPerPage={resultsPerPage}
         itemsTotal={searchCount}
         pageHref={(page) =>
-          PageHrefs.search({ languageTag, page, query: query ?? undefined })
+          PageHrefs.search({
+            basePath,
+            languageTag,
+            page,
+            query: query ?? undefined,
+          })
         }
       />
     </>
