@@ -6,9 +6,16 @@ const nextConfig = {
   // cpus: 1,
   // workerThreads: false,
   // },
+  images: {
+    unoptimized: true,
+  },
   output: "export",
   staticPageGenerationTimeout: 60 * 5, // in seconds
   webpack: (config, { isServer, webpack }) => {
+    if (!isServer) {
+      config.resolve.fallback.fs = false;
+    }
+
     config.plugins.push(
       new webpack.IgnorePlugin({
         checkResource: function (resource, context) {
