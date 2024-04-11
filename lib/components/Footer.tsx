@@ -24,18 +24,28 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   const rightsParts: React.ReactNode[] = [];
   const copyright = "© " + new Date().getFullYear();
   if (rightsHolder !== null) {
-    rightsParts.push(copyright + " " + rightsHolder.value);
+    rightsParts.push(
+      <span
+        dangerouslySetInnerHTML={{
+          __html: copyright + " " + rightsHolder.value,
+        }}
+      />,
+    );
   } else {
     rightsParts.push(copyright);
   }
   if (rights !== null) {
-    rightsParts.push(rights.value);
+    rightsParts.push(
+      <span dangerouslySetInnerHTML={{ __html: rights.value }} />,
+    );
   }
   if (license !== null) {
     if (license.termType === "NamedNode") {
       rightsParts.push(<Link href={license.value}>License</Link>);
     } else {
-      rightsParts.push(license.value);
+      rightsParts.push(
+        <span dangerouslySetInnerHTML={{ __html: license.value }} />,
+      );
     }
   }
 
