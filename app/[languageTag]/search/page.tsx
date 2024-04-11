@@ -47,8 +47,8 @@ export default async function SearchPage({
     });
     console.info("created", languageTag, "search engine");
 
-    const searcheEngineJsonString = JSON.stringify(searchEngine.toJson());
-    searchEngineJson = JSON.parse(searcheEngineJsonString);
+    const searchEngineJsonString = JSON.stringify(searchEngine.toJson());
+    searchEngineJson = JSON.parse(searchEngineJsonString);
 
     console.info(
       "writing",
@@ -57,7 +57,7 @@ export default async function SearchPage({
       searchEngineJsonFilePath,
     );
     await fs.mkdir(searchEngineJsonDirPath, { recursive: true });
-    await fs.writeFile(searchEngineJsonFilePath, searcheEngineJsonString);
+    await fs.writeFile(searchEngineJsonFilePath, searchEngineJsonString);
     console.info(
       "wrote",
       languageTag,
