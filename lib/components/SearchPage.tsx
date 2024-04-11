@@ -1,16 +1,16 @@
 "use client";
 
 import { LanguageTag } from "@/lib/models/LanguageTag";
-import { SearchEngineType } from "@/lib/search/SearchEngineType";
 import { useSearchParams } from "next/navigation";
 import { createSearchEngineFromJson } from "@/lib/search/createSearchEngineFromJson";
 import { SearchResult } from "@/lib/search/SearchResult";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { PageTitleHeading } from "./PageTitleHeading";
 import { PageHrefs } from "@/app/PageHrefs";
 import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Link } from "@/lib/components/Link";
 import { Pagination } from "./Pagination";
+import { SearchEngineJson } from "../search/SearchEngineJson";
 
 function AnimatedSpinner() {
   return (
@@ -58,15 +58,17 @@ function searchResultHref({
   }
 }
 
-export function SearchPage({
+interface SearchPageProps {
+  languageTag: LanguageTag;
+  resultsPerPage: number;
+  searchEngineJson: SearchEngineJson;
+}
+
+function SearchPageImpl({
   languageTag,
   resultsPerPage,
   searchEngineJson,
-}: {
-  languageTag: LanguageTag;
-  resultsPerPage: number;
-  searchEngineJson: { [index: string]: any; type: SearchEngineType };
-}) {
+}: SearchPageProps) {
   const searchParams = useSearchParams();
   const pageString = searchParams.get("page");
   let page = pageString ? parseInt(pageString) : 0;
@@ -157,5 +159,14 @@ export function SearchPage({
         }
       />
     </>
+  );
+}
+
+export function SearchPage(props: SearchPageProps) {
+  // https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+  return (
+    <Suspense>
+      <SearchPageImpl {...props} />
+    </Suspense>
   );
 }

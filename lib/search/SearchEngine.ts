@@ -1,5 +1,5 @@
 import { SearchResult } from "@/lib/search/SearchResult";
-import { SearchEngineType } from "./SearchEngineType";
+import { SearchEngineJson } from "@/lib/search/SearchEngineJson";
 
 export interface SearchEngine {
   search(kwds: {
@@ -10,5 +10,5 @@ export interface SearchEngine {
 
   searchCount(kwds: { query: string }): Promise<number>;
 
-  toJson(): { [index: string]: any; type: SearchEngineType };
+  toJson(): SearchEngineJson;
 }

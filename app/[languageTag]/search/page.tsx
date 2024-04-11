@@ -8,7 +8,7 @@ import configuration from "@/app/configuration";
 import { Layout } from "@/lib/components/Layout";
 import { Metadata } from "next";
 import { PageMetadata } from "@/app/PageMetadata";
-import { SearchEngineType } from "@/lib/search/SearchEngineType";
+import { SearchEngineJson } from "@/lib/search/SearchEngineJson";
 
 interface SearchPageParams {
   languageTag: LanguageTag;
@@ -36,7 +36,7 @@ export default async function SearchPage({
     /* empty */
   }
 
-  let searchEngineJson: { [index: string]: any; type: SearchEngineType };
+  let searchEngineJson: SearchEngineJson;
   if (searchEngineJsonFileContents) {
     searchEngineJson = JSON.parse(searchEngineJsonFileContents.toString());
   } else {

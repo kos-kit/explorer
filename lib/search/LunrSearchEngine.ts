@@ -6,8 +6,8 @@ import { LanguageTag } from "@/lib/models/LanguageTag";
 import { LabeledModel } from "@/lib/models/LabeledModel";
 import { Identifier } from "@/lib/models/Identifier";
 import { identifierToString } from "@/lib/utilities/identifierToString";
-import { SearchEngineType } from "./SearchEngineType";
-import { LunrIndexCompactor } from "./LunrIndexCompactor";
+import { LunrIndexCompactor } from "@/lib/search/LunrIndexCompactor";
+import { SearchEngineJson } from "@/lib/search/SearchEngineJson";
 
 export class LunrSearchEngine implements SearchEngine {
   private constructor(
@@ -105,7 +105,7 @@ export class LunrSearchEngine implements SearchEngine {
     return new LunrSearchEngine(compactIndexDocuments, index);
   }
 
-  static fromJson(json: { [index: string]: any }) {
+  static fromJson(json: SearchEngineJson) {
     const lunrIndexCompactor = new LunrIndexCompactor();
     return new LunrSearchEngine(
       json.documents,
@@ -161,7 +161,7 @@ export class LunrSearchEngine implements SearchEngine {
     });
   }
 
-  toJson(): { [index: string]: any; type: SearchEngineType } {
+  toJson(): SearchEngineJson {
     const lunrIndexCompactor = new LunrIndexCompactor();
     return {
       documents: this.documents,
