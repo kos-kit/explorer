@@ -41,7 +41,7 @@ export default async function ConceptSemanticRelationsPage({
   return (
     <Layout languageTag={languageTag}>
       <PageTitleHeading>
-        Concept: ${await displayLabel({ languageTag, model: concept })}
+        Concept: {await displayLabel({ languageTag, model: concept })}
       </PageTitleHeading>
       <ConceptList concepts={semanticRelations} languageTag={languageTag} />
     </Layout>

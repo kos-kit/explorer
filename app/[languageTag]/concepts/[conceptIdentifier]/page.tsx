@@ -39,7 +39,7 @@ export default async function ConceptPage({
   return (
     <Layout languageTag={languageTag}>
       <PageTitleHeading>
-        Concept: ${await displayLabel({ languageTag, model: concept })}`
+        Concept: {await displayLabel({ languageTag, model: concept })}
       </PageTitleHeading>
       <LabelSections languageTag={languageTag} model={concept} />
       {await Promise.all(

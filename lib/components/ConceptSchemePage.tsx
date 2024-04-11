@@ -22,7 +22,6 @@ export async function ConceptSchemePage({
   return (
     <Layout languageTag={languageTag}>
       <PageTitleHeading>
-        {" "}
         Concept Scheme:{" "}
         {await displayLabel({ languageTag, model: conceptScheme })}
       </PageTitleHeading>
