@@ -1,6 +1,7 @@
 /build
 /coverage
 /.env
+/.kos-kit
 /.next/
 /node_modules
 /out/

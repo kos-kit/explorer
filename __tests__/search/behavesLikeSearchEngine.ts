@@ -7,11 +7,15 @@ export const behavesLikeSearchEngine = (
   const expectUnescoThesaurusConcept10Result = async (
     searchEngine: SearchEngine,
   ) => {
+    const query = "right to education";
+
+    const count = await searchEngine.searchCount({ query });
+    expect(count).toBeGreaterThan(0);
+
     const results = await searchEngine.search({
       limit: 10,
       offset: 0,
-      languageTag: "en",
-      query: "right to education",
+      query,
     });
     expect(results).not.toHaveLength(0);
     const result = results.find(
@@ -29,11 +33,13 @@ export const behavesLikeSearchEngine = (
     await expectUnescoThesaurusConcept10Result(await lazySearchEngine());
   });
 
-  it("should serialize to and from client JSON", async () => {
+  it("should serialize to and from JSON", async () => {
     const serverSearchEngine = await lazySearchEngine();
     await expectUnescoThesaurusConcept10Result(serverSearchEngine);
+    const serverSearchEngineJson = serverSearchEngine.toJson();
+    expect(serverSearchEngineJson.type).toBeDefined();
     const clientSearchEngine = createSearchEngineFromJson(
-      serverSearchEngine.toJson(),
+      serverSearchEngineJson,
     );
     await expectUnescoThesaurusConcept10Result(clientSearchEngine);
   });

@@ -9,154 +9,130 @@ import { identifierToString } from "@/lib/utilities/identifierToString";
 import { SearchEngineType } from "./SearchEngineType";
 import { LunrIndexCompactor } from "./LunrIndexCompactor";
 
-interface LunrSearchEngineIndex {
-  readonly documents: Record<string, Record<string, string>>; // type -> identifier -> prefLabel
-  readonly index: Index;
-}
-
 export class LunrSearchEngine implements SearchEngine {
   private constructor(
-    private readonly indicesByLanguageTag: Record<
-      string,
-      LunrSearchEngineIndex
-    >,
+    private readonly documents: Record<string, Record<string, string>>, // type -> identifier -> prefLabel
+    private readonly index: Index,
   ) {}
 
-  static async create(
-    modelSet: ModelSet,
-    options?: { conceptsLimit: number },
-  ): Promise<LunrSearchEngine> {
-    const conceptsLimit = options?.conceptsLimit;
-    const indicesByLanguageTag: { [index: string]: LunrSearchEngineIndex } = {};
+  static async create({
+    conceptsLimit,
+    languageTag,
+    modelSet,
+  }: {
+    conceptsLimit?: number;
+    languageTag: LanguageTag;
+    modelSet: ModelSet;
+  }): Promise<LunrSearchEngine> {
+    type IndexDocument = {
+      readonly identifier: string;
+      readonly joinedLabels: string;
+      readonly prefLabel: string;
+      readonly type: SearchResult["type"];
+    };
 
-    for (const languageTag of await modelSet.languageTags()) {
-      type IndexDocument = {
-        readonly identifier: string;
-        readonly joinedLabels: string;
-        readonly prefLabel: string;
-        readonly type: SearchResult["type"];
-      };
-
-      const toIndexDocument = async (
-        model: LabeledModel & { identifier: Identifier },
-        type: SearchResult["type"],
-      ): Promise<IndexDocument | null> => {
-        const prefLabels = await model.prefLabels({ languageTag });
-        if (prefLabels.length === 0) {
-          return null;
-        }
-        const altLabels = await model.altLabels({ languageTag });
-        const hiddenLabels = await model.hiddenLabels({ languageTag });
-
-        const identifierString = identifierToString(model.identifier);
-
-        return {
-          identifier: identifierString,
-          joinedLabels: [altLabels, hiddenLabels, prefLabels]
-            .flatMap((labels) => labels.map((label) => label.literalForm.value))
-            .join(" "),
-          prefLabel: prefLabels[0].literalForm.value,
-          type,
-        };
-      };
-
-      const indexDocumentPromises: Promise<IndexDocument | null>[] = [];
-
-      if (conceptsLimit != null) {
-        // Don't index all concepts in the set, in testing
-        for (const concept of await modelSet.conceptsPage({
-          limit: conceptsLimit,
-          offset: 0,
-        })) {
-          indexDocumentPromises.push(toIndexDocument(concept, "Concept"));
-        }
-      } else {
-        // Index all concepts in the set
-        for await (const concept of await modelSet.concepts()) {
-          indexDocumentPromises.push(toIndexDocument(concept, "Concept"));
-        }
+    const toIndexDocument = async (
+      model: LabeledModel & { identifier: Identifier },
+      type: SearchResult["type"],
+    ): Promise<IndexDocument | null> => {
+      const prefLabels = await model.prefLabels({ languageTag });
+      if (prefLabels.length === 0) {
+        return null;
       }
+      const altLabels = await model.altLabels({ languageTag });
+      const hiddenLabels = await model.hiddenLabels({ languageTag });
 
-      // Index concept schemes
-      indexDocumentPromises.push(
-        ...(await modelSet.conceptSchemes()).map((conceptScheme) =>
-          toIndexDocument(conceptScheme, "ConceptScheme"),
-        ),
-      );
+      const identifierString = identifierToString(model.identifier);
 
-      const indexDocuments = await Promise.all(indexDocumentPromises);
-
-      const compactIndexDocuments: Record<string, Record<string, string>> = {};
-      indicesByLanguageTag[languageTag] = {
-        documents: compactIndexDocuments,
-        index: lunr(function () {
-          this.ref("identifier");
-          this.field("joinedLabels");
-          for (const indexDocument of indexDocuments) {
-            if (indexDocument === null) {
-              continue;
-            }
-            this.add(indexDocument);
-
-            let compactIndexDocumentsByIdentifier =
-              compactIndexDocuments[indexDocument.type];
-            if (!compactIndexDocumentsByIdentifier) {
-              compactIndexDocumentsByIdentifier = compactIndexDocuments[
-                indexDocument.type
-              ] = {};
-            }
-            compactIndexDocumentsByIdentifier[indexDocument.identifier] =
-              indexDocument.prefLabel;
-          }
-        }),
+      return {
+        identifier: identifierString,
+        joinedLabels: [altLabels, hiddenLabels, prefLabels]
+          .flatMap((labels) => labels.map((label) => label.literalForm.value))
+          .join(" "),
+        prefLabel: prefLabels[0].literalForm.value,
+        type,
       };
+    };
+
+    const indexDocumentPromises: Promise<IndexDocument | null>[] = [];
+
+    if (conceptsLimit != null) {
+      // Don't index all concepts in the set, in testing
+      for (const concept of await modelSet.conceptsPage({
+        limit: conceptsLimit,
+        offset: 0,
+      })) {
+        indexDocumentPromises.push(toIndexDocument(concept, "Concept"));
+      }
+    } else {
+      // Index all concepts in the set
+      for await (const concept of await modelSet.concepts()) {
+        indexDocumentPromises.push(toIndexDocument(concept, "Concept"));
+      }
     }
 
-    return new LunrSearchEngine(indicesByLanguageTag);
+    // Index concept schemes
+    indexDocumentPromises.push(
+      ...(await modelSet.conceptSchemes()).map((conceptScheme) =>
+        toIndexDocument(conceptScheme, "ConceptScheme"),
+      ),
+    );
+
+    const indexDocuments = await Promise.all(indexDocumentPromises);
+
+    const compactIndexDocuments: Record<string, Record<string, string>> = {};
+    const index = lunr(function () {
+      this.ref("identifier");
+      this.field("joinedLabels");
+      for (const indexDocument of indexDocuments) {
+        if (indexDocument === null) {
+          continue;
+        }
+        this.add(indexDocument);
+
+        let compactIndexDocumentsByIdentifier =
+          compactIndexDocuments[indexDocument.type];
+        if (!compactIndexDocumentsByIdentifier) {
+          compactIndexDocumentsByIdentifier = compactIndexDocuments[
+            indexDocument.type
+          ] = {};
+        }
+        compactIndexDocumentsByIdentifier[indexDocument.identifier] =
+          indexDocument.prefLabel;
+      }
+    });
+
+    return new LunrSearchEngine(compactIndexDocuments, index);
   }
 
   static fromJson(json: { [index: string]: any }) {
-    const indicesByLanguageTag: Record<string, LunrSearchEngineIndex> = {};
     const lunrIndexCompactor = new LunrIndexCompactor();
-    for (const languageTag of Object.keys(json.indicesByLanguageTag)) {
-      indicesByLanguageTag[languageTag] = {
-        documents: json.indicesByLanguageTag[languageTag].documents,
-        index: lunrIndexCompactor.expandLunrIndex(
-          json.indicesByLanguageTag[languageTag].index,
-        ),
-      };
-    }
-    return new LunrSearchEngine(indicesByLanguageTag);
+    return new LunrSearchEngine(
+      json.documents,
+      lunrIndexCompactor.expandLunrIndex(json.index),
+    );
   }
 
   search({
-    languageTag,
     limit,
     offset,
     query,
   }: {
-    languageTag: LanguageTag;
     limit: number;
     offset: number;
     query: string;
   }): Promise<readonly SearchResult[]> {
     return new Promise((resolve) => {
-      const index = this.indicesByLanguageTag[languageTag];
-      if (!index) {
-        resolve([]);
-        return;
-      }
-
       const results: SearchResult[] = [];
       let lunrResultCount = 0;
-      for (const lunrResult of index.index.search(query)) {
+      for (const lunrResult of this.index.search(query)) {
         if (lunrResultCount++ < offset) {
           continue;
         }
 
-        for (const documentType of Object.keys(index.documents)) {
+        for (const documentType of Object.keys(this.documents)) {
           const documentPrefLabel =
-            index.documents[documentType][lunrResult.ref];
+            this.documents[documentType][lunrResult.ref];
 
           if (!documentPrefLabel) {
             continue;
@@ -179,19 +155,17 @@ export class LunrSearchEngine implements SearchEngine {
     });
   }
 
+  searchCount({ query }: { query: string }): Promise<number> {
+    return new Promise((resolve) => {
+      resolve(this.index.search(query).length);
+    });
+  }
+
   toJson(): { [index: string]: any; type: SearchEngineType } {
     const lunrIndexCompactor = new LunrIndexCompactor();
-    const indicesByLanguageTag: Record<string, any> = {};
-    for (const languageTag of Object.keys(this.indicesByLanguageTag)) {
-      indicesByLanguageTag[languageTag] = {
-        documents: this.indicesByLanguageTag[languageTag].documents,
-        index: lunrIndexCompactor.compactLunrIndex(
-          this.indicesByLanguageTag[languageTag].index,
-        ),
-      };
-    }
     return {
-      indicesByLanguageTag,
+      documents: this.documents,
+      index: lunrIndexCompactor.compactLunrIndex(this.index),
       type: "Lunr",
     };
   }

@@ -4,6 +4,10 @@ import { testRdfJsModelSet } from "../models/rdfjs/testRdfJsModelSet";
 
 describe("LunrSearchEngine", () => {
   behavesLikeSearchEngine(() =>
-    LunrSearchEngine.create(testRdfJsModelSet, { conceptsLimit: 10 }),
+    LunrSearchEngine.create({
+      conceptsLimit: 10,
+      languageTag: "en",
+      modelSet: testRdfJsModelSet,
+    }),
   );
 });
