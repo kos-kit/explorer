@@ -7,6 +7,13 @@ import fs from "node:fs";
 
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {
+  const directoryPathValidator = envalid.makeExactValidator((value) => {
+    if (value.length === 0) {
+      throw new Error("not specified");
+    }
+    return path.resolve(value);
+  });
+
   const filePathArrayValidator: envalid.StructuredValidator =
     makeStructuredValidator((value) => {
       if (value.length === 0) {
@@ -31,13 +38,15 @@ if (!configuration.value) {
         } else {
           throw new Error(`${relativePath}`);
         }
-        return absolutePath;
       });
     });
 
   const intValidator = envalid.makeExactValidator<number>(parseInt);
 
   const env = envalid.cleanEnv(process.env, {
+    INPUT_CACHE_DIRECTORY_PATH: directoryPathValidator({
+      default: ".kos-kit/explorer/cache",
+    }),
     INPUT_CONCEPTS_PER_PAGE: intValidator({ default: 25 }),
     INPUT_DATA_PATHS: filePathArrayValidator(),
     INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
@@ -45,6 +54,7 @@ if (!configuration.value) {
   });
 
   configuration.value = {
+    cacheDirectoryPath: env.INPUT_CACHE_DIRECTORY_PATH,
     dataFilePaths: env.INPUT_DATA_PATHS,
     defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
     conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
