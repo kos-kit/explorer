@@ -9,6 +9,7 @@ import { SearchForm } from "./SearchForm";
 import configuration from "@/app/configuration";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
+  const availableLanguageTags = await modelSet.languageTags();
   const title: string = (await PageMetadata.languageTag({ languageTag }))
     .title as string;
 
@@ -26,9 +27,9 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
         </Link>
         <div className="flex gap-4 justify-end">
           <SearchForm languageTag={languageTag} />
-          <LanguageSelector
-            availableLanguageTags={await modelSet.languageTags()}
-          />
+          {availableLanguageTags.length > 1 ? (
+            <LanguageSelector availableLanguageTags={availableLanguageTags} />
+          ) : null}
         </div>
       </div>
     </nav>
