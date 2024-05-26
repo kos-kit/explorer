@@ -2,6 +2,7 @@
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
     "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": false,
     "paths": {
       "@/*": ["./*"]
