@@ -100,17 +100,21 @@ function SearchPageImpl({
     const searchEngine = createSearchEngineFromJson(searchEngineJson);
 
     if (searchCount === null) {
-      searchEngine.searchCount({ query }).then(setSearchCount, setError);
+      searchEngine
+        .searchCount({ languageTag, query })
+        .then(setSearchCount, setError);
     }
 
     searchEngine
       .search({
+        languageTag,
         limit: resultsPerPage,
         offset: page * resultsPerPage,
         query,
       })
       .then(setSearchResults, setError);
   }, [
+    languageTag,
     page,
     query,
     resultsPerPage,
