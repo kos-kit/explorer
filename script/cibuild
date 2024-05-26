@@ -9,8 +9,8 @@ touch ../.env
 
 export NEXT_TELEMETRY_DISABLED=1
 
-yarn lint
+npm run lint
 
-yarn test
+npm run test
 
-# yarn build
+# npm run build

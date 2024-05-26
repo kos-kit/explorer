@@ -4,4 +4,4 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-yarn test
+npm run test
