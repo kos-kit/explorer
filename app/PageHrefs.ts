@@ -1,8 +1,10 @@
-import { identifierToString } from "@/lib/utilities/identifierToString";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { filenamify } from "@/lib/utilities/filenamify";
-import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
-import { Identifier } from "@/lib/models/Identifier";
+import {
+  Identifier,
+  LanguageTag,
+  SemanticRelationProperty,
+} from "@kos-kit/client/models";
+import { identifierToString } from "@kos-kit/client/utilities";
 import queryString from "query-string";
 
 export class PageHrefs {

@@ -1,7 +1,6 @@
-import { LabeledModel } from "@/lib/models/LabeledModel";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import React from "react";
 import { Section } from "@/lib/components/Section";
+import { LanguageTag, LabeledModel } from "@kos-kit/client/models";
 
 export async function LabelSections({
   languageTag,

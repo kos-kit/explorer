@@ -1,8 +1,8 @@
 import modelSet from "@/app/modelSet";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { Literal, NamedNode } from "@rdfjs/types";
 import { Link } from "@/lib/components/Link";
 import { Fragment } from "react";
+import { LanguageTag } from "@kos-kit/client/models";
 
 export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let license: Literal | NamedNode | null = null;

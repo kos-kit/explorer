@@ -5,17 +5,19 @@ import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
 import { Pagination } from "@/lib/components/Pagination";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
-import { identifierToString } from "@/lib/utilities/identifierToString";
 import { pageCount } from "@/lib/utilities/pageCount";
-import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
 import { displayLabel } from "@/lib/utilities/displayLabel";
 import { PageMetadata } from "@/app/PageMetadata";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
+import { LanguageTag } from "@kos-kit/client/models";
+import {
+  identifierToString,
+  stringToIdentifier,
+} from "@kos-kit/client/utilities";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;

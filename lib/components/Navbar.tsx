@@ -1,12 +1,12 @@
 import { PageHrefs } from "@/app/PageHrefs";
 import { ListBulletIcon } from "@heroicons/react/24/solid";
 import { Link } from "@/lib/components/Link";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { PageMetadata } from "@/app/PageMetadata";
 import { LanguageSelector } from "./LanguageSelector";
 import modelSet from "@/app/modelSet";
 import { SearchForm } from "./SearchForm";
 import configuration from "@/app/configuration";
+import { LanguageTag } from "@kos-kit/client/models";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
   const availableLanguageTags = await modelSet.languageTags();

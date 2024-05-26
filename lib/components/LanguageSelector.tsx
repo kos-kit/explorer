@@ -4,9 +4,9 @@
 
 import React, { useEffect, useState } from "react";
 import "@/node_modules/flag-icons/css/flag-icons.min.css";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { usePathname, useRouter } from "next/navigation";
 import { getLangNameFromCode } from "language-name-map";
+import { LanguageTag } from "@kos-kit/client/models";
 
 function FlagIcon({ countryCode }: { countryCode: string }) {
   return (

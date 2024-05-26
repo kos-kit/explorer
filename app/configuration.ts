@@ -1,9 +1,9 @@
-import { GlobalRef } from "@/lib/models/GlobalRef";
-import { Configuration } from "@/lib/models/Configuration";
 import * as envalid from "envalid";
 import { makeStructuredValidator } from "envalid/dist/makers";
 import path from "node:path";
 import fs from "node:fs";
+import { GlobalRef } from "@/lib/GlobalRef";
+import { Configuration } from "@/lib/Configuration";
 
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {

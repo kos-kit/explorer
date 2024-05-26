@@ -1,16 +1,18 @@
 "use client";
 
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { useSearchParams } from "next/navigation";
-import { createSearchEngineFromJson } from "@/lib/search/createSearchEngineFromJson";
-import { SearchResult } from "@/lib/search/SearchResult";
 import { Suspense, useEffect, useState } from "react";
 import { PageTitleHeading } from "./PageTitleHeading";
 import { PageHrefs } from "@/app/PageHrefs";
-import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
 import { Link } from "@/lib/components/Link";
 import { Pagination } from "./Pagination";
-import { SearchEngineJson } from "../search/SearchEngineJson";
+import {
+  SearchEngineJson,
+  SearchResult,
+  createSearchEngineFromJson,
+} from "@kos-kit/client/search";
+import { stringToIdentifier } from "@kos-kit/client/utilities";
+import { LanguageTag } from "@kos-kit/client/models";
 
 function AnimatedSpinner() {
   return (

@@ -4,16 +4,18 @@ import modelSet from "@/app/modelSet";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { LanguageTag } from "@/lib/models/LanguageTag";
-import {
-  semanticRelationProperties,
-  semanticRelationPropertiesByName,
-} from "@/lib/models/semanticRelationProperties";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { displayLabel } from "@/lib/utilities/displayLabel";
 import { filenamify } from "@/lib/utilities/filenamify";
-import { identifierToString } from "@/lib/utilities/identifierToString";
-import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
+import {
+  LanguageTag,
+  semanticRelationProperties,
+  semanticRelationPropertiesByName,
+} from "@kos-kit/client/models";
+import {
+  identifierToString,
+  stringToIdentifier,
+} from "@kos-kit/client/utilities";
 import { Metadata } from "next";
 
 interface ConceptSemanticRelationsPageParams {

@@ -1,8 +1,7 @@
 import { Link } from "@/lib/components/Link";
-import { identifierToString } from "@/lib/utilities/identifierToString";
 import { PageHrefs } from "@/app/PageHrefs";
-import { Concept } from "@/lib/models/Concept";
-import { LanguageTag } from "../models/LanguageTag";
+import { Concept, LanguageTag } from "@kos-kit/client/models";
+import { identifierToString } from "@kos-kit/client/utilities";
 import { displayLabel } from "../utilities/displayLabel";
 import configuration from "@/app/configuration";
 

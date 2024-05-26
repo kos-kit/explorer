@@ -8,16 +8,20 @@ import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
-import { LanguageTag } from "@/lib/models/LanguageTag";
-import { noteProperties } from "@/lib/models/noteProperties";
-import { semanticRelationProperties } from "@/lib/models/semanticRelationProperties";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { displayLabel } from "@/lib/utilities/displayLabel";
 import { filenamify } from "@/lib/utilities/filenamify";
-import { identifierToString } from "@/lib/utilities/identifierToString";
-import { stringToIdentifier } from "@/lib/utilities/stringToIdentifier";
-import { xsd } from "@/lib/vocabularies";
+import {
+  LanguageTag,
+  noteProperties,
+  semanticRelationProperties,
+} from "@kos-kit/client/models";
+import {
+  identifierToString,
+  stringToIdentifier,
+} from "@kos-kit/client/utilities";
 import { Metadata } from "next";
+import { xsd } from "@kos-kit/client/vocabularies";
 import React from "react";
 
 interface ConceptPageParams {

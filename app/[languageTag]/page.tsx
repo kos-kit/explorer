@@ -1,9 +1,9 @@
 import configuration from "@/app/configuration";
 import modelSet from "@/app/modelSet";
 import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { Metadata } from "next";
 import { PageMetadata } from "../PageMetadata";
+import { LanguageTag } from "@kos-kit/client/models";
 
 interface LanguageTagPageParams {
   languageTag: LanguageTag;

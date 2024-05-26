@@ -1,4 +1,4 @@
-import { LanguageTag } from "../../client/src/models/LanguageTag";
+import { LanguageTag } from "@kos-kit/client/models";
 
 export interface Configuration {
   readonly cacheDirectoryPath: string;

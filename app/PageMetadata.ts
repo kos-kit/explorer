@@ -1,10 +1,12 @@
 import { Metadata } from "next";
-import { Concept } from "@/lib/models/Concept";
-import { ConceptScheme } from "@/lib/models/ConceptScheme";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import modelSet from "./modelSet";
-import { SemanticRelationProperty } from "@/lib/models/SemanticRelationProperty";
 import { displayLabel } from "@/lib/utilities/displayLabel";
+import {
+  Concept,
+  ConceptScheme,
+  LanguageTag,
+  SemanticRelationProperty,
+} from "@kos-kit/client/models";
 
 export class PageMetadata {
   static async concept({

@@ -1,9 +1,9 @@
-import { GlobalRef } from "@/lib/models/GlobalRef";
-import { ModelSet } from "@/lib/models/ModelSet";
-import { RdfJsModelSet } from "@/lib/models/rdfjs/RdfJsModelSet";
 import { Parser, Store } from "n3";
 import fs from "node:fs";
 import configuration from "./configuration";
+import { GlobalRef } from "@/lib/GlobalRef";
+import { RdfJsModelSet } from "@kos-kit/client/models/rdfjs";
+import { ModelSet } from "@kos-kit/client/models";
 
 const modelSet = new GlobalRef("modelSet");
 if (!modelSet.value) {

@@ -1,5 +1,3 @@
-import { ConceptScheme } from "@/lib/models/ConceptScheme";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import configuration from "@/app/configuration";
@@ -9,6 +7,7 @@ import { Layout } from "@/lib/components/Layout";
 import { displayLabel } from "@/lib/utilities/displayLabel";
 import { PageHrefs } from "@/app/PageHrefs";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
+import { ConceptScheme, LanguageTag } from "@kos-kit/client/models";
 
 export async function ConceptSchemePage({
   conceptScheme,

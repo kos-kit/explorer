@@ -1,6 +1,5 @@
-import { LabeledModel } from "@/lib/models/LabeledModel";
-import { identifierToString } from "@/lib/utilities/identifierToString";
-import { Identifier } from "@/lib/models/Identifier";
+import { Identifier, LabeledModel } from "@kos-kit/client/models";
+import { identifierToString } from "@kos-kit/client/utilities";
 
 export async function displayLabel({
   languageTag,

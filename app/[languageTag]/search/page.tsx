@@ -1,14 +1,14 @@
 import modelSet from "@/app/modelSet";
-import { LanguageTag } from "@/lib/models/LanguageTag";
 import path from "node:path";
 import fs from "node:fs/promises";
-import { LunrSearchEngine } from "@/lib/search/LunrSearchEngine";
 import { SearchPage as SearchPageClient } from "@/lib/components/SearchPage";
 import configuration from "@/app/configuration";
 import { Layout } from "@/lib/components/Layout";
 import { Metadata } from "next";
 import { PageMetadata } from "@/app/PageMetadata";
-import { SearchEngineJson } from "@/lib/search/SearchEngineJson";
+import { LanguageTag } from "@kos-kit/client/models";
+import { SearchEngineJson } from "@kos-kit/client/search";
+import { LunrSearchEngine } from "@kos-kit/client/search/LunrSearchEngine";
 
 interface SearchPageParams {
   languageTag: LanguageTag;
