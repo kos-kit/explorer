@@ -1,5 +1,5 @@
 import configuration from "@/app/configuration";
-import modelSet from "@/app/modelSet";
+import kos from "@/app/kos";
 import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
 import { Metadata } from "next";
 import { PageMetadata } from "../PageMetadata";
@@ -10,7 +10,7 @@ interface LanguageTagPageParams {
 }
 
 export default async function LanguageTagPage() {
-  const conceptSchemes = await modelSet.conceptSchemes();
+  const conceptSchemes = await kos.conceptSchemes();
   if (conceptSchemes.length === 1) {
     return (
       <ConceptSchemePage
@@ -35,7 +35,7 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams(): Promise<LanguageTagPageParams[]> {
-  return (await modelSet.languageTags()).map((languageTag) => ({
+  return (await kos.languageTags()).map((languageTag) => ({
     languageTag,
   }));
 }

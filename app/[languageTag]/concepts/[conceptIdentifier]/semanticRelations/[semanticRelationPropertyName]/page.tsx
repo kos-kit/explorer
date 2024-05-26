@@ -1,6 +1,6 @@
 import { PageMetadata } from "@/app/PageMetadata";
 import configuration from "@/app/configuration";
-import modelSet from "@/app/modelSet";
+import kos from "@/app/kos";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
@@ -29,7 +29,7 @@ export default async function ConceptSemanticRelationsPage({
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
-  const concept = await modelSet.conceptByIdentifier(
+  const concept = await kos.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
@@ -56,7 +56,7 @@ export async function generateMetadata({
   params: ConceptSemanticRelationsPageParams;
 }): Promise<Metadata> {
   return PageMetadata.conceptSemanticRelations({
-    concept: await modelSet.conceptByIdentifier(
+    concept: await kos.conceptByIdentifier(
       stringToIdentifier(defilenamify(conceptIdentifier)),
     ),
     languageTag,
@@ -70,8 +70,8 @@ export async function generateStaticParams(): Promise<
 > {
   const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
-  const languageTags = await modelSet.languageTags();
-  for await (const concept of modelSet.concepts()) {
+  const languageTags = await kos.languageTags();
+  for await (const concept of kos.concepts()) {
     const conceptIdentifier = filenamify(
       identifierToString(concept.identifier),
     );

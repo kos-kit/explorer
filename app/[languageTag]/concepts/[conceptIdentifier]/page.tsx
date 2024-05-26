@@ -1,5 +1,5 @@
 import configuration from "@/app/configuration";
-import modelSet from "@/app/modelSet";
+import kos from "@/app/kos";
 import { PageHrefs } from "@/app/PageHrefs";
 import { PageMetadata } from "@/app/PageMetadata";
 import { ConceptList } from "@/lib/components/ConceptList";
@@ -34,7 +34,7 @@ export default async function ConceptPage({
 }: {
   params: ConceptPageParams;
 }) {
-  const concept = await modelSet.conceptByIdentifier(
+  const concept = await kos.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
@@ -133,7 +133,7 @@ export async function generateMetadata({
   params: ConceptPageParams;
 }): Promise<Metadata> {
   return PageMetadata.concept({
-    concept: await modelSet.conceptByIdentifier(
+    concept: await kos.conceptByIdentifier(
       stringToIdentifier(defilenamify(conceptIdentifier)),
     ),
     languageTag,
@@ -143,9 +143,9 @@ export async function generateMetadata({
 export async function generateStaticParams(): Promise<ConceptPageParams[]> {
   const staticParams: ConceptPageParams[] = [];
 
-  const languageTags = await modelSet.languageTags();
+  const languageTags = await kos.languageTags();
 
-  for await (const concept of modelSet.concepts()) {
+  for await (const concept of kos.concepts()) {
     for (const languageTag of languageTags) {
       staticParams.push({
         conceptIdentifier: filenamify(identifierToString(concept.identifier)),

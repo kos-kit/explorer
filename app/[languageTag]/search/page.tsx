@@ -1,4 +1,4 @@
-import modelSet from "@/app/modelSet";
+import kos from "@/app/kos";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { SearchPage as SearchPageClient } from "@/lib/components/SearchPage";
@@ -43,7 +43,7 @@ export default async function SearchPage({
     console.info("creating", languageTag, "search engine");
     const searchEngine = await LunrSearchEngine.create({
       languageTag,
-      modelSet,
+      kos,
     });
     console.info("created", languageTag, "search engine");
 
@@ -89,7 +89,7 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams(): Promise<SearchPageParams[]> {
-  return (await modelSet.languageTags()).map((languageTag) => ({
+  return (await kos.languageTags()).map((languageTag) => ({
     languageTag,
   }));
 }

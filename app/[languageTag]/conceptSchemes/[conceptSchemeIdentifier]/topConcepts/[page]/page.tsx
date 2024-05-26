@@ -1,5 +1,5 @@
 import configuration from "@/app/configuration";
-import modelSet from "@/app/modelSet";
+import kos from "@/app/kos";
 import { PageHrefs } from "@/app/PageHrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
@@ -30,7 +30,7 @@ export default async function ConceptSchemeTopConceptsPage({
 }: {
   params: ConceptSchemeTopConceptsPageParams;
 }) {
-  const conceptScheme = await modelSet.conceptSchemeByIdentifier(
+  const conceptScheme = await kos.conceptSchemeByIdentifier(
     stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
   );
 
@@ -97,7 +97,7 @@ export async function generateMetadata({
   params: ConceptSchemeTopConceptsPageParams;
 }): Promise<Metadata> {
   return PageMetadata.conceptSchemeTopConcepts({
-    conceptScheme: await modelSet.conceptSchemeByIdentifier(
+    conceptScheme: await kos.conceptSchemeByIdentifier(
       stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
     ),
     languageTag,
@@ -110,9 +110,9 @@ export async function generateStaticParams(): Promise<
 > {
   const staticParams: ConceptSchemeTopConceptsPageParams[] = [];
 
-  const languageTags = await modelSet.languageTags();
+  const languageTags = await kos.languageTags();
 
-  for (const conceptScheme of await modelSet.conceptSchemes()) {
+  for (const conceptScheme of await kos.conceptSchemes()) {
     const topConceptsCount = await conceptScheme.topConceptsCount();
     if (topConceptsCount <= configuration.relatedConceptsPerSection) {
       // Top concepts will fit on the concept scheme page, no need for this page.

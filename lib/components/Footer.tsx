@@ -1,4 +1,4 @@
-import modelSet from "@/app/modelSet";
+import kos from "@/app/kos";
 import { Literal, NamedNode } from "@rdfjs/types";
 import { Link } from "@/lib/components/Link";
 import { Fragment } from "react";
@@ -9,7 +9,7 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let rights: Literal | null = null;
   let rightsHolder: Literal | null = null;
 
-  const conceptSchemes = await modelSet.conceptSchemes();
+  const conceptSchemes = await kos.conceptSchemes();
   if (conceptSchemes.length === 1) {
     const conceptScheme = conceptSchemes[0];
     license = await conceptScheme.license(languageTag);

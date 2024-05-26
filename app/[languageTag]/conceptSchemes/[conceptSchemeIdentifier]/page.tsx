@@ -1,5 +1,5 @@
 import { PageMetadata } from "@/app/PageMetadata";
-import modelSet from "@/app/modelSet";
+import kos from "@/app/kos";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
 import { defilenamify } from "@/lib/utilities/defilenamify";
 import { filenamify } from "@/lib/utilities/filenamify";
@@ -20,7 +20,7 @@ export default async function ConceptSchemePage({
 }: {
   params: ConceptSchemePageParams;
 }) {
-  const conceptScheme = await modelSet.conceptSchemeByIdentifier(
+  const conceptScheme = await kos.conceptSchemeByIdentifier(
     stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
   );
 
@@ -38,7 +38,7 @@ export async function generateMetadata({
   params: ConceptSchemePageParams;
 }): Promise<Metadata> {
   return PageMetadata.conceptScheme({
-    conceptScheme: await modelSet.conceptSchemeByIdentifier(
+    conceptScheme: await kos.conceptSchemeByIdentifier(
       stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
     ),
     languageTag,
@@ -50,10 +50,10 @@ export async function generateStaticParams(): Promise<
 > {
   const staticParams: ConceptSchemePageParams[] = [];
 
-  const languageTags = await modelSet.languageTags();
+  const languageTags = await kos.languageTags();
   // If there's only one concept scheme the /[languageTag]/ page will show its ConceptPage,
   // but we still have to generate another ConceptPage here because Next doesn't like an empty staticParams.
-  for (const conceptScheme of await modelSet.conceptSchemes()) {
+  for (const conceptScheme of await kos.conceptSchemes()) {
     for (const languageTag of languageTags) {
       staticParams.push({
         conceptSchemeIdentifier: filenamify(

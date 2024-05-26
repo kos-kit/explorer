@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import modelSet from "./modelSet";
+import kos from "./kos";
 import { displayLabel } from "@/lib/utilities/displayLabel";
 import {
   Concept,
@@ -77,7 +77,7 @@ export class PageMetadata {
   }: {
     languageTag: LanguageTag;
   }): Promise<Metadata> {
-    const conceptSchemes = await modelSet.conceptSchemes();
+    const conceptSchemes = await kos.conceptSchemes();
 
     let title: string = "SKOS";
     if (conceptSchemes.length === 1) {
