@@ -48,7 +48,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "test": "TZ=UTC node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "TZ=UTC node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests"
   },
   "version": "0.1.0"
 }
