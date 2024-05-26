@@ -85,10 +85,10 @@ export class PageHrefs {
   }) {
     const searchParams: { [index: string]: string } = {};
     if (page) {
-      searchParams.page = page.toString();
+      searchParams["page"] = page.toString();
     }
     if (query) {
-      searchParams.query = query;
+      searchParams["query"] = query;
     }
 
     return queryString.stringifyUrl({

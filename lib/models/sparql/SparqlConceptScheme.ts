@@ -16,7 +16,7 @@ export class SparqlConceptScheme
     return new RdfJsConceptScheme({ dataset, identifier: this.identifier });
   }
 
-  protected get rdfJsDatasetQueryString(): string {
+  protected override get rdfJsDatasetQueryString(): string {
     return `
 CONSTRUCT {
   <${this.identifier.value}> ?p ?o .

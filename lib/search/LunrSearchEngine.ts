@@ -108,8 +108,8 @@ export class LunrSearchEngine implements SearchEngine {
   static fromJson(json: SearchEngineJson) {
     const lunrIndexCompactor = new LunrIndexCompactor();
     return new LunrSearchEngine(
-      json.documents,
-      lunrIndexCompactor.expandLunrIndex(json.index),
+      json["documents"],
+      lunrIndexCompactor.expandLunrIndex(json["index"]),
     );
   }
 

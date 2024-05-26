@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
     "experimentalDecorators": true,
+    "noUncheckedIndexedAccess": false,
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "target": "es2022"
   },
   "extends": [
     "@tsconfig/next/tsconfig.json",

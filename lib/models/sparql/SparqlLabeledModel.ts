@@ -27,7 +27,7 @@ export abstract class SparqlLabeledModel<RdfJsModelT extends RdfJsLabeledModel>
     return (await this.getOrCreateRdfJsModel()).prefLabels(kwds);
   }
 
-  protected get rdfJsDatasetQueryString(): string {
+  protected override get rdfJsDatasetQueryString(): string {
     return `
 CONSTRUCT {
   <${this.identifier.value}> ?p ?o .

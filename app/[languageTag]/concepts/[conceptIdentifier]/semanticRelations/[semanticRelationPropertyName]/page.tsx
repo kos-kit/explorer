@@ -59,7 +59,7 @@ export async function generateMetadata({
     ),
     languageTag,
     semanticRelationProperty:
-      semanticRelationPropertiesByName[semanticRelationPropertyName],
+      semanticRelationPropertiesByName[semanticRelationPropertyName]!,
   });
 }
 
