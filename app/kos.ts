@@ -2,8 +2,7 @@ import { Parser, Store } from "n3";
 import fs from "node:fs";
 import configuration from "./configuration";
 import { GlobalRef } from "@/lib/GlobalRef";
-import { RdfJsKos } from "@kos-kit/client/models/rdfjs";
-import { Kos } from "@kos-kit/client/models";
+import { Kos, rdfjs } from "@kos-kit/client/models";
 
 const kos = new GlobalRef("kos");
 if (!kos.value) {
@@ -13,6 +12,6 @@ if (!kos.value) {
     store.addQuads(parser.parse(fs.readFileSync(dataFilePath).toString()));
   }
 
-  kos.value = new RdfJsKos(store);
+  kos.value = new rdfjs.Kos(store);
 }
 export default kos.value as Kos;
