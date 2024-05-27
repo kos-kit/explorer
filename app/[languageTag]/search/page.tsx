@@ -94,7 +94,7 @@ async function getServerSearchEngineJson({
 }: {
   searchEndpoint: string;
 }): Promise<SearchEngineJson> {
-  console.info("using search endpoint", searchEndpoint);
+  // console.info("using search endpoint", searchEndpoint);
   return Promise.resolve(new ServerSearchEngine(searchEndpoint).toJson());
 }
 
