@@ -12,5 +12,5 @@ inputs:
     required: false
 name: Generate a static site for browsing and searching SKOS data
 runs:
-  image: docker/action/Dockerfile
+  image: action-Dockerfile
   using: docker
