@@ -52,6 +52,8 @@ if (!configuration.value) {
     INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
     INPUT_NEXT_BASE_PATH: envalid.str({ default: "" }),
     INPUT_RELATED_CONCEPTS_PER_SECTION: intValidator({ default: 10 }),
+    INPUT_SEARCH_ENDPOINT: envalid.str({ default: "" }),
+    INPUT_SPARQL_ENDPOINT: envalid.str({ default: "" }),
   });
 
   configuration.value = {
@@ -61,6 +63,10 @@ if (!configuration.value) {
     defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
     nextBasePath: env.INPUT_NEXT_BASE_PATH,
     relatedConceptsPerSection: env.INPUT_RELATED_CONCEPTS_PER_SECTION,
+    searchEndpoint:
+      env.INPUT_SEARCH_ENDPOINT.length > 0 ? env.INPUT_SEARCH_ENDPOINT : null,
+    sparqlEndpoint:
+      env.INPUT_SPARQL_ENDPOINT.length > 0 ? env.INPUT_SPARQL_ENDPOINT : null,
   } satisfies Configuration;
   // console.log("Configuration:", JSON.stringify(configuration.value));
 }
