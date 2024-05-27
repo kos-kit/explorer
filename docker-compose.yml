@@ -2,11 +2,11 @@ services:
   action:
     build:
       context: .
-      dockerfile: docker/action/Dockerfile
+      dockerfile: action-Dockerfile
   standalone:
     build:
       context: .
-      dockerfile: docker/standalone/Dockerfile
+      dockerfile: standalone-Dockerfile
     container_name: kos-kit-explorer-standalone
     environment:
       INPUT_DATA_PATHS: /data
