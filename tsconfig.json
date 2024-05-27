@@ -5,13 +5,21 @@
     "forceConsistentCasingInFileNames": true,
     "noUncheckedIndexedAccess": false,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     },
-    "target": "es2022"
+    "target": "es2022",
+    "strictNullChecks": true
   },
   "extends": [
     "@tsconfig/next/tsconfig.json",
     "@tsconfig/strictest/tsconfig.json"
   ],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ]
 }
