@@ -48,7 +48,7 @@ if (!configuration.value) {
       default: ".kos-kit/explorer/cache",
     }),
     INPUT_CONCEPTS_PER_PAGE: intValidator({ default: 25 }),
-    INPUT_DATA_PATHS: filePathArrayValidator(),
+    INPUT_DATA_PATHS: filePathArrayValidator({ default: "" }),
     INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
     INPUT_NEXT_BASE_PATH: envalid.str({ default: "" }),
     INPUT_RELATED_CONCEPTS_PER_SECTION: intValidator({ default: 10 }),

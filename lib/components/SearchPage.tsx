@@ -9,6 +9,7 @@ import { Pagination } from "./Pagination";
 import {
   SearchEngineJson,
   SearchResult,
+  SearchResults,
   createSearchEngineFromJson,
 } from "@kos-kit/client/search";
 import { stringToIdentifier } from "@kos-kit/client/utilities";
@@ -86,10 +87,9 @@ function SearchPageImpl({
   const query = searchParams.get("query");
 
   const [error, setError] = useState<Error | null>(null);
-  const [searchCount, setSearchCount] = useState<number | null>(null);
-  const [searchResults, setSearchResults] = useState<
-    readonly SearchResult[] | null
-  >(null);
+  const [searchResults, setSearchResults] = useState<SearchResults | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!query) {
@@ -98,12 +98,6 @@ function SearchPageImpl({
     }
 
     const searchEngine = createSearchEngineFromJson(searchEngineJson);
-
-    if (searchCount === null) {
-      searchEngine
-        .searchCount({ languageTag, query })
-        .then(setSearchCount, setError);
-    }
 
     searchEngine
       .search({
@@ -118,7 +112,6 @@ function SearchPageImpl({
     page,
     query,
     resultsPerPage,
-    searchCount,
     searchEngineJson,
     searchParams,
   ]);
@@ -135,7 +128,7 @@ function SearchPageImpl({
   const heading = (
     <PageTitleHeading>Search results for &quot;{query}&quot;</PageTitleHeading>
   );
-  if (searchCount === null || searchResults === null) {
+  if (searchResults === null) {
     return (
       <>
         {heading}
@@ -153,7 +146,7 @@ function SearchPageImpl({
     <>
       {heading}
       <ul>
-        {searchResults.map((searchResult, searchResultI) => (
+        {searchResults.page.map((searchResult, searchResultI) => (
           <li key={searchResultI}>
             {searchResult.type}:&nbsp;
             <Link
@@ -167,7 +160,7 @@ function SearchPageImpl({
       <Pagination
         currentPage={page}
         itemsPerPage={resultsPerPage}
-        itemsTotal={searchCount}
+        itemsTotal={searchResults.total}
         pageHref={(page) =>
           PageHrefs.search({
             basePath,
