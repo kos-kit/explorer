@@ -17,7 +17,7 @@ if (!configuration.value) {
   const filePathArrayValidator: envalid.StructuredValidator =
     makeStructuredValidator((value) => {
       if (value.length === 0) {
-        throw new Error("not specified");
+        return [];
       }
       return value.split(path.delimiter).flatMap((relativePath) => {
         const absolutePath = path.resolve(relativePath);
@@ -68,6 +68,21 @@ if (!configuration.value) {
     sparqlEndpoint:
       env.INPUT_SPARQL_ENDPOINT.length > 0 ? env.INPUT_SPARQL_ENDPOINT : null,
   } satisfies Configuration;
+
+  const checkConfiguration = configuration.value as Configuration;
+  if (checkConfiguration.dataFilePaths.length === 0) {
+    if (checkConfiguration.searchEndpoint === null) {
+      throw new Error(
+        "must specify a search endpoint in the configuration if no data paths are specified",
+      );
+    }
+    if (checkConfiguration.sparqlEndpoint === null) {
+      throw new Error(
+        "must specify a SPARQL endpoint in the configuration if no data paths are specified",
+      );
+    }
+  }
+
   // console.log("Configuration:", JSON.stringify(configuration.value));
 }
 export default configuration.value as Configuration;
