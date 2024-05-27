@@ -3,7 +3,7 @@ import fs from "node:fs";
 import configuration from "./configuration";
 import { GlobalRef } from "@/lib/GlobalRef";
 import { Kos, rdfjs, sparql } from "@kos-kit/client/models";
-import { QueryEngine } from "@comunica/query-sparql";
+import SparqlClient from "sparql-http-client/ParsingClient";
 
 const kos = new GlobalRef("kos");
 if (!kos.value) {
@@ -23,10 +23,7 @@ if (!kos.value) {
       "as KOS",
     );
     kos.value = new sparql.Kos(
-      {
-        sources: [configuration.sparqlEndpoint],
-      },
-      new QueryEngine(),
+      new SparqlClient({ endpointUrl: configuration.sparqlEndpoint }),
     );
   } else {
     throw new RangeError();
