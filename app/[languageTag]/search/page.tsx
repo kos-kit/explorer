@@ -7,18 +7,18 @@ import { Layout } from "@/lib/components/Layout";
 import { Metadata } from "next";
 import { PageMetadata } from "@/app/PageMetadata";
 import { LanguageTag } from "@kos-kit/client/models";
-import { SearchEngineJson } from "@kos-kit/client/search";
+import { SearchEngineJson, ServerSearchEngine } from "@kos-kit/client/search";
 import { LunrSearchEngine } from "@kos-kit/client/search/LunrSearchEngine";
 
 interface SearchPageParams {
   languageTag: LanguageTag;
 }
 
-export default async function SearchPage({
-  params: { languageTag },
+async function getLunrSearchEngineJson({
+  languageTag,
 }: {
-  params: SearchPageParams;
-}) {
+  languageTag: LanguageTag;
+}): Promise<SearchEngineJson> {
   const searchEngineJsonDirPath = path.join(
     configuration.cacheDirectoryPath,
     "search-engine",
@@ -66,13 +66,48 @@ export default async function SearchPage({
     );
   }
 
+  return searchEngineJson;
+}
+
+async function getSearchEngineJson({
+  languageTag,
+}: {
+  languageTag: LanguageTag;
+}): Promise<SearchEngineJson> {
+  if (configuration.dataFilePaths.length > 0) {
+    return getLunrSearchEngineJson({ languageTag });
+  } else if (configuration.searchEndpoint !== null) {
+    return getServerSearchEngineJson({
+      searchEndpoint: configuration.searchEndpoint,
+    });
+  } else {
+    return Promise.reject(
+      new Error("must specify data paths or search endpoint in configuration"),
+    );
+  }
+}
+
+async function getServerSearchEngineJson({
+  searchEndpoint,
+}: {
+  searchEndpoint: string;
+}): Promise<SearchEngineJson> {
+  console.info("using search endpoint", searchEndpoint);
+  return Promise.resolve(new ServerSearchEngine(searchEndpoint).toJson());
+}
+
+export default async function SearchPage({
+  params: { languageTag },
+}: {
+  params: SearchPageParams;
+}) {
   return (
     <Layout languageTag={languageTag}>
       <SearchPageClient
         basePath={configuration.nextBasePath}
         languageTag={languageTag}
         resultsPerPage={configuration.conceptsPerPage}
-        searchEngineJson={searchEngineJson}
+        searchEngineJson={await getSearchEngineJson({ languageTag })}
       />
     </Layout>
   );

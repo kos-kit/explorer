@@ -7,4 +7,6 @@ export interface Configuration {
   readonly defaultLanguageTag: LanguageTag;
   readonly nextBasePath: string;
   readonly relatedConceptsPerSection: number;
+  readonly searchEndpoint: string | null;
+  readonly sparqlEndpoint: string | null;
 }
