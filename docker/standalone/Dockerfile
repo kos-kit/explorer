@@ -17,6 +17,9 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ENV INPUT_NEXT_OUTPUT standalone
+ENV NEXT_TELEMETRY_DISABLED 1
+RUN npm run build
 
 
 # Production image, copy all the files and run next

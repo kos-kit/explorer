@@ -1,8 +1,9 @@
-/build
-/coverage
+/build/
+/coverage/
+/data/
 /.env
 /.kos-kit
 /.next/
+next-env.d.ts
 /node_modules
 /out/
-next-env.d.ts
