@@ -10,6 +10,18 @@ const nextConfig = {
     unoptimized: true,
   },
   output: process.env.INPUT_NEXT_OUTPUT ?? "export",
+  async rewrites() {
+    if (process.env.INPUT_SEARCH_ENDPOINT) {
+      return [
+        {
+          source: "/proxy/search",
+          destination: process.env.INPUT_SEARCH_ENDPOINT,
+        },
+      ];
+    } else {
+      return [];
+    }
+  },
   staticPageGenerationTimeout: 60 * 5, // in seconds
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {

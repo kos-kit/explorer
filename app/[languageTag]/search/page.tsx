@@ -78,7 +78,9 @@ async function getSearchEngineJson({
     return getLunrSearchEngineJson({ languageTag });
   } else if (configuration.searchEndpoint !== null) {
     return getServerSearchEngineJson({
-      searchEndpoint: configuration.searchEndpoint,
+      searchEndpoint: configuration.dynamic
+        ? "/proxy/search"
+        : configuration.searchEndpoint,
     });
   } else {
     return Promise.reject(
