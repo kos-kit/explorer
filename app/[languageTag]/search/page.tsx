@@ -79,7 +79,7 @@ async function getSearchEngineJson({
   } else if (configuration.searchEndpoint !== null) {
     return getServerSearchEngineJson({
       searchEndpoint: configuration.dynamic
-        ? "/proxy/search"
+        ? "/api/search"
         : configuration.searchEndpoint,
     });
   } else {
