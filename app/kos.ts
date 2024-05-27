@@ -1,9 +1,10 @@
 import { Parser, Store } from "n3";
 import fs from "node:fs";
 import configuration from "./configuration";
-import { GlobalRef } from "@/lib/GlobalRef";
+import { GlobalRef } from "@/lib/models/GlobalRef";
 import { Kos, rdfjs, sparql } from "@kos-kit/client/models";
 import SparqlClient from "sparql-http-client/ParsingClient";
+import { NotImplementedKos } from "@/lib/models/NotImplementedKos";
 
 const kos = new GlobalRef("kos");
 if (!kos.value) {
@@ -26,7 +27,8 @@ if (!kos.value) {
       new SparqlClient({ endpointUrl: configuration.sparqlEndpoint }),
     );
   } else {
-    throw new RangeError();
+    console.info("using NotImplementedKos");
+    kos.value = new NotImplementedKos();
   }
 }
 export default kos.value as Kos;

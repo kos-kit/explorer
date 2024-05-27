@@ -68,6 +68,10 @@ export async function generateMetadata({
 export async function generateStaticParams(): Promise<
   ConceptSemanticRelationsPageParams[]
 > {
+  if (configuration.dynamic) {
+    return [];
+  }
+
   const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
   const languageTags = await kos.languageTags();

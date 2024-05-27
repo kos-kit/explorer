@@ -5,6 +5,7 @@ export interface Configuration {
   readonly conceptsPerPage: number;
   readonly dataFilePaths: readonly string[];
   readonly defaultLanguageTag: LanguageTag;
+  readonly dynamic: boolean;
   readonly nextBasePath: string;
   readonly relatedConceptsPerSection: number;
   readonly searchEndpoint: string | null;

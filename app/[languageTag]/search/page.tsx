@@ -124,6 +124,10 @@ export async function generateMetadata({
 }
 
 export async function generateStaticParams(): Promise<SearchPageParams[]> {
+  if (configuration.dynamic) {
+    return [];
+  }
+
   return (await kos.languageTags()).map((languageTag) => ({
     languageTag,
   }));

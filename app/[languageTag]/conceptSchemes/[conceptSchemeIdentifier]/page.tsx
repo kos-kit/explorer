@@ -1,4 +1,5 @@
 import { PageMetadata } from "@/app/PageMetadata";
+import configuration from "@/app/configuration";
 import kos from "@/app/kos";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
 import { defilenamify } from "@/lib/utilities/defilenamify";
@@ -48,6 +49,10 @@ export async function generateMetadata({
 export async function generateStaticParams(): Promise<
   ConceptSchemePageParams[]
 > {
+  if (configuration.dynamic) {
+    return [];
+  }
+
   const staticParams: ConceptSchemePageParams[] = [];
 
   const languageTags = await kos.languageTags();

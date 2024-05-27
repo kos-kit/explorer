@@ -2,8 +2,8 @@ import * as envalid from "envalid";
 import { makeStructuredValidator } from "envalid/dist/makers";
 import path from "node:path";
 import fs from "node:fs";
-import { GlobalRef } from "@/lib/GlobalRef";
-import { Configuration } from "@/lib/Configuration";
+import { GlobalRef } from "@/lib/models/GlobalRef";
+import { Configuration } from "@/lib/models/Configuration";
 
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {
@@ -51,6 +51,7 @@ if (!configuration.value) {
     INPUT_DATA_PATHS: filePathArrayValidator({ default: "" }),
     INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
     INPUT_NEXT_BASE_PATH: envalid.str({ default: "" }),
+    INPUT_NEXT_OUTPUT: envalid.str({ default: "" }),
     INPUT_RELATED_CONCEPTS_PER_SECTION: intValidator({ default: 10 }),
     INPUT_SEARCH_ENDPOINT: envalid.str({ default: "" }),
     INPUT_SPARQL_ENDPOINT: envalid.str({ default: "" }),
@@ -61,6 +62,7 @@ if (!configuration.value) {
     conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
     dataFilePaths: env.INPUT_DATA_PATHS,
     defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
+    dynamic: env.INPUT_NEXT_OUTPUT.toLowerCase() == "standalone",
     nextBasePath: env.INPUT_NEXT_BASE_PATH,
     relatedConceptsPerSection: env.INPUT_RELATED_CONCEPTS_PER_SECTION,
     searchEndpoint:
@@ -68,21 +70,5 @@ if (!configuration.value) {
     sparqlEndpoint:
       env.INPUT_SPARQL_ENDPOINT.length > 0 ? env.INPUT_SPARQL_ENDPOINT : null,
   } satisfies Configuration;
-
-  const checkConfiguration = configuration.value as Configuration;
-  if (checkConfiguration.dataFilePaths.length === 0) {
-    if (checkConfiguration.searchEndpoint === null) {
-      throw new Error(
-        "must specify a search endpoint in the configuration if no data paths are specified",
-      );
-    }
-    if (checkConfiguration.sparqlEndpoint === null) {
-      throw new Error(
-        "must specify a SPARQL endpoint in the configuration if no data paths are specified",
-      );
-    }
-  }
-
-  // console.log("Configuration:", JSON.stringify(configuration.value));
 }
 export default configuration.value as Configuration;

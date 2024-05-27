@@ -108,6 +108,10 @@ export async function generateMetadata({
 export async function generateStaticParams(): Promise<
   ConceptSchemeTopConceptsPageParams[]
 > {
+  if (configuration.dynamic) {
+    return [];
+  }
+
   const staticParams: ConceptSchemeTopConceptsPageParams[] = [];
 
   const languageTags = await kos.languageTags();
