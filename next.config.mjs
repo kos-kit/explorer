@@ -9,7 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  output: "export",
+  output: process.env.INPUT_NEXT_OUTPUT ?? "export",
   staticPageGenerationTimeout: 60 * 5, // in seconds
   webpack: (config, { isServer, webpack }) => {
     if (!isServer) {

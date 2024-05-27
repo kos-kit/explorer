@@ -23,6 +23,4 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
-EXPOSE 80
-
-CMD ["/app/docker-cmd-build.sh"]
+CMD ["/app/docker/action/docker-cmd.sh"]
