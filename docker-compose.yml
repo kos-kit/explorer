@@ -7,8 +7,11 @@ services:
     build:
       context: .
       dockerfile: docker/standalone/Dockerfile
+    container_name: kos-kit-explorer-standalone
     environment:
       INPUT_DATA_PATHS: /data
     image: kos-kit/explorer
+    ports:
+      - "127.0.0.1:3000:3000"
     volumes:
       - ./data:/data:ro

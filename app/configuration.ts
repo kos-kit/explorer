@@ -32,7 +32,7 @@ if (!configuration.value) {
             if (!dirent.isFile()) {
               continue;
             }
-            filePaths.push(dirent.path);
+            filePaths.push(path.resolve(absolutePath, dirent.name));
           }
           return filePaths;
         } else {
