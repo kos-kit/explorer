@@ -53,7 +53,7 @@ export function LanguageSelector({
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
-  const pathnameSplit = pathname.split("/");
+  const pathnameSplit = pathname!.split("/");
   const currentLanguageTag = pathnameSplit[1];
 
   useEffect(() => {

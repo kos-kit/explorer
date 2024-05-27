@@ -79,12 +79,12 @@ function SearchPageImpl({
   searchEngineJson,
 }: SearchPageProps) {
   const searchParams = useSearchParams();
-  const pageString = searchParams.get("page");
+  const pageString = searchParams!.get("page");
   let page = pageString ? parseInt(pageString) : 0;
   if (isNaN(page)) {
     page = 0;
   }
-  const query = searchParams.get("query");
+  const query = searchParams!.get("query");
 
   const [error, setError] = useState<Error | null>(null);
   const [searchResults, setSearchResults] = useState<SearchResults | null>(
