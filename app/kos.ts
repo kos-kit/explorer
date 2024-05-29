@@ -3,7 +3,7 @@ import fs from "node:fs";
 import configuration from "./configuration";
 import { GlobalRef } from "@/lib/models/GlobalRef";
 import { Kos, rdfjs, sparql } from "@kos-kit/client/models";
-import { SparqlClient } from "@kos-kit/client";
+import SparqlClient from "sparql-http-client/ParsingClient";
 import { NotImplementedKos } from "@/lib/models/NotImplementedKos";
 
 const kos = new GlobalRef("kos");
