@@ -2,7 +2,8 @@ import { PageMetadata } from "@/app/PageMetadata";
 import configuration from "@/app/configuration";
 import kos from "@/app/kos";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
-import { defilenamify, filenamify } from "@kos-kit/client/utilities";
+import { defilenamify } from "@/lib/utilities/defilenamify";
+import { filenamify } from "@/lib/utilities/filenamify";
 import { LanguageTag } from "@kos-kit/client/models";
 import {
   identifierToString,

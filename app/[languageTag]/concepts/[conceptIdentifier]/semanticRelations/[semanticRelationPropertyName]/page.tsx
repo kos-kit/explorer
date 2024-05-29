@@ -4,8 +4,9 @@ import kos from "@/app/kos";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { defilenamify, filenamify } from "@kos-kit/client/utilities";
+import { defilenamify } from "@/lib/utilities/defilenamify";
 import { displayLabel } from "@/lib/utilities/displayLabel";
+import { filenamify } from "@/lib/utilities/filenamify";
 import {
   LanguageTag,
   semanticRelationProperties,

@@ -5,7 +5,9 @@ import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
 import { Pagination } from "@/lib/components/Pagination";
-import { filenamify, defilenamify, pageCount } from "@kos-kit/client/utilities";
+import { defilenamify } from "@/lib/utilities/defilenamify";
+import { filenamify } from "@/lib/utilities/filenamify";
+import { pageCount } from "@/lib/utilities/pageCount";
 import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
 import { displayLabel } from "@/lib/utilities/displayLabel";
@@ -41,6 +43,7 @@ export default async function ConceptSchemeTopConceptsPage({
       <PageTitleHeading>
         <Link
           href={PageHrefs.conceptScheme({
+            basePath: configuration.nextBasePath,
             conceptSchemeIdentifier: conceptScheme.identifier,
             languageTag,
           })}
@@ -75,6 +78,7 @@ export default async function ConceptSchemeTopConceptsPage({
             itemsTotal={topConceptsCount}
             pageHref={(page) =>
               PageHrefs.conceptSchemeTopConcepts({
+                basePath: configuration.nextBasePath,
                 conceptSchemeIdentifier: conceptScheme.identifier,
                 languageTag,
                 page,
