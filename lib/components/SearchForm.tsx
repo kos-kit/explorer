@@ -1,13 +1,11 @@
 import { PageHrefs } from "@/app/PageHrefs";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import configuration from "@/app/configuration";
 import { LanguageTag } from "@kos-kit/client/models";
 
 export function SearchForm({ languageTag }: { languageTag: LanguageTag }) {
   return (
     <form
       action={PageHrefs.search({
-        basePath: configuration.nextBasePath,
         languageTag,
       })}
       className="flex gap-1"

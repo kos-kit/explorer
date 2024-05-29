@@ -19,7 +19,6 @@ export async function ConceptList({
           <li key={identifierToString(concept.identifier)}>
             <Link
               href={PageHrefs.concept({
-                basePath: configuration.nextBasePath,
                 conceptIdentifier: concept.identifier,
                 languageTag,
               })}
