@@ -8,9 +8,8 @@ import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
-import { defilenamify } from "@/lib/utilities/defilenamify";
+import { defilenamify, filenamify } from "@kos-kit/client/utilities";
 import { displayLabel } from "@/lib/utilities/displayLabel";
-import { filenamify } from "@/lib/utilities/filenamify";
 import {
   LanguageTag,
   noteProperties,

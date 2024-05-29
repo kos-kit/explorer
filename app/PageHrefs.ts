@@ -1,4 +1,4 @@
-import { filenamify } from "@/lib/utilities/filenamify";
+import { filenamify } from "@kos-kit/client/utilities";
 import {
   Identifier,
   LanguageTag,
