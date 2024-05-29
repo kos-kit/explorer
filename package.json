@@ -30,7 +30,6 @@
     "@types/sparql-http-client": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
-    "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",
     "eslint-config-prettier": "^9.1.0",
@@ -44,10 +43,6 @@
   "license": "GPL-3.0-only",
   "name": "@kos-kit/explorer",
   "private": true,
-  "resolutions": {
-    "wrap-ansi": "7.0.0",
-    "string-width": "4.1.0"
-  },
   "scripts": {
     "build": "node --max-old-space-size=8192 node_modules/next/dist/bin/next build",
     "dev": "next dev",
