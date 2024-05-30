@@ -11,10 +11,11 @@ export async function LabelSections({
 }) {
   const sections: React.ReactElement[] = [];
 
+  const languageTags = new Set([languageTag, ""]);
   for (const { labels, type } of [
-    { labels: await model.prefLabels({ languageTag }), type: "Preferred" },
-    { labels: await model.altLabels({ languageTag }), type: "Alternate" },
-    { labels: await model.hiddenLabels({ languageTag }), type: "Hidden" },
+    { labels: await model.prefLabels({ languageTags }), type: "Preferred" },
+    { labels: await model.altLabels({ languageTags }), type: "Alternate" },
+    { labels: await model.hiddenLabels({ languageTags }), type: "Hidden" },
   ]) {
     if (labels.length === 0 || (type == "Preferred" && labels.length === 1)) {
       continue;
