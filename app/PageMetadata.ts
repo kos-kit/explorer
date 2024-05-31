@@ -9,81 +9,53 @@ import {
 } from "@kos-kit/client/models";
 
 export class PageMetadata {
-  static async concept({
-    concept,
-    languageTag,
-  }: {
-    concept: Concept;
-    languageTag: LanguageTag;
-  }): Promise<Metadata> {
-    const rootPageMetadata = await PageMetadata.languageTag({ languageTag });
+  private readonly _languageTag: LanguageTag;
+
+  constructor({ languageTag }: { languageTag: LanguageTag }) {
+    this._languageTag = languageTag;
+  }
+
+  async concept(concept: Concept): Promise<Metadata> {
+    const rootPageMetadata = await this.languageTag();
     return {
-      title: `${rootPageMetadata.title}: Concept: ${await displayLabel({ languageTag, model: concept })}`,
+      title: `${rootPageMetadata.title}: Concept: ${await displayLabel({ languageTag: this._languageTag, model: concept })}`,
     } satisfies Metadata;
   }
 
-  static async conceptScheme({
-    conceptScheme,
-    languageTag,
-  }: {
-    conceptScheme: ConceptScheme;
-    languageTag: LanguageTag;
-  }): Promise<Metadata> {
-    const rootPageMetadata = await PageMetadata.languageTag({ languageTag });
+  async conceptScheme(conceptScheme: ConceptScheme): Promise<Metadata> {
+    const rootPageMetadata = await this.languageTag();
     return {
-      title: `${rootPageMetadata.title}: Concept Scheme: ${await displayLabel({ languageTag, model: conceptScheme })}`,
+      title: `${rootPageMetadata.title}: Concept Scheme: ${await displayLabel({ languageTag: this._languageTag, model: conceptScheme })}`,
     } satisfies Metadata;
   }
 
-  static async conceptSchemeTopConcepts({
-    conceptScheme,
-    languageTag,
-  }: {
-    conceptScheme: ConceptScheme;
-    languageTag: LanguageTag;
-    page: number;
-  }) {
-    const conceptSchemePageMetadata = await PageMetadata.conceptScheme({
-      conceptScheme,
-      languageTag,
-    });
+  async conceptSchemeTopConcepts(conceptScheme: ConceptScheme, _page: number) {
+    const conceptSchemePageMetadata = await this.conceptScheme(conceptScheme);
 
     return {
       title: conceptSchemePageMetadata.title + ": Top concepts",
     } satisfies Metadata;
   }
 
-  static async conceptSemanticRelations({
-    concept,
-    languageTag,
-    semanticRelationProperty,
-  }: {
-    concept: Concept;
-    languageTag: LanguageTag;
-    semanticRelationProperty: SemanticRelationProperty;
-  }) {
-    const conceptPageMetadata = await PageMetadata.concept({
-      concept,
-      languageTag,
-    });
+  async conceptSemanticRelations(
+    concept: Concept,
+    semanticRelationProperty: SemanticRelationProperty,
+  ) {
+    const conceptPageMetadata = await this.concept(concept);
 
     return {
       title: `${conceptPageMetadata.title}: ${semanticRelationProperty.label} concepts`,
     } satisfies Metadata;
   }
 
-  static async languageTag({
-    languageTag,
-  }: {
-    languageTag: LanguageTag;
-  }): Promise<Metadata> {
+  async languageTag(): Promise<Metadata> {
     const conceptSchemes = await kos.conceptSchemes();
 
     let title: string = "SKOS";
     if (conceptSchemes.length === 1) {
       const conceptScheme = conceptSchemes[0];
       const prefLabels = await conceptScheme.prefLabels({
-        languageTags: new Set([languageTag, ""]),
+        languageTags: new Set([this._languageTag, ""]),
       });
       if (prefLabels.length > 0) {
         title = prefLabels[0].literalForm.value;
@@ -95,13 +67,9 @@ export class PageMetadata {
     } satisfies Metadata;
   }
 
-  static async search({
-    languageTag,
-  }: {
-    languageTag: LanguageTag;
-  }): Promise<Metadata> {
+  async search(): Promise<Metadata> {
     return {
-      title: `${(await PageMetadata.languageTag({ languageTag })).title}: search results`,
+      title: `${(await this.languageTag()).title}: search results`,
     } satisfies Metadata;
   }
 }

@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { PageTitleHeading } from "./PageTitleHeading";
-import { PageHrefs } from "@/app/PageHrefs";
 import { Link } from "@/lib/components/Link";
 import { Pagination } from "./Pagination";
 import {
@@ -14,6 +13,9 @@ import {
 } from "@kos-kit/client/search";
 import { stringToIdentifier } from "@kos-kit/client/utilities";
 import { LanguageTag } from "@kos-kit/client/models";
+import configuration from "@/app/configuration";
+import { Hrefs } from "../Hrefs";
+import { Configuration } from "../models/Configuration";
 
 function AnimatedSpinner() {
   return (
@@ -41,43 +43,39 @@ function AnimatedSpinner() {
 }
 
 function searchResultHref({
-  basePath,
   languageTag,
   searchResult,
 }: {
-  basePath: string;
   languageTag: LanguageTag;
   searchResult: SearchResult;
 }): string {
+  const hrefs = new Hrefs({ configuration, languageTag });
+
   switch (searchResult.type) {
     case "Concept":
-      return PageHrefs.concept({
-        basePath,
-        conceptIdentifier: stringToIdentifier(searchResult.identifier),
-        languageTag,
+      return hrefs.concept({
+        identifier: stringToIdentifier(searchResult.identifier),
       });
     case "ConceptScheme":
-      return PageHrefs.conceptScheme({
-        basePath,
-        conceptSchemeIdentifier: stringToIdentifier(searchResult.identifier),
-        languageTag,
+      return hrefs.conceptScheme({
+        identifier: stringToIdentifier(searchResult.identifier),
       });
   }
 }
 
 interface SearchPageProps {
-  basePath: string;
+  configuration: Configuration;
   languageTag: LanguageTag;
-  resultsPerPage: number;
   searchEngineJson: SearchEngineJson;
 }
 
 function SearchPageImpl({
-  basePath,
+  configuration,
   languageTag,
-  resultsPerPage,
   searchEngineJson,
 }: SearchPageProps) {
+  const hrefs = new Hrefs({ configuration, languageTag });
+  const resultsPerPage = configuration.conceptsPerPage;
   const searchParams = useSearchParams();
   const pageString = searchParams!.get("page");
   let page = pageString ? parseInt(pageString) : 0;
@@ -149,9 +147,7 @@ function SearchPageImpl({
         {searchResults.page.map((searchResult, searchResultI) => (
           <li key={searchResultI}>
             {searchResult.type}:&nbsp;
-            <Link
-              href={searchResultHref({ basePath, languageTag, searchResult })}
-            >
+            <Link href={searchResultHref({ languageTag, searchResult })}>
               <b>{searchResult.prefLabel}</b>
             </Link>
           </li>
@@ -162,9 +158,7 @@ function SearchPageImpl({
         itemsPerPage={resultsPerPage}
         itemsTotal={searchResults.total}
         pageHref={(page) =>
-          PageHrefs.search({
-            basePath,
-            languageTag,
+          hrefs.search({
             page,
             query: query ?? undefined,
           })

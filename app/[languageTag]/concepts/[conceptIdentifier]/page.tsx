@@ -1,6 +1,5 @@
 import configuration from "@/app/configuration";
 import kos from "@/app/kos";
-import { PageHrefs } from "@/app/PageHrefs";
 import { PageMetadata } from "@/app/PageMetadata";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";
@@ -22,6 +21,7 @@ import {
 import { Metadata } from "next";
 import { xsd } from "@kos-kit/client/vocabularies";
 import React from "react";
+import { Hrefs } from "@/lib/Hrefs";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -36,6 +36,8 @@ export default async function ConceptPage({
   const concept = await kos.conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
+
+  const hrefs = new Hrefs({ configuration, languageTag });
 
   const notations = await concept.notations();
 
@@ -108,12 +110,10 @@ export default async function ConceptPage({
               {semanticRelations.length >
               configuration.relatedConceptsPerSection ? (
                 <Link
-                  href={PageHrefs.conceptSemanticRelations({
-                    basePath: configuration.nextBasePath,
-                    conceptIdentifier: concept.identifier,
-                    languageTag,
+                  href={hrefs.conceptSemanticRelations(
+                    concept,
                     semanticRelationProperty,
-                  })}
+                  )}
                 >
                   More
                 </Link>
