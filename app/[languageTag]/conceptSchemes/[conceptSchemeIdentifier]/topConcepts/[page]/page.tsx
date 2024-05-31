@@ -1,6 +1,5 @@
 import configuration from "@/app/configuration";
 import kos from "@/app/kos";
-import { PageHrefs } from "@/app/PageHrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
@@ -16,6 +15,7 @@ import {
   identifierToString,
   stringToIdentifier,
 } from "@kos-kit/client/utilities";
+import { Hrefs } from "@/lib/Hrefs";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -32,6 +32,8 @@ export default async function ConceptSchemeTopConceptsPage({
     stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
   );
 
+  const hrefs = new Hrefs({ configuration, languageTag });
+
   const pageInt = parseInt(page);
 
   const topConceptsCount = await conceptScheme.topConceptsCount();
@@ -39,13 +41,7 @@ export default async function ConceptSchemeTopConceptsPage({
   return (
     <Layout languageTag={languageTag}>
       <PageTitleHeading>
-        <Link
-          href={PageHrefs.conceptScheme({
-            basePath: configuration.nextBasePath,
-            conceptSchemeIdentifier: conceptScheme.identifier,
-            languageTag,
-          })}
-        >
+        <Link href={hrefs.conceptScheme(conceptScheme)}>
           Concept Scheme:{" "}
           {await displayLabel({ languageTag, model: conceptScheme })}
         </Link>
@@ -75,12 +71,7 @@ export default async function ConceptSchemeTopConceptsPage({
             itemsPerPage={configuration.conceptsPerPage}
             itemsTotal={topConceptsCount}
             pageHref={(page) =>
-              PageHrefs.conceptSchemeTopConcepts({
-                basePath: configuration.nextBasePath,
-                conceptSchemeIdentifier: conceptScheme.identifier,
-                languageTag,
-                page,
-              })
+              hrefs.conceptSchemeTopConcepts({ conceptScheme, page })
             }
           />
         </div>
@@ -94,11 +85,10 @@ export async function generateMetadata({
 }: {
   params: ConceptSchemeTopConceptsPageParams;
 }): Promise<Metadata> {
-  return PageMetadata.conceptSchemeTopConcepts({
+  return new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
     conceptScheme: await kos.conceptSchemeByIdentifier(
       stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
     ),
-    languageTag,
     page: parseInt(page),
   });
 }

@@ -54,11 +54,10 @@ export async function generateMetadata({
 }: {
   params: ConceptSemanticRelationsPageParams;
 }): Promise<Metadata> {
-  return PageMetadata.conceptSemanticRelations({
+  return new PageMetadata({ languageTag }).conceptSemanticRelations({
     concept: await kos.conceptByIdentifier(
       stringToIdentifier(defilenamify(conceptIdentifier)),
     ),
-    languageTag,
     semanticRelationProperty:
       semanticRelationPropertiesByName[semanticRelationPropertyName]!,
   });

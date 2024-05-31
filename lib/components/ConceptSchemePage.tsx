@@ -5,9 +5,9 @@ import { LabelSections } from "@/lib/components/LabelSections";
 import { Section } from "@/lib/components/Section";
 import { Layout } from "@/lib/components/Layout";
 import { displayLabel } from "@/lib/utilities/displayLabel";
-import { PageHrefs } from "@/app/PageHrefs";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { ConceptScheme, LanguageTag } from "@kos-kit/client/models";
+import { Hrefs } from "../Hrefs";
 
 export async function ConceptSchemePage({
   conceptScheme,
@@ -37,12 +37,10 @@ export async function ConceptSchemePage({
             />
             {topConceptsCount > configuration.relatedConceptsPerSection ? (
               <Link
-                href={PageHrefs.conceptSchemeTopConcepts({
-                  basePath: configuration.nextBasePath,
-                  conceptSchemeIdentifier: conceptScheme.identifier,
+                href={new Hrefs({
+                  configuration,
                   languageTag,
-                  page: 0,
-                })}
+                }).conceptSchemeTopConcepts({ conceptScheme, page: 0 })}
               >
                 More
               </Link>

@@ -1,4 +1,3 @@
-import { PageHrefs } from "@/app/PageHrefs";
 import { ListBulletIcon } from "@heroicons/react/24/solid";
 import { Link } from "@/lib/components/Link";
 import { PageMetadata } from "@/app/PageMetadata";
@@ -7,17 +6,18 @@ import kos from "@/app/kos";
 import { SearchForm } from "./SearchForm";
 import configuration from "@/app/configuration";
 import { LanguageTag } from "@kos-kit/client/models";
+import { Hrefs } from "../Hrefs";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
   const availableLanguageTags = await kos.languageTags();
-  const title: string = (await PageMetadata.languageTag({ languageTag }))
+  const title: string = (await new PageMetadata({ languageTag }).languageTag())
     .title as string;
 
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap justify-between">
         <Link
-          href={PageHrefs.root({ basePath: configuration.nextBasePath })}
+          href={new Hrefs({ configuration, languageTag }).languageTag}
           className="flex space-x-3 rtl:space-x-reverse"
         >
           <ListBulletIcon className="h-8 w-8" />
