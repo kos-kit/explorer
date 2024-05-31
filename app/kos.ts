@@ -2,7 +2,7 @@ import { Parser, Store } from "n3";
 import fs from "node:fs";
 import configuration from "./configuration";
 import { GlobalRef } from "@/lib/models/GlobalRef";
-import { Kos, rdfjs, sparql } from "@kos-kit/client/models";
+import { Kos, mem, sparql } from "@kos-kit/client/models";
 import SparqlClient from "sparql-http-client/ParsingClient";
 import { NotImplementedKos } from "@/lib/models/NotImplementedKos";
 
@@ -16,7 +16,7 @@ if (!kos.value) {
       store.addQuads(parser.parse(fs.readFileSync(dataFilePath).toString()));
     }
 
-    kos.value = new rdfjs.Kos(store);
+    kos.value = new mem.Kos(store);
   } else if (configuration.sparqlEndpoint !== null) {
     console.info(
       "using SPARQL endpoint",
