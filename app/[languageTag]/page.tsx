@@ -29,9 +29,7 @@ export async function generateMetadata({
 }: {
   params: LanguageTagPageParams;
 }): Promise<Metadata> {
-  return PageMetadata.languageTag({
-    languageTag,
-  });
+  return new PageMetadata({ languageTag }).languageTag();
 }
 
 export async function generateStaticParams(): Promise<LanguageTagPageParams[]> {

@@ -13,7 +13,6 @@ import {
 } from "@kos-kit/client/search";
 import { stringToIdentifier } from "@kos-kit/client/utilities";
 import { LanguageTag } from "@kos-kit/client/models";
-import configuration from "@/app/configuration";
 import { Hrefs } from "../Hrefs";
 import { Configuration } from "../models/Configuration";
 
@@ -43,9 +42,11 @@ function AnimatedSpinner() {
 }
 
 function searchResultHref({
+  configuration,
   languageTag,
   searchResult,
 }: {
+  configuration: Configuration;
   languageTag: LanguageTag;
   searchResult: SearchResult;
 }): string {
@@ -147,7 +148,13 @@ function SearchPageImpl({
         {searchResults.page.map((searchResult, searchResultI) => (
           <li key={searchResultI}>
             {searchResult.type}:&nbsp;
-            <Link href={searchResultHref({ languageTag, searchResult })}>
+            <Link
+              href={searchResultHref({
+                configuration,
+                languageTag,
+                searchResult,
+              })}
+            >
               <b>{searchResult.prefLabel}</b>
             </Link>
           </li>

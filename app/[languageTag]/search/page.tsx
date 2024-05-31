@@ -106,9 +106,8 @@ export default async function SearchPage({
   return (
     <Layout languageTag={languageTag}>
       <SearchPageClient
-        basePath={configuration.nextBasePath}
+        configuration={configuration}
         languageTag={languageTag}
-        resultsPerPage={configuration.conceptsPerPage}
         searchEngineJson={await getSearchEngineJson({ languageTag })}
       />
     </Layout>
@@ -120,9 +119,7 @@ export async function generateMetadata({
 }: {
   params: SearchPageParams;
 }): Promise<Metadata> {
-  return PageMetadata.search({
-    languageTag,
-  });
+  return new PageMetadata({ languageTag }).search();
 }
 
 export async function generateStaticParams(): Promise<SearchPageParams[]> {

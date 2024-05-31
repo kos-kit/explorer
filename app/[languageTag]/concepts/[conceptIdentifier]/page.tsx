@@ -110,10 +110,10 @@ export default async function ConceptPage({
               {semanticRelations.length >
               configuration.relatedConceptsPerSection ? (
                 <Link
-                  href={hrefs.conceptSemanticRelations(
+                  href={hrefs.conceptSemanticRelations({
                     concept,
                     semanticRelationProperty,
-                  )}
+                  })}
                 >
                   More
                 </Link>
@@ -131,12 +131,11 @@ export async function generateMetadata({
 }: {
   params: ConceptPageParams;
 }): Promise<Metadata> {
-  return PageMetadata.concept({
-    concept: await kos.conceptByIdentifier(
+  return new PageMetadata({ languageTag }).concept(
+    await kos.conceptByIdentifier(
       stringToIdentifier(defilenamify(conceptIdentifier)),
     ),
-    languageTag,
-  });
+  );
 }
 
 export async function generateStaticParams(): Promise<ConceptPageParams[]> {

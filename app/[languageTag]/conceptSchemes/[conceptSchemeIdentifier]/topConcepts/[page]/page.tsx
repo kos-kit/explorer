@@ -71,7 +71,7 @@ export default async function ConceptSchemeTopConceptsPage({
             itemsPerPage={configuration.conceptsPerPage}
             itemsTotal={topConceptsCount}
             pageHref={(page) =>
-              hrefs.conceptSchemeTopConcepts(conceptScheme, page)
+              hrefs.conceptSchemeTopConcepts({ conceptScheme, page })
             }
           />
         </div>
@@ -85,11 +85,10 @@ export async function generateMetadata({
 }: {
   params: ConceptSchemeTopConceptsPageParams;
 }): Promise<Metadata> {
-  return PageMetadata.conceptSchemeTopConcepts({
+  return new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
     conceptScheme: await kos.conceptSchemeByIdentifier(
       stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
     ),
-    languageTag,
     page: parseInt(page),
   });
 }

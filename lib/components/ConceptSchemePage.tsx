@@ -40,7 +40,7 @@ export async function ConceptSchemePage({
                 href={new Hrefs({
                   configuration,
                   languageTag,
-                }).conceptSchemeTopConcepts(conceptScheme, 0)}
+                }).conceptSchemeTopConcepts({ conceptScheme, page: 0 })}
               >
                 More
               </Link>

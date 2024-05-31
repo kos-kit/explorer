@@ -10,7 +10,7 @@ import { Hrefs } from "../Hrefs";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
   const availableLanguageTags = await kos.languageTags();
-  const title: string = (await PageMetadata.languageTag({ languageTag }))
+  const title: string = (await new PageMetadata({ languageTag }).languageTag())
     .title as string;
 
   return (

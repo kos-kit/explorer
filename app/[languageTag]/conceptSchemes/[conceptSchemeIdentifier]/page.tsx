@@ -37,12 +37,11 @@ export async function generateMetadata({
 }: {
   params: ConceptSchemePageParams;
 }): Promise<Metadata> {
-  return PageMetadata.conceptScheme({
-    conceptScheme: await kos.conceptSchemeByIdentifier(
+  return new PageMetadata({ languageTag }).conceptScheme(
+    await kos.conceptSchemeByIdentifier(
       stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
     ),
-    languageTag,
-  });
+  );
 }
 
 export async function generateStaticParams(): Promise<

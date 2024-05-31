@@ -31,17 +31,23 @@ export class Hrefs {
     return `${this.languageTag}/conceptSchemes/${filenamify(identifierToString(conceptScheme.identifier))}`;
   }
 
-  conceptSchemeTopConcepts(
-    conceptScheme: { identifier: Identifier },
-    page: number,
-  ): string {
+  conceptSchemeTopConcepts({
+    conceptScheme,
+    page,
+  }: {
+    conceptScheme: { identifier: Identifier };
+    page: number;
+  }): string {
     return `${this.conceptScheme(conceptScheme)}/topConcepts/${page}`;
   }
 
-  conceptSemanticRelations(
-    concept: { identifier: Identifier },
-    semanticRelationProperty: SemanticRelationProperty,
-  ): string {
+  conceptSemanticRelations({
+    concept,
+    semanticRelationProperty,
+  }: {
+    concept: { identifier: Identifier };
+    semanticRelationProperty: SemanticRelationProperty;
+  }): string {
     return `${this.concept(concept)}/semanticRelations/${semanticRelationProperty.name}`;
   }
 

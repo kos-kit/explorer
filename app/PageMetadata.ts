@@ -29,7 +29,12 @@ export class PageMetadata {
     } satisfies Metadata;
   }
 
-  async conceptSchemeTopConcepts(conceptScheme: ConceptScheme, _page: number) {
+  async conceptSchemeTopConcepts({
+    conceptScheme,
+  }: {
+    conceptScheme: ConceptScheme;
+    page: number;
+  }) {
     const conceptSchemePageMetadata = await this.conceptScheme(conceptScheme);
 
     return {
@@ -37,10 +42,13 @@ export class PageMetadata {
     } satisfies Metadata;
   }
 
-  async conceptSemanticRelations(
-    concept: Concept,
-    semanticRelationProperty: SemanticRelationProperty,
-  ) {
+  async conceptSemanticRelations({
+    concept,
+    semanticRelationProperty,
+  }: {
+    concept: Concept;
+    semanticRelationProperty: SemanticRelationProperty;
+  }) {
     const conceptPageMetadata = await this.concept(concept);
 
     return {
