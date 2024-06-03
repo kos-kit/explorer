@@ -7,6 +7,7 @@ import {
   intValidator,
   languageTagArrayValidator,
 } from "@kos-kit/client/utilities/envalidValidators";
+import { LanguageTag } from "@kos-kit/client/models";
 
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {
@@ -17,7 +18,7 @@ if (!configuration.value) {
     INPUT_CONCEPTS_PER_PAGE: intValidator({ default: 25 }),
     INPUT_DATA_PATHS: existingFilePathArrayValidator({ default: [] }),
     INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
-    INPUT_LANGUAGE_TAGS: languageTagArrayValidator({ default: ["en"] }),
+    INPUT_LANGUAGE_TAGS: languageTagArrayValidator({ default: [] }),
     INPUT_NEXT_BASE_PATH: envalid.str({ default: "" }),
     INPUT_NEXT_OUTPUT: envalid.str({ default: "" }),
     INPUT_RELATED_CONCEPTS_PER_SECTION: intValidator({ default: 10 }),
@@ -31,7 +32,10 @@ if (!configuration.value) {
     dataFilePaths: env.INPUT_DATA_PATHS,
     defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
     dynamic: env.INPUT_NEXT_OUTPUT.toLowerCase() == "standalone",
-    languageTags: env.INPUT_LANGUAGE_TAGS,
+    languageTags:
+      env.INPUT_LANGUAGE_TAGS.length > 0
+        ? env.INPUT_LANGUAGE_TAGS
+        : [env.INPUT_DEFAULT_LANGUAGE_TAG],
     nextBasePath: env.INPUT_NEXT_BASE_PATH,
     relatedConceptsPerSection: env.INPUT_RELATED_CONCEPTS_PER_SECTION,
     searchEndpoint:
