@@ -7,7 +7,6 @@ import {
   intValidator,
   languageTagArrayValidator,
 } from "@kos-kit/client/utilities/envalidValidators";
-import { LanguageTag } from "@kos-kit/client/models";
 
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {
