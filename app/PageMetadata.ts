@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import kos from "./kos";
+import kos from "./kosFactory";
 import { displayLabel } from "@/lib/utilities/displayLabel";
 import {
   Concept,

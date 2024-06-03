@@ -2,14 +2,12 @@ import { ListBulletIcon } from "@heroicons/react/24/solid";
 import { Link } from "@/lib/components/Link";
 import { PageMetadata } from "@/app/PageMetadata";
 import { LanguageSelector } from "./LanguageSelector";
-import kos from "@/app/kos";
 import { SearchForm } from "./SearchForm";
 import configuration from "@/app/configuration";
 import { LanguageTag } from "@kos-kit/client/models";
 import { Hrefs } from "../Hrefs";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
-  const availableLanguageTags = await kos.languageTags();
   const title: string = (await new PageMetadata({ languageTag }).languageTag())
     .title as string;
 
@@ -27,8 +25,10 @@ export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
         </Link>
         <div className="flex gap-4 justify-end">
           <SearchForm languageTag={languageTag} />
-          {availableLanguageTags.length > 1 ? (
-            <LanguageSelector availableLanguageTags={availableLanguageTags} />
+          {configuration.languageTags.length > 1 ? (
+            <LanguageSelector
+              availableLanguageTags={configuration.languageTags}
+            />
           ) : null}
         </div>
       </div>

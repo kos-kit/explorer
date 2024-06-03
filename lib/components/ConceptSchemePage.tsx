@@ -4,7 +4,6 @@ import configuration from "@/app/configuration";
 import { LabelSections } from "@/lib/components/LabelSections";
 import { Section } from "@/lib/components/Section";
 import { Layout } from "@/lib/components/Layout";
-import { displayLabel } from "@/lib/utilities/displayLabel";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { ConceptScheme, LanguageTag } from "@kos-kit/client/models";
 import { Hrefs } from "../Hrefs";
@@ -21,15 +20,14 @@ export async function ConceptSchemePage({
   return (
     <Layout languageTag={languageTag}>
       <PageTitleHeading>
-        Concept Scheme:{" "}
-        {await displayLabel({ languageTag, model: conceptScheme })}
+        Concept Scheme: {conceptScheme.displayLabel}
       </PageTitleHeading>
       <LabelSections languageTag={languageTag} model={conceptScheme} />
       {topConceptsCount > 0 ? (
         <Section title="Top concepts">
           <div className="flex flex-col gap-2">
             <ConceptList
-              concepts={await conceptScheme.topConcepts({
+              concepts={await conceptScheme.topConceptsPage({
                 limit: configuration.relatedConceptsPerSection,
                 offset: 0,
               })}

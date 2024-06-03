@@ -6,6 +6,7 @@ export interface Configuration {
   readonly dataFilePaths: readonly string[];
   readonly defaultLanguageTag: LanguageTag;
   readonly dynamic: boolean;
+  readonly languageTags: readonly LanguageTag[];
   readonly nextBasePath: string;
   readonly relatedConceptsPerSection: number;
   readonly searchEndpoint: string | null;

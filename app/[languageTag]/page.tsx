@@ -1,5 +1,4 @@
 import configuration from "@/app/configuration";
-import kos from "@/app/kos";
 import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
 import { Metadata } from "next";
 import { PageMetadata } from "../PageMetadata";
@@ -37,7 +36,7 @@ export async function generateStaticParams(): Promise<LanguageTagPageParams[]> {
     return [];
   }
 
-  return (await kos.languageTags()).map((languageTag) => ({
+  return configuration.languageTags.map((languageTag) => ({
     languageTag,
   }));
 }

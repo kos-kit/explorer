@@ -1,5 +1,4 @@
 import configuration from "@/app/configuration";
-import kos from "@/app/kos";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
@@ -7,7 +6,6 @@ import { Pagination } from "@/lib/components/Pagination";
 import { defilenamify, filenamify, pageCount } from "@kos-kit/client/utilities";
 import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
-import { displayLabel } from "@/lib/utilities/displayLabel";
 import { PageMetadata } from "@/app/PageMetadata";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { LanguageTag } from "@kos-kit/client/models";
@@ -16,6 +14,7 @@ import {
   stringToIdentifier,
 } from "@kos-kit/client/utilities";
 import { Hrefs } from "@/lib/Hrefs";
+import kosFactory from "../../../../../kosFactory";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -28,7 +27,9 @@ export default async function ConceptSchemeTopConceptsPage({
 }: {
   params: ConceptSchemeTopConceptsPageParams;
 }) {
-  const conceptScheme = await kos.conceptSchemeByIdentifier(
+  const conceptScheme = await kosFactory({
+    languageTag,
+  }).conceptSchemeByIdentifier(
     stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
   );
 
@@ -42,8 +43,7 @@ export default async function ConceptSchemeTopConceptsPage({
     <Layout languageTag={languageTag}>
       <PageTitleHeading>
         <Link href={hrefs.conceptScheme(conceptScheme)}>
-          Concept Scheme:{" "}
-          {await displayLabel({ languageTag, model: conceptScheme })}
+          Concept Scheme: {conceptScheme.displayLabel}
         </Link>
       </PageTitleHeading>
       <Section
@@ -59,7 +59,7 @@ export default async function ConceptSchemeTopConceptsPage({
         }
       >
         <ConceptList
-          concepts={await conceptScheme.topConcepts({
+          concepts={await conceptScheme.topConceptsPage({
             limit: configuration.conceptsPerPage,
             offset: parseInt(page) * configuration.conceptsPerPage,
           })}
@@ -86,7 +86,7 @@ export async function generateMetadata({
   params: ConceptSchemeTopConceptsPageParams;
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
-    conceptScheme: await kos.conceptSchemeByIdentifier(
+    conceptScheme: await kosFactory({ languageTag }).conceptSchemeByIdentifier(
       stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
     ),
     page: parseInt(page),
@@ -102,20 +102,20 @@ export async function generateStaticParams(): Promise<
 
   const staticParams: ConceptSchemeTopConceptsPageParams[] = [];
 
-  const languageTags = await kos.languageTags();
-
-  for (const conceptScheme of await kos.conceptSchemes()) {
-    const topConceptsCount = await conceptScheme.topConceptsCount();
-    if (topConceptsCount <= configuration.relatedConceptsPerSection) {
-      // Top concepts will fit on the concept scheme page, no need for this page.
-      continue;
-    }
-    const pageCount_ = pageCount({
-      itemsPerPage: configuration.conceptsPerPage,
-      itemsTotal: topConceptsCount,
-    });
-    // Top concepts will spill over from the concept scheme page to this one.
-    for (const languageTag of languageTags) {
+  for (const languageTag of configuration.languageTags) {
+    for (const conceptScheme of await kosFactory({
+      languageTag,
+    }).conceptSchemes()) {
+      const topConceptsCount = await conceptScheme.topConceptsCount();
+      if (topConceptsCount <= configuration.relatedConceptsPerSection) {
+        // Top concepts will fit on the concept scheme page, no need for this page.
+        continue;
+      }
+      const pageCount_ = pageCount({
+        itemsPerPage: configuration.conceptsPerPage,
+        itemsTotal: topConceptsCount,
+      });
+      // Top concepts will spill over from the concept scheme page to this one.
       for (let page = 0; page < pageCount_; page++) {
         staticParams.push({
           conceptSchemeIdentifier: filenamify(

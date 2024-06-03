@@ -1,11 +1,9 @@
 import { PageMetadata } from "@/app/PageMetadata";
 import configuration from "@/app/configuration";
-import kos from "@/app/kos";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { defilenamify, filenamify } from "@kos-kit/client/utilities";
-import { displayLabel } from "@/lib/utilities/displayLabel";
 import {
   LanguageTag,
   semanticRelationProperties,
@@ -16,6 +14,7 @@ import {
   stringToIdentifier,
 } from "@kos-kit/client/utilities";
 import { Metadata } from "next";
+import kosFactory from "../../../../../kosFactory";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
@@ -28,7 +27,7 @@ export default async function ConceptSemanticRelationsPage({
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
-  const concept = await kos.conceptByIdentifier(
+  const concept = await kosFactory({ languageTag }).conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
@@ -41,9 +40,7 @@ export default async function ConceptSemanticRelationsPage({
 
   return (
     <Layout languageTag={languageTag}>
-      <PageTitleHeading>
-        Concept: {await displayLabel({ languageTag, model: concept })}
-      </PageTitleHeading>
+      <PageTitleHeading>Concept: {concept.displayLabel}</PageTitleHeading>
       <ConceptList concepts={semanticRelations} languageTag={languageTag} />
     </Layout>
   );
@@ -55,7 +52,7 @@ export async function generateMetadata({
   params: ConceptSemanticRelationsPageParams;
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).conceptSemanticRelations({
-    concept: await kos.conceptByIdentifier(
+    concept: await kosFactory({ languageTag }).conceptByIdentifier(
       stringToIdentifier(defilenamify(conceptIdentifier)),
     ),
     semanticRelationProperty:
@@ -72,21 +69,20 @@ export async function generateStaticParams(): Promise<
 
   const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
-  const languageTags = await kos.languageTags();
-  for await (const concept of kos.concepts()) {
-    const conceptIdentifier = filenamify(
-      identifierToString(concept.identifier),
-    );
-
-    for (const semanticRelationProperty of semanticRelationProperties) {
-      const semanticRelationCount = await concept.semanticRelationsCount(
-        semanticRelationProperty,
+  for (const languageTag of configuration.languageTags) {
+    for await (const concept of kosFactory({ languageTag }).concepts()) {
+      const conceptIdentifier = filenamify(
+        identifierToString(concept.identifier),
       );
-      if (semanticRelationCount <= configuration.relatedConceptsPerSection) {
-        continue;
-      }
 
-      for (const languageTag of languageTags) {
+      for (const semanticRelationProperty of semanticRelationProperties) {
+        const semanticRelationCount = await concept.semanticRelationsCount(
+          semanticRelationProperty,
+        );
+        if (semanticRelationCount <= configuration.relatedConceptsPerSection) {
+          continue;
+        }
+
         staticParams.push({
           conceptIdentifier,
           languageTag,

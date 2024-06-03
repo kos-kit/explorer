@@ -1,5 +1,4 @@
 import configuration from "@/app/configuration";
-import kos from "@/app/kos";
 import { PageMetadata } from "@/app/PageMetadata";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";
@@ -8,7 +7,6 @@ import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { defilenamify, filenamify } from "@kos-kit/client/utilities";
-import { displayLabel } from "@/lib/utilities/displayLabel";
 import {
   LanguageTag,
   noteProperties,
@@ -22,6 +20,7 @@ import { Metadata } from "next";
 import { xsd } from "@kos-kit/client/vocabularies";
 import React from "react";
 import { Hrefs } from "@/lib/Hrefs";
+import kosFactory from "../../../kosFactory";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -33,23 +32,21 @@ export default async function ConceptPage({
 }: {
   params: ConceptPageParams;
 }) {
-  const concept = await kos.conceptByIdentifier(
+  const concept = await kosFactory({ languageTag }).conceptByIdentifier(
     stringToIdentifier(defilenamify(conceptIdentifier)),
   );
 
   const hrefs = new Hrefs({ configuration, languageTag });
 
-  const notations = await concept.notations();
+  const notations = concept.notations;
 
   return (
     <Layout languageTag={languageTag}>
-      <PageTitleHeading>
-        Concept: {await displayLabel({ languageTag, model: concept })}
-      </PageTitleHeading>
-      <LabelSections languageTag={languageTag} model={concept} />
+      <PageTitleHeading>Concept: {concept.displayLabel}</PageTitleHeading>
+      <LabelSections model={concept} />
       {await Promise.all(
         noteProperties.map(async (noteProperty) => {
-          const notes = await concept.notes(languageTag, noteProperty);
+          const notes = concept.notes(noteProperty);
           if (notes.length === 0) {
             return null;
           }
@@ -132,7 +129,7 @@ export async function generateMetadata({
   params: ConceptPageParams;
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).concept(
-    await kos.conceptByIdentifier(
+    await kosFactory({ languageTag }).conceptByIdentifier(
       stringToIdentifier(defilenamify(conceptIdentifier)),
     ),
   );
@@ -145,10 +142,8 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
 
   const staticParams: ConceptPageParams[] = [];
 
-  const languageTags = await kos.languageTags();
-
-  for await (const concept of kos.concepts()) {
-    for (const languageTag of languageTags) {
+  for (const languageTag of configuration.languageTags) {
+    for await (const concept of kosFactory({ languageTag }).concepts()) {
       staticParams.push({
         conceptIdentifier: filenamify(identifierToString(concept.identifier)),
         languageTag,

@@ -1,20 +1,20 @@
-import kos from "@/app/kos";
 import { Literal, NamedNode } from "@rdfjs/types";
 import { Link } from "@/lib/components/Link";
 import { Fragment } from "react";
 import { LanguageTag } from "@kos-kit/client/models";
+import kosFactory from "../../app/kosFactory";
 
 export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let license: Literal | NamedNode | null = null;
   let rights: Literal | null = null;
   let rightsHolder: Literal | null = null;
 
-  const conceptSchemes = await kos.conceptSchemes();
+  const conceptSchemes = await kosFactory({ languageTag }).conceptSchemes();
   if (conceptSchemes.length === 1) {
     const conceptScheme = conceptSchemes[0];
-    license = await conceptScheme.license(languageTag);
-    rights = await conceptScheme.rights(languageTag);
-    rightsHolder = await conceptScheme.rightsHolder(languageTag);
+    license = conceptScheme.license;
+    rights = conceptScheme.rights;
+    rightsHolder = conceptScheme.rightsHolder;
   }
 
   if (license === null && rights === null && rightsHolder === null) {

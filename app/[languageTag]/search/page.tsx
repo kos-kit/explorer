@@ -1,8 +1,8 @@
-import kos from "@/app/kos";
 import path from "node:path";
 import fs from "node:fs/promises";
 import { SearchPage as SearchPageClient } from "@/lib/components/SearchPage";
 import configuration from "@/app/configuration";
+import kosFactory from "@/app/kosFactory";
 import { Layout } from "@/lib/components/Layout";
 import { Metadata } from "next";
 import { PageMetadata } from "@/app/PageMetadata";
@@ -43,7 +43,7 @@ async function getLunrSearchEngineJson({
     console.info("creating", languageTag, "search engine");
     const searchEngine = await LunrSearchEngine.create({
       languageTag,
-      kos,
+      kos: kosFactory({ languageTag: languageTag }),
     });
     console.info("created", languageTag, "search engine");
 
@@ -127,7 +127,7 @@ export async function generateStaticParams(): Promise<SearchPageParams[]> {
     return [];
   }
 
-  return (await kos.languageTags()).map((languageTag) => ({
+  return configuration.languageTags.map((languageTag) => ({
     languageTag,
   }));
 }
