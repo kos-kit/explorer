@@ -7,6 +7,9 @@ inputs:
     description: colon-separated paths to one or more RDF data files
       or directories containing data files
     required: true
+  language_tags:
+    description: comma-separated array of RDF language tags
+    required: false
   next_base_path:
     description: path prefix (Next.js basePath) the app will be deployed under
     required: false
