@@ -22,7 +22,7 @@ export async function ConceptSchemePage({
       <PageTitleHeading>
         Concept Scheme: {conceptScheme.displayLabel}
       </PageTitleHeading>
-      <LabelSections languageTag={languageTag} model={conceptScheme} />
+      <LabelSections model={conceptScheme} />
       {topConceptsCount > 0 ? (
         <Section title="Top concepts">
           <div className="flex flex-col gap-2">

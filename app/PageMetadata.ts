@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import kos from "./kosFactory";
-import { displayLabel } from "@/lib/utilities/displayLabel";
+import kosFactory from "./kosFactory";
 import {
   Concept,
   ConceptScheme,
@@ -18,14 +17,14 @@ export class PageMetadata {
   async concept(concept: Concept): Promise<Metadata> {
     const rootPageMetadata = await this.languageTag();
     return {
-      title: `${rootPageMetadata.title}: Concept: ${await displayLabel({ languageTag: this._languageTag, model: concept })}`,
+      title: `${rootPageMetadata.title}: Concept: ${concept.displayLabel}`,
     } satisfies Metadata;
   }
 
   async conceptScheme(conceptScheme: ConceptScheme): Promise<Metadata> {
     const rootPageMetadata = await this.languageTag();
     return {
-      title: `${rootPageMetadata.title}: Concept Scheme: ${await displayLabel({ languageTag: this._languageTag, model: conceptScheme })}`,
+      title: `${rootPageMetadata.title}: Concept Scheme: ${conceptScheme.displayLabel}`,
     } satisfies Metadata;
   }
 
@@ -57,14 +56,14 @@ export class PageMetadata {
   }
 
   async languageTag(): Promise<Metadata> {
-    const conceptSchemes = await kos.conceptSchemes();
+    const conceptSchemes = await kosFactory({
+      languageTag: this._languageTag,
+    }).conceptSchemes();
 
     let title: string = "SKOS";
     if (conceptSchemes.length === 1) {
       const conceptScheme = conceptSchemes[0];
-      const prefLabels = await conceptScheme.prefLabels({
-        languageTags: new Set([this._languageTag, ""]),
-      });
+      const prefLabels = conceptScheme.prefLabels;
       if (prefLabels.length > 0) {
         title = prefLabels[0].literalForm.value;
       }

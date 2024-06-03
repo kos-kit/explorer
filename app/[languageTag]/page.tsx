@@ -3,13 +3,16 @@ import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
 import { Metadata } from "next";
 import { PageMetadata } from "../PageMetadata";
 import { LanguageTag } from "@kos-kit/client/models";
+import kosFactory from "../kosFactory";
 
 interface LanguageTagPageParams {
   languageTag: LanguageTag;
 }
 
 export default async function LanguageTagPage() {
-  const conceptSchemes = await kos.conceptSchemes();
+  const conceptSchemes = await kosFactory({
+    languageTag: configuration.defaultLanguageTag,
+  }).conceptSchemes();
   if (conceptSchemes.length === 1) {
     return (
       <ConceptSchemePage

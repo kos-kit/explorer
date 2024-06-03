@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   basePath: process.env.INPUT_NEXT_BASE_PATH,
-  // experimental: {
-  // esmExternals: false,
-  // cpus: 1,
-  // workerThreads: false,
-  // },
+  experimental: {
+    esmExternals: "loose",
+    // cpus: 1,
+    // workerThreads: false,
+  },
   images: {
     unoptimized: true,
   },
