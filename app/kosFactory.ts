@@ -19,7 +19,7 @@ class NotImplementedKos implements Kos {
     throw new Error("method not implemented");
   }
 
-  concepts(): AsyncGenerator<Concept, any, unknown> {
+  concepts(): AsyncGenerator<Concept> {
     throw new Error("method not implemented");
   }
 

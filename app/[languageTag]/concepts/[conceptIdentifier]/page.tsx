@@ -51,7 +51,10 @@ export default async function ConceptPage({
             return null;
           }
           return (
-            <Section key={noteProperty.name} title={`${noteProperty.label}s`}>
+            <Section
+              key={noteProperty.name}
+              title={`${noteProperty.pluralLabel}`}
+            >
               <table className="w-full">
                 <tbody>
                   {notes.map((note, noteI) => (
