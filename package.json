@@ -46,6 +46,7 @@
   "scripts": {
     "build": "node --max-old-space-size=8192 node_modules/next/dist/bin/next build",
     "dev": "next dev",
+    "link-kos-kit-lib": "npm link @kos-kit/mem-models @kos-kit/models @kos-kit/next-utils @kos-kit/rdf-resource @kos-kit/rdf-utils @kos-kit/search @kos-kit/sparql-models",
     "lint": "next lint",
     "start": "next start"
   },
