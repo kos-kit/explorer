@@ -1,11 +1,14 @@
+/action-Dockerfile
 /build/
 /docker-compose.yml
 /Dockerfile
 /.dockerignore
 **/.DS_Store
+/.env
 /.git/
 /.github/
 **/.gitignore
+/.kos-kit/
 /LICENSE
 *.log
 /.next/
@@ -13,5 +16,7 @@
 /out/
 /script/
 /setup.cfg
+/.swc/
+/standalone-Dockerfile
 /tag-action.sh
-/__tests__/
+/.vscode/
