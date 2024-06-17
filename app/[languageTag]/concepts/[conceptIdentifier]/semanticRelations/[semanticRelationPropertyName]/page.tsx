@@ -3,18 +3,15 @@ import configuration from "@/app/configuration";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { defilenamify, filenamify } from "@kos-kit/client/utilities";
+import { defilenamify, filenamify } from "@kos-kit/next-utils";
 import {
   LanguageTag,
   semanticRelationProperties,
   semanticRelationPropertiesByName,
-} from "@kos-kit/client/models";
-import {
-  identifierToString,
-  stringToIdentifier,
-} from "@kos-kit/client/utilities";
+} from "@kos-kit/models";
 import { Metadata } from "next";
 import kosFactory from "../../../../../kosFactory";
+import { Resource } from "@kos-kit/rdf-resource";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
@@ -28,7 +25,7 @@ export default async function ConceptSemanticRelationsPage({
   params: ConceptSemanticRelationsPageParams;
 }) {
   const concept = await kosFactory({ languageTag }).conceptByIdentifier(
-    stringToIdentifier(defilenamify(conceptIdentifier)),
+    Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
   );
 
   const semanticRelationProperty =
@@ -53,7 +50,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).conceptSemanticRelations({
     concept: await kosFactory({ languageTag }).conceptByIdentifier(
-      stringToIdentifier(defilenamify(conceptIdentifier)),
+      Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
     ),
     semanticRelationProperty:
       semanticRelationPropertiesByName[semanticRelationPropertyName]!,
@@ -72,7 +69,7 @@ export async function generateStaticParams(): Promise<
   for (const languageTag of configuration.languageTags) {
     for await (const concept of kosFactory({ languageTag }).concepts()) {
       const conceptIdentifier = filenamify(
-        identifierToString(concept.identifier),
+        Resource.Identifier.toString(concept.identifier),
       );
 
       for (const semanticRelationProperty of semanticRelationProperties) {

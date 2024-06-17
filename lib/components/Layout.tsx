@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { Navbar } from "@/lib/components/Navbar";
 import { Footer } from "@/lib/components/Footer";
-import { LanguageTag } from "@kos-kit/client/models";
+import { LanguageTag } from "@kos-kit/models";
 
 export function Layout({
   children,

@@ -6,9 +6,12 @@ import kosFactory from "@/app/kosFactory";
 import { Layout } from "@/lib/components/Layout";
 import { Metadata } from "next";
 import { PageMetadata } from "@/app/PageMetadata";
-import { LanguageTag } from "@kos-kit/client/models";
-import { SearchEngineJson, ServerSearchEngine } from "@kos-kit/client/search";
-import { LunrSearchEngine } from "@kos-kit/client/search/LunrSearchEngine";
+import { LanguageTag } from "@kos-kit/models";
+import {
+  SearchEngineJson,
+  LunrSearchEngine,
+  ServerSearchEngine,
+} from "@kos-kit/search";
 
 interface SearchPageParams {
   languageTag: LanguageTag;

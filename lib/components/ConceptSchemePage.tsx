@@ -5,7 +5,7 @@ import { LabelSections } from "@/lib/components/LabelSections";
 import { Section } from "@/lib/components/Section";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { ConceptScheme, LanguageTag } from "@kos-kit/client/models";
+import { ConceptScheme, LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "../Hrefs";
 
 export async function ConceptSchemePage({

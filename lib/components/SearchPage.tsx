@@ -10,11 +10,11 @@ import {
   SearchResult,
   SearchResults,
   createSearchEngineFromJson,
-} from "@kos-kit/client/search";
-import { stringToIdentifier } from "@kos-kit/client/utilities";
-import { LanguageTag } from "@kos-kit/client/models";
+} from "@kos-kit/search";
+import { LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "../Hrefs";
 import { Configuration } from "../models/Configuration";
+import { Resource } from "@kos-kit/rdf-resource";
 
 function AnimatedSpinner() {
   return (
@@ -55,11 +55,11 @@ function searchResultHref({
   switch (searchResult.type) {
     case "Concept":
       return hrefs.concept({
-        identifier: stringToIdentifier(searchResult.identifier),
+        identifier: Resource.Identifier.fromString(searchResult.identifier),
       });
     case "ConceptScheme":
       return hrefs.conceptScheme({
-        identifier: stringToIdentifier(searchResult.identifier),
+        identifier: Resource.Identifier.fromString(searchResult.identifier),
       });
   }
 }

@@ -15,5 +15,11 @@
     "@tsconfig/next/tsconfig.json",
     "@tsconfig/strictest/tsconfig.json"
   ],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../lib/packages/next-utils/src/GlobalRef.ts"
+  ]
 }

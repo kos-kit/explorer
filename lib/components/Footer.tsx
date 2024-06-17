@@ -1,7 +1,7 @@
 import { Literal, NamedNode } from "@rdfjs/types";
 import { Link } from "@/lib/components/Link";
 import { Fragment } from "react";
-import { LanguageTag } from "@kos-kit/client/models";
+import { LanguageTag } from "@kos-kit/models";
 import kosFactory from "../../app/kosFactory";
 
 export async function Footer({ languageTag }: { languageTag: LanguageTag }) {

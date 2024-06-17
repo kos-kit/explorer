@@ -4,7 +4,7 @@ import { PageMetadata } from "@/app/PageMetadata";
 import { LanguageSelector } from "./LanguageSelector";
 import { SearchForm } from "./SearchForm";
 import configuration from "@/app/configuration";
-import { LanguageTag } from "@kos-kit/client/models";
+import { LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "../Hrefs";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {

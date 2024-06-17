@@ -1,6 +1,6 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import configuration from "@/app/configuration";
-import { LanguageTag } from "@kos-kit/client/models";
+import { LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "../Hrefs";
 
 export function SearchForm({ languageTag }: { languageTag: LanguageTag }) {

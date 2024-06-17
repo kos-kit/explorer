@@ -2,7 +2,7 @@ import configuration from "@/app/configuration";
 import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
 import { Metadata } from "next";
 import { PageMetadata } from "../PageMetadata";
-import { LanguageTag } from "@kos-kit/client/models";
+import { LanguageTag } from "@kos-kit/models";
 import kosFactory from "../kosFactory";
 
 interface LanguageTagPageParams {
