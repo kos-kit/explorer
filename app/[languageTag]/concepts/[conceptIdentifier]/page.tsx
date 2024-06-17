@@ -6,21 +6,18 @@ import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
-import { defilenamify, filenamify } from "@kos-kit/client/utilities";
+import { defilenamify, filenamify } from "@kos-kit/next-utils";
 import {
   LanguageTag,
   noteProperties,
   semanticRelationProperties,
-} from "@kos-kit/client/models";
-import {
-  identifierToString,
-  stringToIdentifier,
-} from "@kos-kit/client/utilities";
+} from "@kos-kit/models";
 import { Metadata } from "next";
-import { xsd } from "@kos-kit/client/vocabularies";
 import React from "react";
 import { Hrefs } from "@/lib/Hrefs";
 import kosFactory from "../../../kosFactory";
+import { Resource } from "@kos-kit/rdf-resource";
+import { xsd } from "@tpluscode/rdf-ns-builders";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -33,7 +30,7 @@ export default async function ConceptPage({
   params: ConceptPageParams;
 }) {
   const concept = await kosFactory({ languageTag }).conceptByIdentifier(
-    stringToIdentifier(defilenamify(conceptIdentifier)),
+    Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
   );
 
   const hrefs = new Hrefs({ configuration, languageTag });
@@ -133,7 +130,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).concept(
     await kosFactory({ languageTag }).conceptByIdentifier(
-      stringToIdentifier(defilenamify(conceptIdentifier)),
+      Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
     ),
   );
 }
@@ -148,7 +145,9 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
   for (const languageTag of configuration.languageTags) {
     for await (const concept of kosFactory({ languageTag }).concepts()) {
       staticParams.push({
-        conceptIdentifier: filenamify(identifierToString(concept.identifier)),
+        conceptIdentifier: filenamify(
+          Resource.Identifier.toString(concept.identifier),
+        ),
         languageTag,
       });
     }

@@ -8,6 +8,7 @@
     "@kos-kit/rdf-utils": "2.0.3",
     "@kos-kit/search": "2.0.3",
     "@kos-kit/sparql-models": "2.0.3",
+    "@tpluscode/rdf-ns-builders": "^4.3.0",
     "clsx": "^2.1.0",
     "envalid": "^8.0.0",
     "flag-icons": "^7.2.1",

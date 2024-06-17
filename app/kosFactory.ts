@@ -1,47 +1,16 @@
 import { Parser, Store } from "n3";
 import fs from "node:fs";
 import configuration from "./configuration";
-import { GlobalRef } from "@/lib/models/GlobalRef";
 import {
   Kos,
   LanguageTag,
-  mem,
-  sparql,
-  Concept,
-  ConceptScheme,
-  Identifier,
-} from "@kos-kit/client/models";
-import { LanguageTagSet } from "@kos-kit/client/models/LanguageTagSet";
-import { SparqlClient } from "@kos-kit/client";
-
-class NotImplementedKos implements Kos {
-  conceptByIdentifier(_identifier: Identifier): Promise<Concept> {
-    throw new Error("method not implemented");
-  }
-
-  concepts(): AsyncGenerator<Concept> {
-    throw new Error("method not implemented");
-  }
-
-  conceptsPage(_kwds: {
-    limit: number;
-    offset: number;
-  }): Promise<readonly Concept[]> {
-    throw new Error("method not implemented");
-  }
-
-  conceptsCount(): Promise<number> {
-    throw new Error("method not implemented");
-  }
-
-  conceptSchemeByIdentifier(_identifier: Identifier): Promise<ConceptScheme> {
-    throw new Error("method not implemented");
-  }
-
-  conceptSchemes(): Promise<readonly ConceptScheme[]> {
-    throw new Error("method not implemented");
-  }
-}
+  LanguageTagSet,
+  NotImplementedKos,
+} from "@kos-kit/models";
+import { SparqlClient } from "@kos-kit/sparql-models";
+import { GlobalRef } from "@kos-kit/next-utils";
+import { Kos as MemKos } from "@kos-kit/mem-models";
+import { Kos as SparqlKos } from "@kos-kit/sparql-models";
 
 type KosFactory = (kwds: { languageTag: LanguageTag }) => Kos;
 
@@ -56,7 +25,7 @@ if (!kosFactory.value) {
     }
 
     kosFactory.value = ({ languageTag }: { languageTag: LanguageTag }) =>
-      new mem.Kos({
+      new MemKos({
         dataset: store,
         includeLanguageTags: new LanguageTagSet(languageTag, ""),
       });
@@ -67,7 +36,7 @@ if (!kosFactory.value) {
       "as KOS",
     );
     kosFactory.value = ({ languageTag }: { languageTag: LanguageTag }) =>
-      new sparql.Kos({
+      new SparqlKos({
         includeLanguageTags: new LanguageTagSet(languageTag, ""),
         sparqlClient: new SparqlClient({
           endpointUrl: configuration.sparqlEndpoint!,

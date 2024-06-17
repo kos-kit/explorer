@@ -3,18 +3,15 @@ import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
 import { Pagination } from "@/lib/components/Pagination";
-import { defilenamify, filenamify, pageCount } from "@kos-kit/client/utilities";
+import { defilenamify, filenamify, pageCount } from "@kos-kit/next-utils";
 import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
 import { PageMetadata } from "@/app/PageMetadata";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { LanguageTag } from "@kos-kit/client/models";
-import {
-  identifierToString,
-  stringToIdentifier,
-} from "@kos-kit/client/utilities";
+import { LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "@/lib/Hrefs";
 import kosFactory from "../../../../../kosFactory";
+import { Resource } from "@kos-kit/rdf-resource";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -30,7 +27,7 @@ export default async function ConceptSchemeTopConceptsPage({
   const conceptScheme = await kosFactory({
     languageTag,
   }).conceptSchemeByIdentifier(
-    stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
+    Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
   );
 
   const hrefs = new Hrefs({ configuration, languageTag });
@@ -87,7 +84,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
     conceptScheme: await kosFactory({ languageTag }).conceptSchemeByIdentifier(
-      stringToIdentifier(defilenamify(conceptSchemeIdentifier)),
+      Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
     ),
     page: parseInt(page),
   });
@@ -119,7 +116,7 @@ export async function generateStaticParams(): Promise<
       for (let page = 0; page < pageCount_; page++) {
         staticParams.push({
           conceptSchemeIdentifier: filenamify(
-            identifierToString(conceptScheme.identifier),
+            Resource.Identifier.toString(conceptScheme.identifier),
           ),
           languageTag,
           page: page.toString(),

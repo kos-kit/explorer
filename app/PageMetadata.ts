@@ -5,7 +5,7 @@ import {
   ConceptScheme,
   LanguageTag,
   SemanticRelationProperty,
-} from "@kos-kit/client/models";
+} from "@kos-kit/models";
 
 export class PageMetadata {
   private readonly _languageTag: LanguageTag;

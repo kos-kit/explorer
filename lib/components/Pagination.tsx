@@ -1,6 +1,6 @@
 import { Link } from "@/lib/components/Link";
 import { PropsWithChildren } from "react";
-import { pageCount } from "@kos-kit/client/utilities";
+import { pageCount } from "@kos-kit/next-utils";
 
 function PageLink({
   active,
