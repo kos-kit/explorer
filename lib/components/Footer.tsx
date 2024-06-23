@@ -9,7 +9,9 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let rights: Literal | null = null;
   let rightsHolder: Literal | null = null;
 
-  const conceptSchemes = await kosFactory({ languageTag }).conceptSchemes();
+  const conceptSchemes = await (
+    await kosFactory({ languageTag })
+  ).conceptSchemes();
   if (conceptSchemes.length === 1) {
     const conceptScheme = conceptSchemes[0];
     license = conceptScheme.license;

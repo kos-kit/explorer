@@ -24,7 +24,9 @@ export default async function ConceptSemanticRelationsPage({
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
-  const concept = await kosFactory({ languageTag }).conceptByIdentifier(
+  const concept = await (
+    await kosFactory({ languageTag })
+  ).conceptByIdentifier(
     Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
   );
 
@@ -49,7 +51,9 @@ export async function generateMetadata({
   params: ConceptSemanticRelationsPageParams;
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).conceptSemanticRelations({
-    concept: await kosFactory({ languageTag }).conceptByIdentifier(
+    concept: await (
+      await kosFactory({ languageTag })
+    ).conceptByIdentifier(
       Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
     ),
     semanticRelationProperty:
@@ -67,7 +71,9 @@ export async function generateStaticParams(): Promise<
   const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
   for (const languageTag of configuration.languageTags) {
-    for await (const concept of kosFactory({ languageTag }).concepts()) {
+    for await (const concept of (
+      await kosFactory({ languageTag })
+    ).concepts()) {
       const conceptIdentifier = filenamify(
         Resource.Identifier.toString(concept.identifier),
       );

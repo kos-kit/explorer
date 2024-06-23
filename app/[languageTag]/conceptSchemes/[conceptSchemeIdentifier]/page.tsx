@@ -17,9 +17,11 @@ export default async function ConceptSchemePage({
 }: {
   params: ConceptSchemePageParams;
 }) {
-  const conceptScheme = await kosFactory({
-    languageTag,
-  }).conceptSchemeByIdentifier(
+  const conceptScheme = await (
+    await kosFactory({
+      languageTag,
+    })
+  ).conceptSchemeByIdentifier(
     Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
   );
 
@@ -37,7 +39,9 @@ export async function generateMetadata({
   params: ConceptSchemePageParams;
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).conceptScheme(
-    await kosFactory({ languageTag }).conceptSchemeByIdentifier(
+    await (
+      await kosFactory({ languageTag })
+    ).conceptSchemeByIdentifier(
       Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
     ),
   );
@@ -55,9 +59,11 @@ export async function generateStaticParams(): Promise<
   // If there's only one concept scheme the /[languageTag]/ page will show its ConceptPage,
   // but we still have to generate another ConceptPage here because Next doesn't like an empty staticParams.
   for (const languageTag of configuration.languageTags) {
-    for (const conceptScheme of await kosFactory({
-      languageTag,
-    }).conceptSchemes()) {
+    for (const conceptScheme of await (
+      await kosFactory({
+        languageTag,
+      })
+    ).conceptSchemes()) {
       staticParams.push({
         conceptSchemeIdentifier: filenamify(
           Resource.Identifier.toString(conceptScheme.identifier),

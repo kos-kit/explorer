@@ -29,7 +29,9 @@ export default async function ConceptPage({
 }: {
   params: ConceptPageParams;
 }) {
-  const concept = await kosFactory({ languageTag }).conceptByIdentifier(
+  const concept = await (
+    await kosFactory({ languageTag })
+  ).conceptByIdentifier(
     Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
   );
 
@@ -129,7 +131,9 @@ export async function generateMetadata({
   params: ConceptPageParams;
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).concept(
-    await kosFactory({ languageTag }).conceptByIdentifier(
+    await (
+      await kosFactory({ languageTag })
+    ).conceptByIdentifier(
       Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
     ),
   );
@@ -143,7 +147,9 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
   const staticParams: ConceptPageParams[] = [];
 
   for (const languageTag of configuration.languageTags) {
-    for await (const concept of kosFactory({ languageTag }).concepts()) {
+    for await (const concept of (
+      await kosFactory({ languageTag })
+    ).concepts()) {
       staticParams.push({
         conceptIdentifier: filenamify(
           Resource.Identifier.toString(concept.identifier),

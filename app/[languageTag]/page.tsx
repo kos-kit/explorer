@@ -10,9 +10,11 @@ interface LanguageTagPageParams {
 }
 
 export default async function LanguageTagPage() {
-  const conceptSchemes = await kosFactory({
-    languageTag: configuration.defaultLanguageTag,
-  }).conceptSchemes();
+  const conceptSchemes = await (
+    await kosFactory({
+      languageTag: configuration.defaultLanguageTag,
+    })
+  ).conceptSchemes();
   if (conceptSchemes.length === 1) {
     return (
       <ConceptSchemePage

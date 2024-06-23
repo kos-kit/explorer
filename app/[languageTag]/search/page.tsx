@@ -46,7 +46,7 @@ async function getLunrSearchEngineJson({
     console.info("creating", languageTag, "search engine");
     const searchEngine = await LunrSearchEngine.create({
       languageTag,
-      kos: kosFactory({ languageTag: languageTag }),
+      kos: await kosFactory({ languageTag: languageTag }),
     });
     console.info("created", languageTag, "search engine");
 

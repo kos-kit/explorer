@@ -24,9 +24,11 @@ export default async function ConceptSchemeTopConceptsPage({
 }: {
   params: ConceptSchemeTopConceptsPageParams;
 }) {
-  const conceptScheme = await kosFactory({
-    languageTag,
-  }).conceptSchemeByIdentifier(
+  const conceptScheme = await (
+    await kosFactory({
+      languageTag,
+    })
+  ).conceptSchemeByIdentifier(
     Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
   );
 
@@ -83,7 +85,9 @@ export async function generateMetadata({
   params: ConceptSchemeTopConceptsPageParams;
 }): Promise<Metadata> {
   return new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
-    conceptScheme: await kosFactory({ languageTag }).conceptSchemeByIdentifier(
+    conceptScheme: await (
+      await kosFactory({ languageTag })
+    ).conceptSchemeByIdentifier(
       Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
     ),
     page: parseInt(page),
@@ -100,9 +104,11 @@ export async function generateStaticParams(): Promise<
   const staticParams: ConceptSchemeTopConceptsPageParams[] = [];
 
   for (const languageTag of configuration.languageTags) {
-    for (const conceptScheme of await kosFactory({
-      languageTag,
-    }).conceptSchemes()) {
+    for (const conceptScheme of await (
+      await kosFactory({
+        languageTag,
+      })
+    ).conceptSchemes()) {
       const topConceptsCount = await conceptScheme.topConceptsCount();
       if (topConceptsCount <= configuration.relatedConceptsPerSection) {
         // Top concepts will fit on the concept scheme page, no need for this page.

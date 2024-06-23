@@ -56,9 +56,11 @@ export class PageMetadata {
   }
 
   async languageTag(): Promise<Metadata> {
-    const conceptSchemes = await kosFactory({
-      languageTag: this._languageTag,
-    }).conceptSchemes();
+    const conceptSchemes = await (
+      await kosFactory({
+        languageTag: this._languageTag,
+      })
+    ).conceptSchemes();
 
     let title: string = "SKOS";
     if (conceptSchemes.length === 1) {
