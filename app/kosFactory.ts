@@ -7,10 +7,10 @@ import {
 } from "@kos-kit/models";
 import { parseRdfFiles } from "@kos-kit/next-utils/parseRdfFiles";
 import { SparqlClient } from "@kos-kit/sparql-models";
+import { GlobalRef } from "@kos-kit/next-utils";
 import { Kos as MemKos } from "@kos-kit/mem-models";
 import { Kos as SparqlKos } from "@kos-kit/sparql-models";
 import { DatasetCore } from "@rdfjs/types";
-import { GlobalRef } from "../lib/models/GlobalRef";
 
 type KosFactory = (kwds: { languageTag: LanguageTag }) => Promise<Kos>;
 

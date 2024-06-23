@@ -6,7 +6,7 @@ import {
   intValidator,
   languageTagArrayValidator,
 } from "@kos-kit/next-utils/envalidValidators";
-import { GlobalRef } from "../lib/models/GlobalRef";
+import { GlobalRef } from "@kos-kit/next-utils";
 
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {
