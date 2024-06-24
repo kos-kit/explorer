@@ -19,7 +19,7 @@ import kosFactory from "../../../kosFactory";
 import { Resource } from "@kos-kit/rdf-resource";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { notFound } from "next/navigation";
-import O from "fp-ts/Option";
+import * as O from "fp-ts/Option";
 
 interface ConceptPageParams {
   conceptIdentifier: string;

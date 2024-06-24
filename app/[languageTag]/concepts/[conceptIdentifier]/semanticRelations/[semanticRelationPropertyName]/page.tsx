@@ -13,7 +13,7 @@ import { Metadata } from "next";
 import kosFactory from "../../../../../kosFactory";
 import { Resource } from "@kos-kit/rdf-resource";
 import { notFound } from "next/navigation";
-import O from "fp-ts/Option";
+import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/lib/function";
 
 interface ConceptSemanticRelationsPageParams {

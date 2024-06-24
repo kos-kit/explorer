@@ -7,7 +7,7 @@ import { LanguageTag } from "@kos-kit/models";
 import { Metadata } from "next";
 import { Resource } from "@kos-kit/rdf-resource";
 import { notFound } from "next/navigation";
-import O from "fp-ts/Option";
+import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
 
 interface ConceptSchemePageParams {
