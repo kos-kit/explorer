@@ -28,7 +28,7 @@ export default async function LanguageTagPage() {
   );
 }
 
-export async function generateMetadata({
+export function generateMetadata({
   params: { languageTag },
 }: {
   params: LanguageTagPageParams;
@@ -36,7 +36,7 @@ export async function generateMetadata({
   return new PageMetadata({ languageTag }).languageTag();
 }
 
-export async function generateStaticParams(): Promise<LanguageTagPageParams[]> {
+export function generateStaticParams(): LanguageTagPageParams[] {
   if (configuration.dynamic) {
     return [];
   }

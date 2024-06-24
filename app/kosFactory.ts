@@ -40,6 +40,7 @@ if (!kosFactory.value) {
         new SparqlKos({
           includeLanguageTags: new LanguageTagSet(languageTag, ""),
           sparqlClient: new SparqlClient({
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             endpointUrl: configuration.sparqlEndpoint!,
           }),
         }),

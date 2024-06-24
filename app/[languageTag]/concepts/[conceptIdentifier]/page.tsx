@@ -18,6 +18,8 @@ import { Hrefs } from "@/lib/Hrefs";
 import kosFactory from "../../../kosFactory";
 import { Resource } from "@kos-kit/rdf-resource";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { notFound } from "next/navigation";
+import O from "fp-ts/Option";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -29,11 +31,16 @@ export default async function ConceptPage({
 }: {
   params: ConceptPageParams;
 }) {
-  const concept = await (
-    await kosFactory({ languageTag })
-  ).conceptByIdentifier(
-    Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
+  const concept = O.toNullable(
+    await (
+      await kosFactory({ languageTag })
+    ).conceptByIdentifier(
+      Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
+    ),
   );
+  if (!concept) {
+    notFound();
+  }
 
   const hrefs = new Hrefs({ configuration, languageTag });
 
@@ -44,16 +51,13 @@ export default async function ConceptPage({
       <PageTitleHeading>Concept: {concept.displayLabel}</PageTitleHeading>
       <LabelSections model={concept} />
       {await Promise.all(
-        noteProperties.map(async (noteProperty) => {
+        noteProperties.map((noteProperty) => {
           const notes = concept.notes(noteProperty);
           if (notes.length === 0) {
             return null;
           }
           return (
-            <Section
-              key={noteProperty.name}
-              title={`${noteProperty.pluralLabel}`}
-            >
+            <Section key={noteProperty.name} title={noteProperty.pluralLabel}>
               <table className="w-full">
                 <tbody>
                   {notes.map((note, noteI) => (

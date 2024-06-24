@@ -14,7 +14,8 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   if (!configuration.searchEndpoint) {
-    return res.status(404).send(null);
+    res.status(404).send(null);
+    return;
   }
 
   await httpProxyMiddleware(req, res, {
@@ -24,6 +25,6 @@ export default async function handler(
         replaceStr: "",
       },
     ],
-    target: configuration.searchEndpoint!,
+    target: configuration.searchEndpoint,
   });
 }

@@ -78,12 +78,12 @@ function SearchPageImpl({
   const hrefs = new Hrefs({ configuration, languageTag });
   const resultsPerPage = configuration.conceptsPerPage;
   const searchParams = useSearchParams();
-  const pageString = searchParams!.get("page");
+  const pageString = searchParams?.get("page");
   let page = pageString ? parseInt(pageString) : 0;
   if (isNaN(page)) {
     page = 0;
   }
-  const query = searchParams!.get("query");
+  const query = searchParams?.get("query");
 
   const [error, setError] = useState<Error | null>(null);
   const [searchResults, setSearchResults] = useState<SearchResults | null>(

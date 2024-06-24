@@ -37,7 +37,8 @@ export class PageMetadata {
     const conceptSchemePageMetadata = await this.conceptScheme(conceptScheme);
 
     return {
-      title: conceptSchemePageMetadata.title + ": Top concepts",
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-base-to-string
+      title: conceptSchemePageMetadata.title!.toString() + ": Top concepts",
     } satisfies Metadata;
   }
 
@@ -62,7 +63,7 @@ export class PageMetadata {
       })
     ).conceptSchemes();
 
-    let title: string = "SKOS";
+    let title = "SKOS";
     if (conceptSchemes.length === 1) {
       const conceptScheme = conceptSchemes[0];
       const prefLabels = conceptScheme.prefLabels;

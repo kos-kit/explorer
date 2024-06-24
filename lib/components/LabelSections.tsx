@@ -2,7 +2,7 @@ import React from "react";
 import { Section } from "@/lib/components/Section";
 import { LabeledModel } from "@kos-kit/models";
 
-export async function LabelSections({ model }: { model: LabeledModel }) {
+export function LabelSections({ model }: { model: LabeledModel }) {
   const sections: React.ReactElement[] = [];
 
   for (const { labels, type } of [

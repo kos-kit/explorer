@@ -6,6 +6,9 @@ import { defilenamify, filenamify } from "@kos-kit/next-utils";
 import { LanguageTag } from "@kos-kit/models";
 import { Metadata } from "next";
 import { Resource } from "@kos-kit/rdf-resource";
+import { notFound } from "next/navigation";
+import O from "fp-ts/Option";
+import { pipe } from "fp-ts/function";
 
 interface ConceptSchemePageParams {
   conceptSchemeIdentifier: string;
@@ -17,13 +20,18 @@ export default async function ConceptSchemePage({
 }: {
   params: ConceptSchemePageParams;
 }) {
-  const conceptScheme = await (
-    await kosFactory({
-      languageTag,
-    })
-  ).conceptSchemeByIdentifier(
-    Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+  const conceptScheme = O.toNullable(
+    await (
+      await kosFactory({
+        languageTag,
+      })
+    ).conceptSchemeByIdentifier(
+      Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+    ),
   );
+  if (!conceptScheme) {
+    notFound();
+  }
 
   return (
     <ConceptSchemePageComponent
@@ -38,12 +46,16 @@ export async function generateMetadata({
 }: {
   params: ConceptSchemePageParams;
 }): Promise<Metadata> {
-  return new PageMetadata({ languageTag }).conceptScheme(
+  return pipe(
     await (
       await kosFactory({ languageTag })
     ).conceptSchemeByIdentifier(
       Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
     ),
+    O.map((conceptScheme) =>
+      new PageMetadata({ languageTag }).conceptScheme(conceptScheme),
+    ),
+    O.getOrElse(() => ({})),
   );
 }
 

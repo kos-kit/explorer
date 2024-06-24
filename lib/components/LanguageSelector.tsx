@@ -53,12 +53,15 @@ export function LanguageSelector({
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const pathnameSplit = pathname!.split("/");
   const currentLanguageTag = pathnameSplit[1];
 
   useEffect(() => {
     const handleWindowClick = (event: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       const target = event.target.closest("button");
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (target && target.id === LANGUAGE_SELECTOR_ID) {
         return;
       }
@@ -86,7 +89,9 @@ export function LanguageSelector({
       <div className="relative inline-block text-left">
         <div>
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
             type="button"
             className="inline-flex items-center justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-gray-50 text-sm font-medium text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             id={LANGUAGE_SELECTOR_ID}
@@ -123,7 +128,9 @@ export function LanguageSelector({
               {availableLanguageTags.map((languageTag, languageTagI) => (
                 <button
                   key={languageTag}
-                  onClick={() => onChange(languageTag)}
+                  onClick={() => {
+                    onChange(languageTag);
+                  }}
                   className={`${
                     currentLanguageTag === languageTag
                       ? "bg-gray-100 text-gray-900"

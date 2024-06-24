@@ -52,7 +52,7 @@ export class Hrefs {
   }
 
   search({ page, query }: { page?: number; query?: string }) {
-    const searchParams: { [index: string]: string } = {};
+    const searchParams: Record<string, string> = {};
     if (page) {
       searchParams["page"] = page.toString();
     }

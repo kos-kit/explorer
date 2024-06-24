@@ -12,6 +12,9 @@ import { LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "@/lib/Hrefs";
 import kosFactory from "../../../../../kosFactory";
 import { Resource } from "@kos-kit/rdf-resource";
+import O from "fp-ts/Option";
+import { notFound } from "next/navigation";
+import { pipe } from "fp-ts/lib/function";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -24,13 +27,18 @@ export default async function ConceptSchemeTopConceptsPage({
 }: {
   params: ConceptSchemeTopConceptsPageParams;
 }) {
-  const conceptScheme = await (
-    await kosFactory({
-      languageTag,
-    })
-  ).conceptSchemeByIdentifier(
-    Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+  const conceptScheme = O.toNullable(
+    await (
+      await kosFactory({
+        languageTag,
+      })
+    ).conceptSchemeByIdentifier(
+      Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+    ),
   );
+  if (!conceptScheme) {
+    notFound();
+  }
 
   const hrefs = new Hrefs({ configuration, languageTag });
 
@@ -84,14 +92,20 @@ export async function generateMetadata({
 }: {
   params: ConceptSchemeTopConceptsPageParams;
 }): Promise<Metadata> {
-  return new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
-    conceptScheme: await (
+  return pipe(
+    await (
       await kosFactory({ languageTag })
     ).conceptSchemeByIdentifier(
       Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
     ),
-    page: parseInt(page),
-  });
+    O.map((conceptScheme) =>
+      new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
+        conceptScheme,
+        page: parseInt(page),
+      }),
+    ),
+    O.getOrElse(() => ({}) satisfies Metadata),
+  );
 }
 
 export async function generateStaticParams(): Promise<

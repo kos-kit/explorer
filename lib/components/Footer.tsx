@@ -3,10 +3,10 @@ import { Link } from "@/lib/components/Link";
 import { Fragment } from "react";
 import { LanguageTag } from "@kos-kit/models";
 import kosFactory from "../../app/kosFactory";
-import O from "fp-ts/Option";
+import * as O from "fp-ts/Option";
 
 export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
-  let license: Literal | NamedNode | null;
+  let license: Literal | NamedNode | null = null;
   let rights: Literal | null = null;
   let rightsHolder: Literal | null = null;
 
@@ -25,7 +25,7 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   }
 
   const rightsParts: React.ReactNode[] = [];
-  const copyright = "© " + new Date().getFullYear();
+  const copyright = "© " + new Date().getFullYear().toString();
   if (rightsHolder !== null) {
     rightsParts.push(
       <span

@@ -41,6 +41,7 @@ async function getLunrSearchEngineJson({
 
   let searchEngineJson: SearchEngineJson;
   if (searchEngineJsonFileContents) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     searchEngineJson = JSON.parse(searchEngineJsonFileContents.toString());
   } else {
     console.info("creating", languageTag, "search engine");
@@ -51,6 +52,7 @@ async function getLunrSearchEngineJson({
     console.info("created", languageTag, "search engine");
 
     const searchEngineJsonString = JSON.stringify(searchEngine.toJson());
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     searchEngineJson = JSON.parse(searchEngineJsonString);
 
     console.info(
@@ -125,7 +127,7 @@ export async function generateMetadata({
   return new PageMetadata({ languageTag }).search();
 }
 
-export async function generateStaticParams(): Promise<SearchPageParams[]> {
+export function generateStaticParams(): SearchPageParams[] {
   if (configuration.dynamic) {
     return [];
   }

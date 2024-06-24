@@ -12,6 +12,9 @@ import {
 import { Metadata } from "next";
 import kosFactory from "../../../../../kosFactory";
 import { Resource } from "@kos-kit/rdf-resource";
+import { notFound } from "next/navigation";
+import O from "fp-ts/Option";
+import { pipe } from "fp-ts/lib/function";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
@@ -24,14 +27,19 @@ export default async function ConceptSemanticRelationsPage({
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
-  const concept = await (
-    await kosFactory({ languageTag })
-  ).conceptByIdentifier(
-    Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
+  const concept = O.toNullable(
+    await (
+      await kosFactory({ languageTag })
+    ).conceptByIdentifier(
+      Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
+    ),
   );
+  if (!concept) {
+    notFound();
+  }
 
   const semanticRelationProperty =
-    semanticRelationPropertiesByName[semanticRelationPropertyName]!;
+    semanticRelationPropertiesByName[semanticRelationPropertyName];
 
   const semanticRelations = await concept.semanticRelations(
     semanticRelationProperty,
@@ -50,15 +58,21 @@ export async function generateMetadata({
 }: {
   params: ConceptSemanticRelationsPageParams;
 }): Promise<Metadata> {
-  return new PageMetadata({ languageTag }).conceptSemanticRelations({
-    concept: await (
+  return pipe(
+    await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
       Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
     ),
-    semanticRelationProperty:
-      semanticRelationPropertiesByName[semanticRelationPropertyName]!,
-  });
+    O.map((concept) =>
+      new PageMetadata({ languageTag }).conceptSemanticRelations({
+        concept,
+        semanticRelationProperty:
+          semanticRelationPropertiesByName[semanticRelationPropertyName],
+      }),
+    ),
+    O.getOrElse(() => ({}) satisfies Metadata),
+  );
 }
 
 export async function generateStaticParams(): Promise<
