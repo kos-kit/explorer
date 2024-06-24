@@ -3,9 +3,10 @@ import { Link } from "@/lib/components/Link";
 import { Fragment } from "react";
 import { LanguageTag } from "@kos-kit/models";
 import kosFactory from "../../app/kosFactory";
+import O from "fp-ts/Option";
 
 export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
-  let license: Literal | NamedNode | null = null;
+  let license: Literal | NamedNode | null;
   let rights: Literal | null = null;
   let rightsHolder: Literal | null = null;
 
@@ -14,9 +15,9 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   ).conceptSchemes();
   if (conceptSchemes.length === 1) {
     const conceptScheme = conceptSchemes[0];
-    license = conceptScheme.license;
-    rights = conceptScheme.rights;
-    rightsHolder = conceptScheme.rightsHolder;
+    license = O.toNullable(conceptScheme.license);
+    rights = O.toNullable(conceptScheme.rights);
+    rightsHolder = O.toNullable(conceptScheme.rightsHolder);
   }
 
   if (license === null && rights === null && rightsHolder === null) {

@@ -2,15 +2,14 @@
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/strict-type-checked",
+    "plugin:@typescript-eslint/stylistic-type-checked"
   ],
-  "ignorePatterns": ["jest.config.*"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": ["./tsconfig.json"]
   },
   "rules": {
-    "@typescript-eslint/no-floating-promises": "error",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": [
       2,
@@ -20,6 +19,7 @@
         "varsIgnorePattern": "(^jsx$)|(^_)",
         "argsIgnorePattern": "^_"
       }
-    ]
+    ],
+    "@typescript-eslint/restrict-template-expressions": "off"
   }
 }
