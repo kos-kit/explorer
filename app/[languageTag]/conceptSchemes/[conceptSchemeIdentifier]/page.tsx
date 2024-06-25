@@ -9,6 +9,7 @@ import { Resource } from "@kos-kit/rdf-resource";
 import { notFound } from "next/navigation";
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/function";
+import { dataFactory } from "@/lib/dataFactory";
 
 interface ConceptSchemePageParams {
   conceptSchemeIdentifier: string;
@@ -26,7 +27,10 @@ export default async function ConceptSchemePage({
         languageTag,
       })
     ).conceptSchemeByIdentifier(
-      Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+      Resource.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptSchemeIdentifier),
+      }),
     ),
   );
   if (!conceptScheme) {
@@ -50,7 +54,10 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptSchemeByIdentifier(
-      Resource.Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+      Resource.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptSchemeIdentifier),
+      }),
     ),
     O.map((conceptScheme) =>
       new PageMetadata({ languageTag }).conceptScheme(conceptScheme),

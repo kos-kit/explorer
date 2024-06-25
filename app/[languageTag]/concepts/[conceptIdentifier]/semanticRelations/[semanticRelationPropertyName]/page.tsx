@@ -15,6 +15,7 @@ import { Resource } from "@kos-kit/rdf-resource";
 import { notFound } from "next/navigation";
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/lib/function";
+import { dataFactory } from "@/lib/dataFactory";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
@@ -31,7 +32,10 @@ export default async function ConceptSemanticRelationsPage({
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
-      Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
+      Resource.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptIdentifier),
+      }),
     ),
   );
   if (!concept) {
@@ -62,7 +66,10 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
-      Resource.Identifier.fromString(defilenamify(conceptIdentifier)),
+      Resource.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptIdentifier),
+      }),
     ),
     O.map((concept) =>
       new PageMetadata({ languageTag }).conceptSemanticRelations({

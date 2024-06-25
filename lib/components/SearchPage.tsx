@@ -15,6 +15,7 @@ import { LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "../Hrefs";
 import { Configuration } from "../models/Configuration";
 import { Resource } from "@kos-kit/rdf-resource";
+import { dataFactory } from "../dataFactory";
 
 function AnimatedSpinner() {
   return (
@@ -55,11 +56,17 @@ function searchResultHref({
   switch (searchResult.type) {
     case "Concept":
       return hrefs.concept({
-        identifier: Resource.Identifier.fromString(searchResult.identifier),
+        identifier: Resource.Identifier.fromString({
+          dataFactory,
+          identifier: searchResult.identifier,
+        }),
       });
     case "ConceptScheme":
       return hrefs.conceptScheme({
-        identifier: Resource.Identifier.fromString(searchResult.identifier),
+        identifier: Resource.Identifier.fromString({
+          dataFactory,
+          identifier: searchResult.identifier,
+        }),
       });
   }
 }

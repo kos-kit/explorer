@@ -11,6 +11,7 @@ import { GlobalRef } from "@kos-kit/next-utils";
 import { Kos as MemKos } from "@kos-kit/mem-models";
 import { Kos as SparqlKos } from "@kos-kit/sparql-models";
 import { DatasetCore } from "@rdfjs/types";
+import { Store } from "n3";
 
 type KosFactory = (kwds: { languageTag: LanguageTag }) => Promise<Kos>;
 
@@ -22,7 +23,10 @@ if (!kosFactory.value) {
   if (configuration.dataFilePaths.length > 0) {
     kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
       if (!kosDataset.value) {
-        kosDataset.value = await parseRdfFiles(configuration.dataFilePaths);
+        kosDataset.value = await parseRdfFiles(
+          configuration.dataFilePaths,
+          new Store(),
+        );
       }
       return new MemKos({
         dataset: kosDataset.value as DatasetCore,
