@@ -2,7 +2,7 @@ import { Link } from "@/lib/components/Link";
 import configuration from "@/app/configuration";
 import { Hrefs } from "../Hrefs";
 import { Concept, LanguageTag } from "@kos-kit/models";
-import { Resource } from "@kos-kit/rdf-resource";
+import { Identifier } from "@/lib/models/Identifier";
 
 export async function ConceptList({
   concepts,
@@ -17,7 +17,7 @@ export async function ConceptList({
     <ul className="list-disc list-inside">
       {await Promise.all(
         concepts.map((concept) => (
-          <li key={Resource.Identifier.toString(concept.identifier)}>
+          <li key={Identifier.toString(concept.identifier)}>
             <Link href={hrefs.concept(concept)}>{concept.displayLabel}</Link>
           </li>
         )),

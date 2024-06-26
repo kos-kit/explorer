@@ -11,11 +11,10 @@ import {
 } from "@kos-kit/models";
 import { Metadata } from "next";
 import kosFactory from "../../../../../kosFactory";
-import { Resource } from "@kos-kit/rdf-resource";
 import { notFound } from "next/navigation";
 import * as O from "fp-ts/Option";
 import { pipe } from "fp-ts/lib/function";
-import { dataFactory } from "@/lib/dataFactory";
+import { Identifier } from "@/lib/models/Identifier";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
@@ -32,10 +31,7 @@ export default async function ConceptSemanticRelationsPage({
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
-      Resource.Identifier.fromString({
-        dataFactory,
-        identifier: defilenamify(conceptIdentifier),
-      }),
+      Identifier.fromString(defilenamify(conceptIdentifier)),
     ),
   );
   if (!concept) {
@@ -66,10 +62,7 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
-      Resource.Identifier.fromString({
-        dataFactory,
-        identifier: defilenamify(conceptIdentifier),
-      }),
+      Identifier.fromString(defilenamify(conceptIdentifier)),
     ),
     O.map((concept) =>
       new PageMetadata({ languageTag }).conceptSemanticRelations({
@@ -96,7 +89,7 @@ export async function generateStaticParams(): Promise<
       await kosFactory({ languageTag })
     ).concepts()) {
       const conceptIdentifier = filenamify(
-        Resource.Identifier.toString(concept.identifier),
+        Identifier.toString(concept.identifier),
       );
 
       for (const semanticRelationProperty of semanticRelationProperties) {

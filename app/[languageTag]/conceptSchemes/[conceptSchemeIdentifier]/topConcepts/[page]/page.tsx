@@ -11,11 +11,10 @@ import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "@/lib/Hrefs";
 import kosFactory from "../../../../../kosFactory";
-import { Resource } from "@kos-kit/rdf-resource";
 import * as O from "fp-ts/Option";
 import { notFound } from "next/navigation";
 import { pipe } from "fp-ts/lib/function";
-import { dataFactory } from "@/lib/dataFactory";
+import { Identifier } from "@/lib/models/Identifier";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -34,10 +33,7 @@ export default async function ConceptSchemeTopConceptsPage({
         languageTag,
       })
     ).conceptSchemeByIdentifier(
-      Resource.Identifier.fromString({
-        dataFactory,
-        identifier: defilenamify(conceptSchemeIdentifier),
-      }),
+      Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
     ),
   );
   if (!conceptScheme) {
@@ -100,10 +96,7 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptSchemeByIdentifier(
-      Resource.Identifier.fromString({
-        dataFactory,
-        identifier: defilenamify(conceptSchemeIdentifier),
-      }),
+      Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
     ),
     O.map((conceptScheme) =>
       new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
@@ -143,7 +136,7 @@ export async function generateStaticParams(): Promise<
       for (let page = 0; page < pageCount_; page++) {
         staticParams.push({
           conceptSchemeIdentifier: filenamify(
-            Resource.Identifier.toString(conceptScheme.identifier),
+            Identifier.toString(conceptScheme.identifier),
           ),
           languageTag,
           page: page.toString(),
