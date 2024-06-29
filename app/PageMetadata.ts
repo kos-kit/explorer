@@ -1,11 +1,11 @@
-import { Metadata } from "next";
-import kosFactory from "./kosFactory";
 import {
   Concept,
   ConceptScheme,
   LanguageTag,
   SemanticRelationProperty,
 } from "@kos-kit/models";
+import { Metadata } from "next";
+import kosFactory from "./kosFactory";
 
 export class PageMetadata {
   private readonly _languageTag: LanguageTag;

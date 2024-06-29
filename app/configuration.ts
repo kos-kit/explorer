@@ -1,12 +1,12 @@
-import * as envalid from "envalid";
 import { Configuration } from "@/lib/models/Configuration";
+import { GlobalRef } from "@kos-kit/next-utils";
 import {
-  existingFilePathArrayValidator,
   directoryPathValidator,
+  existingFilePathArrayValidator,
   intValidator,
   languageTagArrayValidator,
 } from "@kos-kit/next-utils/envalidValidators";
-import { GlobalRef } from "@kos-kit/next-utils";
+import * as envalid from "envalid";
 
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {

@@ -1,12 +1,12 @@
-import { LanguageTag, SemanticRelationProperty } from "@kos-kit/models";
-import queryString from "query-string";
 import { Configuration } from "@/lib/models/Configuration";
-import { filenamify } from "@kos-kit/next-utils";
 import { Identifier } from "@/lib/models/Identifier";
+import { LanguageTag, SemanticRelationProperty } from "@kos-kit/models";
+import { filenamify } from "@kos-kit/next-utils";
+import queryString from "query-string";
 
 export class Hrefs {
-  private readonly configuration: Configuration;
   private readonly _languageTag: LanguageTag;
+  private readonly configuration: Configuration;
 
   constructor({
     configuration,
@@ -17,6 +17,10 @@ export class Hrefs {
   }) {
     this.configuration = configuration;
     this._languageTag = languageTag;
+  }
+
+  get languageTag(): string {
+    return `${this.configuration.nextBasePath}/${this._languageTag}`;
   }
 
   concept(concept: { identifier: Identifier }): string {
@@ -45,10 +49,6 @@ export class Hrefs {
     semanticRelationProperty: SemanticRelationProperty;
   }): string {
     return `${this.concept(concept)}/semanticRelations/${semanticRelationProperty.name}`;
-  }
-
-  get languageTag(): string {
-    return `${this.configuration.nextBasePath}/${this._languageTag}`;
   }
 
   search({ page, query }: { page?: number; query?: string }) {

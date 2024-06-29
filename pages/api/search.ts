@@ -1,13 +1,6 @@
 import configuration from "@/app/configuration";
 import { NextApiRequest, NextApiResponse } from "next";
-
 import httpProxyMiddleware from "next-http-proxy-middleware";
-
-export const config = {
-  api: {
-    externalResolver: true,
-  },
-};
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,3 +21,9 @@ export default async function handler(
     target: configuration.searchEndpoint,
   });
 }
+
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+};
