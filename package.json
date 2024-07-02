@@ -50,7 +50,9 @@
     "dev": "next dev",
     "link-kos-kit-lib": "npm link @kos-kit/mem-models @kos-kit/models @kos-kit/next-utils @kos-kit/rdf-resource @kos-kit/rdf-utils @kos-kit/search @kos-kit/sparql-models",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "tsc": "tsc --incremental --noEmit",
+    "tsc:watch": "tsc --incremental --noEmit -w"
   },
   "version": "0.1.0"
 }
