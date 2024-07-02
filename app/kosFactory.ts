@@ -1,4 +1,4 @@
-import { Kos as MemKos } from "@kos-kit/mem-models";
+import * as mem from "@kos-kit/mem-models";
 import {
   Kos,
   LanguageTag,
@@ -7,7 +7,7 @@ import {
 } from "@kos-kit/models";
 import { GlobalRef } from "@kos-kit/next-utils";
 import { parseRdfFile } from "@kos-kit/next-utils/parseRdfFile";
-import { SparqlClient, Kos as SparqlKos } from "@kos-kit/sparql-models";
+import * as sparql from "@kos-kit/sparql-models";
 import { DatasetCore } from "@rdfjs/types";
 import { Store } from "n3";
 import configuration from "./configuration";
@@ -59,9 +59,14 @@ if (!kosFactory.value) {
         }
         kosDataset.value = store;
       }
-      return new MemKos({
+      return new mem.Kos({
         dataset: kosDataset.value as DatasetCore,
-        includeLanguageTags: new LanguageTagSet(languageTag, ""),
+        modelFactory: new mem.DefaultModelFactory({
+          conceptConstructor: mem.Concept,
+          conceptSchemeConstructor: mem.ConceptScheme,
+          includeLanguageTags: new LanguageTagSet(languageTag, ""),
+          labelConstructor: mem.Label,
+        }),
       });
     };
   } else if (configuration.sparqlEndpoint !== null) {
@@ -71,15 +76,29 @@ if (!kosFactory.value) {
       "as KOS",
     );
     kosFactoryValue = ({ languageTag }: { languageTag: LanguageTag }) =>
-      Promise.resolve(
-        new SparqlKos({
-          includeLanguageTags: new LanguageTagSet(languageTag, ""),
-          sparqlClient: new SparqlClient({
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            endpointUrl: configuration.sparqlEndpoint!,
+      new Promise((resolve) => {
+        const sparqlClient = new sparql.SparqlClient({
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          endpointUrl: configuration.sparqlEndpoint!,
+        });
+        resolve(
+          new sparql.Kos({
+            modelFetcher: new sparql.DefaultModelFetcher({
+              conceptConstructor: sparql.Concept,
+              conceptSchemeConstructor: sparql.ConceptScheme,
+              memModelFactory: new mem.DefaultModelFactory({
+                conceptConstructor: mem.Concept,
+                conceptSchemeConstructor: mem.ConceptScheme,
+                includeLanguageTags: new LanguageTagSet(languageTag, ""),
+                labelConstructor: mem.Label,
+              }),
+              includeLanguageTags: new LanguageTagSet(languageTag, ""),
+              sparqlClient,
+            }),
+            sparqlClient,
           }),
-        }),
-      );
+        );
+      });
   } else {
     console.info("using NotImplementedKos");
     kosFactoryValue = () => Promise.resolve(new NotImplementedKos());
