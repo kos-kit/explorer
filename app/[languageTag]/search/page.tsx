@@ -79,7 +79,7 @@ async function getSearchEngineJson({
 }: {
   languageTag: LanguageTag;
 }): Promise<SearchEngineJson> {
-  if (configuration.dataFilePaths.length > 0) {
+  if (configuration.dataPaths.length > 0) {
     return getLunrSearchEngineJson({ languageTag });
   } else if (configuration.searchEndpoint !== null) {
     return getServerSearchEngineJson({

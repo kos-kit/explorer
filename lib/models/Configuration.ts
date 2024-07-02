@@ -3,7 +3,7 @@ import { LanguageTag } from "@kos-kit/models";
 export interface Configuration {
   readonly cacheDirectoryPath: string;
   readonly conceptsPerPage: number;
-  readonly dataFilePaths: readonly string[];
+  readonly dataPaths: readonly string[];
   readonly defaultLanguageTag: LanguageTag;
   readonly dynamic: boolean;
   readonly languageTags: readonly LanguageTag[];

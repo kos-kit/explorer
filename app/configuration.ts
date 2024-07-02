@@ -1,21 +1,21 @@
 import { Configuration } from "@/lib/models/Configuration";
 import { GlobalRef } from "@kos-kit/next-utils";
 import {
-  directoryPathValidator,
-  existingFilePathArrayValidator,
+  existingPathsValidator,
   intValidator,
   languageTagArrayValidator,
+  pathValidator,
 } from "@kos-kit/next-utils/envalidValidators";
 import * as envalid from "envalid";
 
 const configuration = new GlobalRef("configuration");
 if (!configuration.value) {
   const env = envalid.cleanEnv(process.env, {
-    INPUT_CACHE_DIRECTORY_PATH: directoryPathValidator({
+    INPUT_CACHE_DIRECTORY_PATH: pathValidator({
       default: ".kos-kit/explorer/cache",
     }),
     INPUT_CONCEPTS_PER_PAGE: intValidator({ default: 25 }),
-    INPUT_DATA_PATHS: existingFilePathArrayValidator({ default: [] }),
+    INPUT_DATA_PATHS: existingPathsValidator({ default: [] }),
     INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
     INPUT_LANGUAGE_TAGS: languageTagArrayValidator({ default: [] }),
     INPUT_NEXT_BASE_PATH: envalid.str({ default: "" }),
@@ -28,7 +28,7 @@ if (!configuration.value) {
   configuration.value = {
     cacheDirectoryPath: env.INPUT_CACHE_DIRECTORY_PATH,
     conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
-    dataFilePaths: env.INPUT_DATA_PATHS,
+    dataPaths: env.INPUT_DATA_PATHS,
     defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
     dynamic: env.INPUT_NEXT_OUTPUT.toLowerCase() == "standalone",
     languageTags:
