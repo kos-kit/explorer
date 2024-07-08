@@ -15,12 +15,10 @@ import {
 import { Metadata } from "next";
 import React from "react";
 import { Hrefs } from "@/lib/Hrefs";
-import kosFactory from "../../../kosFactory";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { notFound } from "next/navigation";
-import * as O from "fp-ts/Option";
-import { pipe } from "fp-ts/function";
 import { Identifier } from "@/lib/models/Identifier";
+import kosFactory from "@/app/kosFactory";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -32,13 +30,13 @@ export default async function ConceptPage({
 }: {
   params: ConceptPageParams;
 }) {
-  const concept = O.toNullable(
+  const concept = (
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
       Identifier.fromString(defilenamify(conceptIdentifier)),
-    ),
-  );
+    )
+  ).extractNullable();
   if (!concept) {
     notFound();
   }
@@ -135,15 +133,17 @@ export async function generateMetadata({
 }: {
   params: ConceptPageParams;
 }): Promise<Metadata> {
-  return pipe(
+  const concept = (
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
       Identifier.fromString(defilenamify(conceptIdentifier)),
-    ),
-    O.map((concept) => new PageMetadata({ languageTag }).concept(concept)),
-    O.getOrElse(() => ({}) satisfies Metadata),
-  );
+    )
+  ).extractNullable();
+  if (!concept) {
+    return {};
+  }
+  return (await new PageMetadata({ languageTag }).concept(concept)) ?? {};
 }
 
 export async function generateStaticParams(): Promise<ConceptPageParams[]> {

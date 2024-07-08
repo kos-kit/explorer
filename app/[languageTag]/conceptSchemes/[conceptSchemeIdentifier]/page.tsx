@@ -6,8 +6,6 @@ import { defilenamify, filenamify } from "@kos-kit/next-utils";
 import { LanguageTag } from "@kos-kit/models";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import * as O from "fp-ts/Option";
-import { pipe } from "fp-ts/function";
 import { Identifier } from "@/lib/models/Identifier";
 
 interface ConceptSchemePageParams {
@@ -20,15 +18,15 @@ export default async function ConceptSchemePage({
 }: {
   params: ConceptSchemePageParams;
 }) {
-  const conceptScheme = O.toNullable(
+  const conceptScheme = (
     await (
       await kosFactory({
         languageTag,
       })
     ).conceptSchemeByIdentifier(
       Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
-    ),
-  );
+    )
+  ).extractNullable();
   if (!conceptScheme) {
     notFound();
   }
@@ -46,16 +44,18 @@ export async function generateMetadata({
 }: {
   params: ConceptSchemePageParams;
 }): Promise<Metadata> {
-  return pipe(
+  const conceptScheme = (
     await (
       await kosFactory({ languageTag })
     ).conceptSchemeByIdentifier(
       Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
-    ),
-    O.map((conceptScheme) =>
-      new PageMetadata({ languageTag }).conceptScheme(conceptScheme),
-    ),
-    O.getOrElse(() => ({})),
+    )
+  ).extractNullable();
+  if (!conceptScheme) {
+    return {};
+  }
+  return (
+    (await new PageMetadata({ languageTag }).conceptScheme(conceptScheme)) ?? {}
   );
 }
 
