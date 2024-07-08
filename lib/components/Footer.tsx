@@ -2,8 +2,7 @@ import { Literal, NamedNode } from "@rdfjs/types";
 import { Link } from "@/lib/components/Link";
 import { Fragment } from "react";
 import { LanguageTag } from "@kos-kit/models";
-import kosFactory from "../../app/kosFactory";
-import * as O from "fp-ts/Option";
+import kosFactory from "@/app/kosFactory";
 
 export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let license: Literal | NamedNode | null = null;
@@ -15,9 +14,9 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   ).conceptSchemes();
   if (conceptSchemes.length === 1) {
     const conceptScheme = conceptSchemes[0];
-    license = O.toNullable(conceptScheme.license);
-    rights = O.toNullable(conceptScheme.rights);
-    rightsHolder = O.toNullable(conceptScheme.rightsHolder);
+    license = conceptScheme.license.extractNullable();
+    rights = conceptScheme.rights.extractNullable();
+    rightsHolder = conceptScheme.rightsHolder.extractNullable();
   }
 
   if (license === null && rights === null && rightsHolder === null) {

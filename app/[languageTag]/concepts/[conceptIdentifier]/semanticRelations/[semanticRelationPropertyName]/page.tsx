@@ -10,11 +10,9 @@ import {
   semanticRelationPropertiesByName,
 } from "@kos-kit/models";
 import { Metadata } from "next";
-import kosFactory from "../../../../../kosFactory";
 import { notFound } from "next/navigation";
-import * as O from "fp-ts/Option";
-import { pipe } from "fp-ts/lib/function";
 import { Identifier } from "@/lib/models/Identifier";
+import kosFactory from "@/app/kosFactory";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
@@ -27,13 +25,13 @@ export default async function ConceptSemanticRelationsPage({
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
-  const concept = O.toNullable(
+  const concept = (
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
       Identifier.fromString(defilenamify(conceptIdentifier)),
-    ),
-  );
+    )
+  ).extractNullable();
   if (!concept) {
     notFound();
   }
@@ -58,20 +56,25 @@ export async function generateMetadata({
 }: {
   params: ConceptSemanticRelationsPageParams;
 }): Promise<Metadata> {
-  return pipe(
+  const concept = (
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
       Identifier.fromString(defilenamify(conceptIdentifier)),
-    ),
-    O.map((concept) =>
-      new PageMetadata({ languageTag }).conceptSemanticRelations({
-        concept,
-        semanticRelationProperty:
-          semanticRelationPropertiesByName[semanticRelationPropertyName],
-      }),
-    ),
-    O.getOrElse(() => ({}) satisfies Metadata),
+    )
+  ).extractNullable();
+
+  if (!concept) {
+    return {};
+  }
+  return (
+    (await new PageMetadata({
+      languageTag,
+    }).conceptSemanticRelations({
+      concept,
+      semanticRelationProperty:
+        semanticRelationPropertiesByName[semanticRelationPropertyName],
+    })) ?? {}
   );
 }
 

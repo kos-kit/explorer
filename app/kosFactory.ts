@@ -14,35 +14,56 @@ import configuration from "./configuration";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { logger } from "@/lib/logger";
+import { Stats } from "node:fs";
+import { dataFactory } from "@/lib/dataFactory";
 
 type KosFactory = (kwds: { languageTag: LanguageTag }) => Promise<Kos>;
 
-async function parseRdfFiles(
-  dataPath: string,
-  intoDataset: DatasetCore,
-): Promise<void> {
-  const absoluteDataPath = path.resolve(dataPath);
+async function loadKosDataset(
+  dataPaths: readonly string[],
+): Promise<DatasetCore> {
+  const store = new Store();
 
-  const stat = await fs.stat(absoluteDataPath);
-  if (stat.isFile()) {
-    logger.debug("parsing RDF file %s", absoluteDataPath);
-    await parseRdfFile(absoluteDataPath, intoDataset);
-    logger.debug("parsed RDF file %s", absoluteDataPath);
-  } else if (stat.isDirectory()) {
-    for (const dirent of await fs.readdir(absoluteDataPath, {
+  async function loadDirectory(directoryPath: string): Promise<void> {
+    for (const dirent of await fs.readdir(directoryPath, {
       withFileTypes: true,
     })) {
-      if (!dirent.isFile()) {
-        continue;
+      const direntPath = path.resolve(directoryPath, dirent.name);
+      if (dirent.isDirectory()) {
+        await loadDirectory(direntPath);
+      } else if (dirent.isFile()) {
+        await loadFile(direntPath);
+      } else {
+        logger.warn("%s is not a directory or file", direntPath);
       }
-      const absoluteDataFilePath = path.resolve(absoluteDataPath, dirent.name);
-      logger.debug("parsing RDF file %s", absoluteDataFilePath);
-      await parseRdfFile(absoluteDataFilePath, intoDataset);
-      logger.debug("parsed RDF file %s", absoluteDataFilePath);
     }
-  } else {
-    logger.warn("data path %s does not exist", absoluteDataPath);
   }
+
+  async function loadFile(filePath: string): Promise<void> {
+    logger.debug("loading RDF file %s", filePath);
+    await parseRdfFile({ dataFactory, dataset: store, rdfFilePath: filePath });
+    logger.debug("loading RDF file %s", filePath);
+  }
+
+  for (const dataPath of dataPaths) {
+    const absoluteDataPath = path.resolve(dataPath);
+    let stat: Stats;
+    try {
+      stat = await fs.stat(absoluteDataPath);
+    } catch {
+      logger.warn("error stat'ing %s", absoluteDataPath);
+      continue;
+    }
+    if (stat.isDirectory()) {
+      await loadDirectory(absoluteDataPath);
+    } else if (stat.isFile()) {
+      await loadFile(absoluteDataPath);
+    } else {
+      logger.warn("%s is not a directory or a file", absoluteDataPath);
+    }
+  }
+
+  return store;
 }
 
 const kosDataset = new GlobalRef("kosDataset");
@@ -53,11 +74,7 @@ if (!kosFactory.value) {
   if (configuration.dataPaths.length > 0) {
     kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
       if (!kosDataset.value) {
-        const store = new Store();
-        for (const dataPath of configuration.dataPaths) {
-          await parseRdfFiles(dataPath, store);
-        }
-        kosDataset.value = store;
+        kosDataset.value = await loadKosDataset(configuration.dataPaths);
       }
       return new mem.Kos({
         dataset: kosDataset.value as DatasetCore,
