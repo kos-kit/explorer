@@ -8,6 +8,7 @@ import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { defilenamify, filenamify } from "@kos-kit/next-utils";
 import {
+  Concept,
   LanguageTag,
   noteProperties,
   semanticRelationProperties,
@@ -17,8 +18,8 @@ import React from "react";
 import { Hrefs } from "@/lib/Hrefs";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { notFound } from "next/navigation";
-import { Identifier } from "@/lib/models/Identifier";
 import kosFactory from "@/app/kosFactory";
+import { dataFactory } from "@/lib/dataFactory";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -34,7 +35,10 @@ export default async function ConceptPage({
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
-      Identifier.fromString(defilenamify(conceptIdentifier)),
+      Concept.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptIdentifier),
+      }),
     )
   ).extractNullable();
   if (!concept) {
@@ -137,7 +141,10 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
-      Identifier.fromString(defilenamify(conceptIdentifier)),
+      Concept.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptIdentifier),
+      }),
     )
   ).extractNullable();
   if (!concept) {
@@ -158,7 +165,9 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
       await kosFactory({ languageTag })
     ).concepts()) {
       staticParams.push({
-        conceptIdentifier: filenamify(Identifier.toString(concept.identifier)),
+        conceptIdentifier: filenamify(
+          Concept.Identifier.toString(concept.identifier),
+        ),
         languageTag,
       });
     }

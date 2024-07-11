@@ -8,11 +8,11 @@ import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
 import { PageMetadata } from "@/app/PageMetadata";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { LanguageTag } from "@kos-kit/models";
+import { ConceptScheme, LanguageTag } from "@kos-kit/models";
 import { Hrefs } from "@/lib/Hrefs";
 import { notFound } from "next/navigation";
-import { Identifier } from "@/lib/models/Identifier";
 import kosFactory from "@/app/kosFactory";
+import { dataFactory } from "@/lib/dataFactory";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -31,7 +31,10 @@ export default async function ConceptSchemeTopConceptsPage({
         languageTag,
       })
     ).conceptSchemeByIdentifier(
-      Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+      ConceptScheme.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptSchemeIdentifier),
+      }),
     )
   ).extractNullable();
   if (!conceptScheme) {
@@ -94,7 +97,10 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptSchemeByIdentifier(
-      Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+      ConceptScheme.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptSchemeIdentifier),
+      }),
     )
   ).extractNullable();
   if (!conceptScheme) {
@@ -136,7 +142,7 @@ export async function generateStaticParams(): Promise<
       for (let page = 0; page < pageCount_; page++) {
         staticParams.push({
           conceptSchemeIdentifier: filenamify(
-            Identifier.toString(conceptScheme.identifier),
+            ConceptScheme.Identifier.toString(conceptScheme.identifier),
           ),
           languageTag,
           page: page.toString(),

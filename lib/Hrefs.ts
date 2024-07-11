@@ -1,6 +1,10 @@
 import { Configuration } from "@/lib/models/Configuration";
-import { Identifier } from "@/lib/models/Identifier";
-import { LanguageTag, SemanticRelationProperty } from "@kos-kit/models";
+import {
+  Concept,
+  ConceptScheme,
+  LanguageTag,
+  SemanticRelationProperty,
+} from "@kos-kit/models";
 import { filenamify } from "@kos-kit/next-utils";
 import queryString from "query-string";
 
@@ -23,19 +27,21 @@ export class Hrefs {
     return `${this.configuration.nextBasePath}/${this._languageTag}`;
   }
 
-  concept(concept: { identifier: Identifier }): string {
-    return `${this.languageTag}/concepts/${filenamify(Identifier.toString(concept.identifier))}`;
+  concept(concept: { identifier: Concept.Identifier }): string {
+    return `${this.languageTag}/concepts/${filenamify(Concept.Identifier.toString(concept.identifier))}`;
   }
 
-  conceptScheme(conceptScheme: { identifier: Identifier }): string {
-    return `${this.languageTag}/conceptSchemes/${filenamify(Identifier.toString(conceptScheme.identifier))}`;
+  conceptScheme(conceptScheme: {
+    identifier: ConceptScheme.Identifier;
+  }): string {
+    return `${this.languageTag}/conceptSchemes/${filenamify(Concept.Identifier.toString(conceptScheme.identifier))}`;
   }
 
   conceptSchemeTopConcepts({
     conceptScheme,
     page,
   }: {
-    conceptScheme: { identifier: Identifier };
+    conceptScheme: { identifier: ConceptScheme.Identifier };
     page: number;
   }): string {
     return `${this.conceptScheme(conceptScheme)}/topConcepts/${page}`;
@@ -45,7 +51,7 @@ export class Hrefs {
     concept,
     semanticRelationProperty,
   }: {
-    concept: { identifier: Identifier };
+    concept: { identifier: Concept.Identifier };
     semanticRelationProperty: SemanticRelationProperty;
   }): string {
     return `${this.concept(concept)}/semanticRelations/${semanticRelationProperty.name}`;

@@ -3,10 +3,10 @@ import configuration from "@/app/configuration";
 import kosFactory from "@/app/kosFactory";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
 import { defilenamify, filenamify } from "@kos-kit/next-utils";
-import { LanguageTag } from "@kos-kit/models";
+import { ConceptScheme, LanguageTag } from "@kos-kit/models";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Identifier } from "@/lib/models/Identifier";
+import { dataFactory } from "@/lib/dataFactory";
 
 interface ConceptSchemePageParams {
   conceptSchemeIdentifier: string;
@@ -24,7 +24,10 @@ export default async function ConceptSchemePage({
         languageTag,
       })
     ).conceptSchemeByIdentifier(
-      Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+      ConceptScheme.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptSchemeIdentifier),
+      }),
     )
   ).extractNullable();
   if (!conceptScheme) {
@@ -48,7 +51,10 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptSchemeByIdentifier(
-      Identifier.fromString(defilenamify(conceptSchemeIdentifier)),
+      ConceptScheme.Identifier.fromString({
+        dataFactory,
+        identifier: defilenamify(conceptSchemeIdentifier),
+      }),
     )
   ).extractNullable();
   if (!conceptScheme) {
@@ -78,7 +84,7 @@ export async function generateStaticParams(): Promise<
     ).conceptSchemes()) {
       staticParams.push({
         conceptSchemeIdentifier: filenamify(
-          Identifier.toString(conceptScheme.identifier),
+          ConceptScheme.Identifier.toString(conceptScheme.identifier),
         ),
         languageTag,
       });

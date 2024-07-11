@@ -2,7 +2,6 @@ import { Link } from "@/lib/components/Link";
 import configuration from "@/app/configuration";
 import { Hrefs } from "../Hrefs";
 import { Concept, LanguageTag } from "@kos-kit/models";
-import { Identifier } from "@/lib/models/Identifier";
 
 export async function ConceptList({
   concepts,
@@ -17,7 +16,7 @@ export async function ConceptList({
     <ul className="list-disc list-inside">
       {await Promise.all(
         concepts.map((concept) => (
-          <li key={Identifier.toString(concept.identifier)}>
+          <li key={Concept.Identifier.toString(concept.identifier)}>
             <Link href={hrefs.concept(concept)}>{concept.displayLabel}</Link>
           </li>
         )),
