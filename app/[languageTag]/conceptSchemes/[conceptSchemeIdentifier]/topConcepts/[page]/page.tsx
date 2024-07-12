@@ -3,7 +3,7 @@ import { ConceptList } from "@/lib/components/ConceptList";
 import { Link } from "@/lib/components/Link";
 import { Section } from "@/lib/components/Section";
 import { Pagination } from "@/lib/components/Pagination";
-import { defilenamify, filenamify, pageCount } from "@kos-kit/next-utils";
+import { decodeFileName, encodeFileName, pageCount } from "@kos-kit/next-utils";
 import { Metadata } from "next";
 import { Layout } from "@/lib/components/Layout";
 import { PageMetadata } from "@/app/PageMetadata";
@@ -33,7 +33,7 @@ export default async function ConceptSchemeTopConceptsPage({
     ).conceptSchemeByIdentifier(
       ConceptScheme.Identifier.fromString({
         dataFactory,
-        identifier: defilenamify(conceptSchemeIdentifier),
+        identifier: decodeFileName(conceptSchemeIdentifier),
       }),
     )
   ).extractNullable();
@@ -99,7 +99,7 @@ export async function generateMetadata({
     ).conceptSchemeByIdentifier(
       ConceptScheme.Identifier.fromString({
         dataFactory,
-        identifier: defilenamify(conceptSchemeIdentifier),
+        identifier: decodeFileName(conceptSchemeIdentifier),
       }),
     )
   ).extractNullable();
@@ -141,7 +141,7 @@ export async function generateStaticParams(): Promise<
       // Top concepts will spill over from the concept scheme page to this one.
       for (let page = 0; page < pageCount_; page++) {
         staticParams.push({
-          conceptSchemeIdentifier: filenamify(
+          conceptSchemeIdentifier: encodeFileName(
             ConceptScheme.Identifier.toString(conceptScheme.identifier),
           ),
           languageTag,

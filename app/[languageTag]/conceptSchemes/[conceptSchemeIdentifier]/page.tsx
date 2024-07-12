@@ -2,7 +2,7 @@ import { PageMetadata } from "@/app/PageMetadata";
 import configuration from "@/app/configuration";
 import kosFactory from "@/app/kosFactory";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
-import { defilenamify, filenamify } from "@kos-kit/next-utils";
+import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { ConceptScheme, LanguageTag } from "@kos-kit/models";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -26,7 +26,7 @@ export default async function ConceptSchemePage({
     ).conceptSchemeByIdentifier(
       ConceptScheme.Identifier.fromString({
         dataFactory,
-        identifier: defilenamify(conceptSchemeIdentifier),
+        identifier: decodeFileName(conceptSchemeIdentifier),
       }),
     )
   ).extractNullable();
@@ -53,7 +53,7 @@ export async function generateMetadata({
     ).conceptSchemeByIdentifier(
       ConceptScheme.Identifier.fromString({
         dataFactory,
-        identifier: defilenamify(conceptSchemeIdentifier),
+        identifier: decodeFileName(conceptSchemeIdentifier),
       }),
     )
   ).extractNullable();
@@ -83,7 +83,7 @@ export async function generateStaticParams(): Promise<
       })
     ).conceptSchemes()) {
       staticParams.push({
-        conceptSchemeIdentifier: filenamify(
+        conceptSchemeIdentifier: encodeFileName(
           ConceptScheme.Identifier.toString(conceptScheme.identifier),
         ),
         languageTag,

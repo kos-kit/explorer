@@ -3,7 +3,7 @@ import configuration from "@/app/configuration";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { defilenamify, filenamify } from "@kos-kit/next-utils";
+import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import {
   Concept,
   LanguageTag,
@@ -32,7 +32,7 @@ export default async function ConceptSemanticRelationsPage({
     ).conceptByIdentifier(
       Concept.Identifier.fromString({
         dataFactory,
-        identifier: defilenamify(conceptIdentifier),
+        identifier: decodeFileName(conceptIdentifier),
       }),
     )
   ).extractNullable();
@@ -66,7 +66,7 @@ export async function generateMetadata({
     ).conceptByIdentifier(
       Concept.Identifier.fromString({
         dataFactory,
-        identifier: defilenamify(conceptIdentifier),
+        identifier: decodeFileName(conceptIdentifier),
       }),
     )
   ).extractNullable();
@@ -98,7 +98,7 @@ export async function generateStaticParams(): Promise<
     for await (const concept of (
       await kosFactory({ languageTag })
     ).concepts()) {
-      const conceptIdentifier = filenamify(
+      const conceptIdentifier = encodeFileName(
         Concept.Identifier.toString(concept.identifier),
       );
 

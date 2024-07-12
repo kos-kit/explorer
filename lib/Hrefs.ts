@@ -5,7 +5,7 @@ import {
   LanguageTag,
   SemanticRelationProperty,
 } from "@kos-kit/models";
-import { filenamify } from "@kos-kit/next-utils";
+import { encodeFileName } from "@kos-kit/next-utils";
 import queryString from "query-string";
 
 export class Hrefs {
@@ -28,13 +28,13 @@ export class Hrefs {
   }
 
   concept(concept: { identifier: Concept.Identifier }): string {
-    return `${this.languageTag}/concepts/${filenamify(Concept.Identifier.toString(concept.identifier))}`;
+    return `${this.languageTag}/concepts/${encodeFileName(Concept.Identifier.toString(concept.identifier))}`;
   }
 
   conceptScheme(conceptScheme: {
     identifier: ConceptScheme.Identifier;
   }): string {
-    return `${this.languageTag}/conceptSchemes/${filenamify(Concept.Identifier.toString(conceptScheme.identifier))}`;
+    return `${this.languageTag}/conceptSchemes/${encodeFileName(Concept.Identifier.toString(conceptScheme.identifier))}`;
   }
 
   conceptSchemeTopConcepts({

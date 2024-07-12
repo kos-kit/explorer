@@ -6,7 +6,7 @@ import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
-import { defilenamify, filenamify } from "@kos-kit/next-utils";
+import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import {
   Concept,
   LanguageTag,
@@ -37,7 +37,7 @@ export default async function ConceptPage({
     ).conceptByIdentifier(
       Concept.Identifier.fromString({
         dataFactory,
-        identifier: defilenamify(conceptIdentifier),
+        identifier: decodeFileName(conceptIdentifier),
       }),
     )
   ).extractNullable();
@@ -143,7 +143,7 @@ export async function generateMetadata({
     ).conceptByIdentifier(
       Concept.Identifier.fromString({
         dataFactory,
-        identifier: defilenamify(conceptIdentifier),
+        identifier: decodeFileName(conceptIdentifier),
       }),
     )
   ).extractNullable();
@@ -165,7 +165,7 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
       await kosFactory({ languageTag })
     ).concepts()) {
       staticParams.push({
-        conceptIdentifier: filenamify(
+        conceptIdentifier: encodeFileName(
           Concept.Identifier.toString(concept.identifier),
         ),
         languageTag,
