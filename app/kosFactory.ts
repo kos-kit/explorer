@@ -75,22 +75,12 @@ async function loadKosDataset(
 }
 
 const kosDataset = new GlobalRef<DatasetCore>("kosDataset");
-if (!kosDataset.value) {
-  kosDataset.value = await loadKosDataset(configuration.dataPaths);
-}
 
 const kosFactory = new GlobalRef<KosFactory>("kosFactory");
 if (!kosFactory.value) {
   let kosFactoryValue: KosFactory;
 
-  if (configuration.dataPaths.length > 0) {
-    kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
-      return new rdfjsDataset.DefaultKos({
-        dataset: kosDataset.value as DatasetCore,
-        includeLanguageTags: new LanguageTagSet(languageTag, ""),
-      });
-    };
-  } else if (configuration.sparqlEndpoint !== null) {
+  if (configuration.sparqlEndpoint !== null) {
     console.info(
       "using SPARQL endpoint",
       configuration.sparqlEndpoint,
@@ -105,7 +95,22 @@ if (!kosFactory.value) {
           dataFactory: N3.DataFactory,
           endpointUrl: configuration.sparqlEndpoint!,
           logger,
+          defaultRequestOptions: {
+            cache: "no-store",
+            method: "POSTDirectly",
+          },
         }),
+      });
+    };
+  } else if (configuration.dataPaths.length > 0) {
+    if (!kosDataset.value) {
+      kosDataset.value = await loadKosDataset(configuration.dataPaths);
+    }
+
+    kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
+      return new rdfjsDataset.DefaultKos({
+        dataset: kosDataset.value!,
+        includeLanguageTags: new LanguageTagSet(languageTag, ""),
       });
     };
   } else {
