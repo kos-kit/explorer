@@ -24,7 +24,7 @@ export default async function ConceptSchemePage({
         languageTag,
       })
     ).conceptSchemeByIdentifier(
-      ConceptScheme.Identifier.fromString({
+      Identifier.fromString({
         dataFactory,
         identifier: decodeFileName(conceptSchemeIdentifier),
       }),
@@ -51,7 +51,7 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptSchemeByIdentifier(
-      ConceptScheme.Identifier.fromString({
+      Identifier.fromString({
         dataFactory,
         identifier: decodeFileName(conceptSchemeIdentifier),
       }),
@@ -84,7 +84,7 @@ export async function generateStaticParams(): Promise<
     ).conceptSchemes()) {
       staticParams.push({
         conceptSchemeIdentifier: encodeFileName(
-          ConceptScheme.Identifier.toString(conceptScheme.identifier),
+          Identifier.toString(conceptScheme.identifier),
         ),
         languageTag,
       });

@@ -30,7 +30,7 @@ export default async function ConceptSemanticRelationsPage({
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
-      Concept.Identifier.fromString({
+      Identifier.fromString({
         dataFactory,
         identifier: decodeFileName(conceptIdentifier),
       }),
@@ -64,7 +64,7 @@ export async function generateMetadata({
     await (
       await kosFactory({ languageTag })
     ).conceptByIdentifier(
-      Concept.Identifier.fromString({
+      Identifier.fromString({
         dataFactory,
         identifier: decodeFileName(conceptIdentifier),
       }),
@@ -99,7 +99,7 @@ export async function generateStaticParams(): Promise<
       await kosFactory({ languageTag })
     ).concepts()) {
       const conceptIdentifier = encodeFileName(
-        Concept.Identifier.toString(concept.identifier),
+        Identifier.toString(concept.identifier),
       );
 
       for (const semanticRelationProperty of semanticRelationProperties) {

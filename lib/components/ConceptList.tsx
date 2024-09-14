@@ -16,7 +16,7 @@ export async function ConceptList({
     <ul className="list-disc list-inside">
       {await Promise.all(
         concepts.map((concept) => (
-          <li key={Concept.Identifier.toString(concept.identifier)}>
+          <li key={Identifier.toString(concept.identifier)}>
             <Link href={hrefs.concept(concept)}>{concept.displayLabel}</Link>
           </li>
         )),

@@ -55,14 +55,14 @@ function searchResultHref({
   switch (searchResult.type) {
     case "Concept":
       return hrefs.concept({
-        identifier: Concept.Identifier.fromString({
+        identifier: Identifier.fromString({
           dataFactory,
           identifier: searchResult.identifier,
         }),
       });
     case "ConceptScheme":
       return hrefs.conceptScheme({
-        identifier: ConceptScheme.Identifier.fromString({
+        identifier: Identifier.fromString({
           dataFactory,
           identifier: searchResult.identifier,
         }),

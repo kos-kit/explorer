@@ -27,21 +27,19 @@ export class Hrefs {
     return `${this.configuration.nextBasePath}/${this._languageTag}`;
   }
 
-  concept(concept: { identifier: Concept.Identifier }): string {
-    return `${this.languageTag}/concepts/${encodeFileName(Concept.Identifier.toString(concept.identifier))}`;
+  concept(concept: { identifier: Identifier }): string {
+    return `${this.languageTag}/concepts/${encodeFileName(Identifier.toString(concept.identifier))}`;
   }
 
-  conceptScheme(conceptScheme: {
-    identifier: ConceptScheme.Identifier;
-  }): string {
-    return `${this.languageTag}/conceptSchemes/${encodeFileName(Concept.Identifier.toString(conceptScheme.identifier))}`;
+  conceptScheme(conceptScheme: { identifier: Identifier }): string {
+    return `${this.languageTag}/conceptSchemes/${encodeFileName(Identifier.toString(conceptScheme.identifier))}`;
   }
 
   conceptSchemeTopConcepts({
     conceptScheme,
     page,
   }: {
-    conceptScheme: { identifier: ConceptScheme.Identifier };
+    conceptScheme: { identifier: Identifier };
     page: number;
   }): string {
     return `${this.conceptScheme(conceptScheme)}/topConcepts/${page}`;
@@ -51,7 +49,7 @@ export class Hrefs {
     concept,
     semanticRelationProperty,
   }: {
-    concept: { identifier: Concept.Identifier };
+    concept: { identifier: Identifier };
     semanticRelationProperty: SemanticRelationProperty;
   }): string {
     return `${this.concept(concept)}/semanticRelations/${semanticRelationProperty.name}`;
