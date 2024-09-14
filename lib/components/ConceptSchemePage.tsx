@@ -28,10 +28,12 @@ export async function ConceptSchemePage({
           <div className="flex flex-col gap-2">
             <ConceptList
               concepts={
-                await conceptScheme.topConcepts({
-                  limit: configuration.relatedConceptsPerSection,
-                  offset: 0,
-                })
+                await (
+                  await conceptScheme.topConcepts({
+                    limit: configuration.relatedConceptsPerSection,
+                    offset: 0,
+                  })
+                ).flatResolve()
               }
               languageTag={languageTag}
             />

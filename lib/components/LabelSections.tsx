@@ -1,16 +1,16 @@
 import { Section } from "@/lib/components/Section";
-import { LabeledModel } from "@/lib/models";
+import { Label, LabeledModel } from "@/lib/models";
 import React from "react";
 
 export function LabelSections({ model }: { model: LabeledModel }) {
   const sections: React.ReactElement[] = [];
 
   for (const { labels, type } of [
-    { labels: model.prefLabels, type: "Preferred" },
-    { labels: model.altLabels, type: "Alternate" },
-    { labels: model.hiddenLabels, type: "Hidden" },
+    { labels: model.labels(Label.Type.PREFERRED), type: "Preferred" },
+    { labels: model.labels(Label.Type.ALTERNATIVE), type: "Alternate" },
+    { labels: model.labels(Label.Type.HIDDEN), type: "Hidden" },
   ]) {
-    if (labels.length === 0 || (type == "Preferred" && labels.length === 1)) {
+    if (labels.length === 0 || (type === "Preferred" && labels.length === 1)) {
       continue;
     }
     sections.push(

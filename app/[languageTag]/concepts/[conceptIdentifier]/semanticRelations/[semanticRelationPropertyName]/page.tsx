@@ -1,25 +1,34 @@
 import { PageMetadata } from "@/app/PageMetadata";
 import configuration from "@/app/configuration";
+import kosFactory from "@/app/kosFactory";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
+import { dataFactory } from "@/lib/dataFactory";
 import {
-  Concept,
+  Identifier,
   LanguageTag,
+  SemanticRelationProperty,
   semanticRelationProperties,
-  semanticRelationPropertiesByName,
-} from "@kos-kit/models";
+} from "@/lib/models";
+import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import kosFactory from "@/app/kosFactory";
-import { dataFactory } from "@/lib/dataFactory";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
   languageTag: LanguageTag;
   semanticRelationPropertyName: string;
 }
+
+const semanticRelationPropertiesByName = semanticRelationProperties.reduce(
+  (semanticRelationPropertiesByName, semanticRelationProperty) => {
+    semanticRelationPropertiesByName[semanticRelationProperty.name] =
+      semanticRelationProperty;
+    return semanticRelationPropertiesByName;
+  },
+  {} as Record<string, SemanticRelationProperty>,
+);
 
 export default async function ConceptSemanticRelationsPage({
   params: { conceptIdentifier, languageTag, semanticRelationPropertyName },
@@ -29,13 +38,17 @@ export default async function ConceptSemanticRelationsPage({
   const concept = (
     await (
       await kosFactory({ languageTag })
-    ).conceptByIdentifier(
-      Identifier.fromString({
-        dataFactory,
-        identifier: decodeFileName(conceptIdentifier),
-      }),
     )
-  ).extractNullable();
+      .concept(
+        Identifier.fromString({
+          dataFactory,
+          identifier: decodeFileName(conceptIdentifier),
+        }),
+      )
+      .resolve()
+  )
+    .toMaybe()
+    .extractNullable();
   if (!concept) {
     notFound();
   }
@@ -43,9 +56,9 @@ export default async function ConceptSemanticRelationsPage({
   const semanticRelationProperty =
     semanticRelationPropertiesByName[semanticRelationPropertyName];
 
-  const semanticRelations = await concept.semanticRelations(
-    semanticRelationProperty,
-  );
+  const semanticRelations = await (
+    await concept.semanticRelations(semanticRelationProperty)
+  ).flatResolve();
 
   return (
     <Layout languageTag={languageTag}>
@@ -63,14 +76,17 @@ export async function generateMetadata({
   const concept = (
     await (
       await kosFactory({ languageTag })
-    ).conceptByIdentifier(
-      Identifier.fromString({
-        dataFactory,
-        identifier: decodeFileName(conceptIdentifier),
-      }),
     )
-  ).extractNullable();
-
+      .concept(
+        Identifier.fromString({
+          dataFactory,
+          identifier: decodeFileName(conceptIdentifier),
+        }),
+      )
+      .resolve()
+  )
+    .toMaybe()
+    .extractNullable();
   if (!concept) {
     return {};
   }
@@ -95,18 +111,20 @@ export async function generateStaticParams(): Promise<
   const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
   for (const languageTag of configuration.languageTags) {
-    for await (const concept of (
-      await kosFactory({ languageTag })
-    ).concepts()) {
+    for await (const concept of await (
+      await (
+        await kosFactory({ languageTag })
+      ).concepts({ limit: null, offset: 0, query: { type: "All" } })
+    ).flatResolve()) {
       const conceptIdentifier = encodeFileName(
         Identifier.toString(concept.identifier),
       );
 
       for (const semanticRelationProperty of semanticRelationProperties) {
-        const semanticRelationCount = await concept.semanticRelationsCount(
-          semanticRelationProperty,
-        );
-        if (semanticRelationCount <= configuration.relatedConceptsPerSection) {
+        if (
+          (await concept.semanticRelations(semanticRelationProperty)).length <=
+          configuration.relatedConceptsPerSection
+        ) {
           continue;
         }
 

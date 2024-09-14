@@ -1,9 +1,9 @@
-import { Configuration } from "@/lib/models/Configuration";
 import {
+  Configuration,
   Identifier,
   LanguageTag,
   SemanticRelationProperty,
-} from "@kos-kit/models";
+} from "@/lib/models";
 import { encodeFileName } from "@kos-kit/next-utils";
 import queryString from "query-string";
 
