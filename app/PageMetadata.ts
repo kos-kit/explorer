@@ -6,7 +6,7 @@ import {
   SemanticRelationProperty,
 } from "@/lib/models";
 import { Metadata } from "next";
-import kosFactory from "./kosFactory";
+import { kosFactory } from "./kosFactory";
 
 export class PageMetadata {
   private readonly _languageTag: LanguageTag;

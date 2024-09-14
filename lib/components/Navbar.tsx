@@ -1,5 +1,5 @@
 import { PageMetadata } from "@/app/PageMetadata";
-import configuration from "@/app/configuration";
+import { configuration } from "@/app/configuration";
 import { Link } from "@/lib/components/Link";
 import { LanguageTag } from "@/lib/models";
 import { ListBulletIcon } from "@heroicons/react/24/solid";

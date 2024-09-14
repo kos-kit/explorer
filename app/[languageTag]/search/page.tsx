@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { PageMetadata } from "@/app/PageMetadata";
-import configuration from "@/app/configuration";
-import kosFactory from "@/app/kosFactory";
+import { configuration } from "@/app/configuration";
+import { kosFactory } from "@/app/kosFactory";
 import { Layout } from "@/lib/components/Layout";
 import { SearchPage as SearchPageClient } from "@/lib/components/SearchPage";
 import { LanguageTag } from "@/lib/models";

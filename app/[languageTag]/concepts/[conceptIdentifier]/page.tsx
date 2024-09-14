@@ -1,6 +1,6 @@
 import { PageMetadata } from "@/app/PageMetadata";
-import configuration from "@/app/configuration";
-import kosFactory from "@/app/kosFactory";
+import { configuration } from "@/app/configuration";
+import { kosFactory } from "@/app/kosFactory";
 import { Hrefs } from "@/lib/Hrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";

@@ -8,8 +8,8 @@ import {
 } from "@kos-kit/next-utils/envalidValidators";
 import * as envalid from "envalid";
 
-const configuration = new GlobalRef("configuration");
-if (!configuration.value) {
+const configurationGlobalRef = new GlobalRef<Configuration>("configuration");
+if (!configurationGlobalRef.value) {
   const env = envalid.cleanEnv(process.env, {
     INPUT_CACHE_DIRECTORY_PATH: pathValidator({
       default: ".kos-kit/explorer/cache",
@@ -25,7 +25,7 @@ if (!configuration.value) {
     INPUT_SPARQL_ENDPOINT: envalid.str({ default: "" }),
   });
 
-  configuration.value = {
+  configurationGlobalRef.value = {
     cacheDirectoryPath: env.INPUT_CACHE_DIRECTORY_PATH,
     conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
     dataPaths: env.INPUT_DATA_PATHS,
@@ -43,4 +43,4 @@ if (!configuration.value) {
       env.INPUT_SPARQL_ENDPOINT.length > 0 ? env.INPUT_SPARQL_ENDPOINT : null,
   } satisfies Configuration;
 }
-export default configuration.value as Configuration;
+export const configuration: Configuration = configurationGlobalRef.value;

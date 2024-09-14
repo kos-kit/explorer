@@ -1,4 +1,4 @@
-import kosFactory from "@/app/kosFactory";
+import { kosFactory } from "@/app/kosFactory";
 import { Link } from "@/lib/components/Link";
 import { LanguageTag } from "@/lib/models";
 import { Literal, NamedNode } from "@rdfjs/types";

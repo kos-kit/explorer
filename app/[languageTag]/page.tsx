@@ -1,9 +1,9 @@
 import { PageMetadata } from "@/app/PageMetadata";
-import configuration from "@/app/configuration";
+import { configuration } from "@/app/configuration";
 import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
 import { LanguageTag } from "@/lib/models";
 import { Metadata } from "next";
-import kosFactory from "../kosFactory";
+import { kosFactory } from "../kosFactory";
 
 interface LanguageTagPageParams {
   languageTag: LanguageTag;

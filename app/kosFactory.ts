@@ -13,7 +13,7 @@ import { HttpSparqlQueryClient } from "@kos-kit/sparql-client";
 import * as sparql from "@kos-kit/sparql-models";
 import { DatasetCore, DatasetCoreFactory, Quad } from "@rdfjs/types";
 import * as N3 from "n3";
-import configuration from "./configuration";
+import { configuration } from "./configuration";
 
 const datasetCoreFactory: DatasetCoreFactory = {
   dataset(quads?: Quad[]): DatasetCore {
@@ -74,10 +74,10 @@ async function loadKosDataset(
   return dataset;
 }
 
-const kosDataset = new GlobalRef<DatasetCore>("kosDataset");
+const kosDatasetGlobalRef = new GlobalRef<DatasetCore>("kosDataset");
 
-const kosFactory = new GlobalRef<KosFactory>("kosFactory");
-if (!kosFactory.value) {
+const kosFactoryGlobalRef = new GlobalRef<KosFactory>("kosFactory");
+if (!kosFactoryGlobalRef.value) {
   let kosFactoryValue: KosFactory;
 
   if (configuration.sparqlEndpoint !== null) {
@@ -103,13 +103,13 @@ if (!kosFactory.value) {
       });
     };
   } else if (configuration.dataPaths.length > 0) {
-    if (!kosDataset.value) {
-      kosDataset.value = await loadKosDataset(configuration.dataPaths);
+    if (!kosDatasetGlobalRef.value) {
+      kosDatasetGlobalRef.value = await loadKosDataset(configuration.dataPaths);
     }
 
     kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
       return new rdfjsDataset.DefaultKos({
-        dataset: kosDataset.value!,
+        dataset: kosDatasetGlobalRef.value!,
         includeLanguageTags: new LanguageTagSet(languageTag, ""),
       });
     };
@@ -118,6 +118,6 @@ if (!kosFactory.value) {
     kosFactoryValue = () => Promise.resolve(new NotImplementedKos());
   }
 
-  kosFactory.value = kosFactoryValue;
+  kosFactoryGlobalRef.value = kosFactoryValue;
 }
-export default kosFactory.value;
+export const kosFactory: KosFactory = kosFactoryGlobalRef.value;

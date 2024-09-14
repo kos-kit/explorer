@@ -1,4 +1,4 @@
-import configuration from "@/app/configuration";
+import { configuration } from "@/app/configuration";
 import { Hrefs } from "@/lib/Hrefs";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { LanguageTag } from "@kos-kit/models";

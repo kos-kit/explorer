@@ -1,4 +1,4 @@
-import configuration from "@/app/configuration";
+import { configuration } from "@/app/configuration";
 import { NextApiRequest, NextApiResponse } from "next";
 import httpProxyMiddleware from "next-http-proxy-middleware";
 

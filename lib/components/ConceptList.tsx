@@ -1,4 +1,4 @@
-import configuration from "@/app/configuration";
+import { configuration } from "@/app/configuration";
 import { Link } from "@/lib/components/Link";
 import { Concept, Identifier, LanguageTag } from "@/lib/models";
 import { Hrefs } from "../Hrefs";

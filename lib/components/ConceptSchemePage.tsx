@@ -1,4 +1,4 @@
-import configuration from "@/app/configuration";
+import { configuration } from "@/app/configuration";
 import { Hrefs } from "@/lib/Hrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";

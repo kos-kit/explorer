@@ -1,6 +1,6 @@
 import { PageMetadata } from "@/app/PageMetadata";
-import configuration from "@/app/configuration";
-import kosFactory from "@/app/kosFactory";
+import { configuration } from "@/app/configuration";
+import { kosFactory } from "@/app/kosFactory";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
 import { dataFactory } from "@/lib/dataFactory";
 import { Identifier, LanguageTag } from "@/lib/models";
