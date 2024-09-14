@@ -1,18 +1,18 @@
-import configuration from "@/app/configuration";
+import { PageMetadata } from "@/app/PageMetadata";
+import { configuration } from "@/app/configuration";
+import { kosFactory } from "@/app/kosFactory";
+import { Hrefs } from "@/lib/Hrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
+import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
-import { Section } from "@/lib/components/Section";
+import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Pagination } from "@/lib/components/Pagination";
+import { Section } from "@/lib/components/Section";
+import { dataFactory } from "@/lib/dataFactory";
+import { Identifier, LanguageTag } from "@/lib/models";
 import { decodeFileName, encodeFileName, pageCount } from "@kos-kit/next-utils";
 import { Metadata } from "next";
-import { Layout } from "@/lib/components/Layout";
-import { PageMetadata } from "@/app/PageMetadata";
-import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { ConceptScheme, LanguageTag } from "@kos-kit/models";
-import { Hrefs } from "@/lib/Hrefs";
 import { notFound } from "next/navigation";
-import kosFactory from "@/app/kosFactory";
-import { dataFactory } from "@/lib/dataFactory";
 
 interface ConceptSchemeTopConceptsPageParams {
   conceptSchemeIdentifier: string;
@@ -30,20 +30,24 @@ export default async function ConceptSchemeTopConceptsPage({
       await kosFactory({
         languageTag,
       })
-    ).conceptSchemeByIdentifier(
-      ConceptScheme.Identifier.fromString({
-        dataFactory,
-        identifier: decodeFileName(conceptSchemeIdentifier),
-      }),
     )
-  ).extractNullable();
+      .conceptScheme(
+        Identifier.fromString({
+          dataFactory,
+          identifier: decodeFileName(conceptSchemeIdentifier),
+        }),
+      )
+      .resolve()
+  )
+    .toMaybe()
+    .extractNullable();
   if (!conceptScheme) {
     notFound();
   }
 
   const hrefs = new Hrefs({ configuration, languageTag });
 
-  const pageInt = parseInt(page);
+  const pageInt = Number.parseInt(page);
 
   const topConceptsCount = await conceptScheme.topConceptsCount();
 
@@ -67,10 +71,14 @@ export default async function ConceptSchemeTopConceptsPage({
         }
       >
         <ConceptList
-          concepts={await conceptScheme.topConceptsPage({
-            limit: configuration.conceptsPerPage,
-            offset: parseInt(page) * configuration.conceptsPerPage,
-          })}
+          concepts={
+            await (
+              await conceptScheme.topConcepts({
+                limit: configuration.conceptsPerPage,
+                offset: Number.parseInt(page) * configuration.conceptsPerPage,
+              })
+            ).flatResolve()
+          }
           languageTag={languageTag}
         />
         <div className="flex justify-center">
@@ -96,20 +104,24 @@ export async function generateMetadata({
   const conceptScheme = (
     await (
       await kosFactory({ languageTag })
-    ).conceptSchemeByIdentifier(
-      ConceptScheme.Identifier.fromString({
-        dataFactory,
-        identifier: decodeFileName(conceptSchemeIdentifier),
-      }),
     )
-  ).extractNullable();
+      .conceptScheme(
+        Identifier.fromString({
+          dataFactory,
+          identifier: decodeFileName(conceptSchemeIdentifier),
+        }),
+      )
+      .resolve()
+  )
+    .toMaybe()
+    .extractNullable();
   if (!conceptScheme) {
     return {};
   }
   return (
     (await new PageMetadata({ languageTag }).conceptSchemeTopConcepts({
       conceptScheme,
-      page: parseInt(page),
+      page: Number.parseInt(page),
     })) ?? {}
   );
 }
@@ -125,10 +137,12 @@ export async function generateStaticParams(): Promise<
 
   for (const languageTag of configuration.languageTags) {
     for (const conceptScheme of await (
-      await kosFactory({
-        languageTag,
-      })
-    ).conceptSchemes()) {
+      await (
+        await kosFactory({
+          languageTag,
+        })
+      ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
+    ).flatResolve()) {
       const topConceptsCount = await conceptScheme.topConceptsCount();
       if (topConceptsCount <= configuration.relatedConceptsPerSection) {
         // Top concepts will fit on the concept scheme page, no need for this page.
@@ -142,7 +156,7 @@ export async function generateStaticParams(): Promise<
       for (let page = 0; page < pageCount_; page++) {
         staticParams.push({
           conceptSchemeIdentifier: encodeFileName(
-            ConceptScheme.Identifier.toString(conceptScheme.identifier),
+            Identifier.toString(conceptScheme.identifier),
           ),
           languageTag,
           page: page.toString(),

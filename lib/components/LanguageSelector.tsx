@@ -4,18 +4,18 @@
 
 import React, { useEffect, useState } from "react";
 import "@/node_modules/flag-icons/css/flag-icons.min.css";
-import { usePathname, useRouter } from "next/navigation";
+import { LanguageTag } from "@/lib/models";
 import { getLangNameFromCode } from "language-name-map";
-import { LanguageTag } from "@kos-kit/models";
+import { usePathname, useRouter } from "next/navigation";
 
 function FlagIcon({ countryCode }: { countryCode: string }) {
   return (
     <span
       className={`fi fis inline-block mr-2 fi-${countryCode}`}
       style={{
-        width: `20px !important`,
-        height: `20px !important`,
-        fontSize: `20px !important`,
+        width: "20px !important",
+        height: "20px !important",
+        fontSize: "20px !important",
         borderRadius: "100%",
         border: "none",
         boxShadow: "inset 0 0 0 2px rgba(0, 0, 0, .06)",
@@ -39,9 +39,8 @@ function languageTagLabel(languageTag: LanguageTag): string {
   const langName = getLangNameFromCode(languageTag);
   if (langName) {
     return `${langName.native} (${languageTag})`;
-  } else {
-    return languageTag;
   }
+  return languageTag;
 }
 
 export function LanguageSelector({
@@ -80,7 +79,7 @@ export function LanguageSelector({
   const onChange = (newLanguageTag: LanguageTag) => {
     router.push(
       // Don't prepend basePath, the router will do that
-      `/${newLanguageTag}${pathnameSplit.length > 2 ? "/" + pathnameSplit.slice(2).join("/") : ""}`,
+      `/${newLanguageTag}${pathnameSplit.length > 2 ? `/${pathnameSplit.slice(2).join("/")}` : ""}`,
     );
   };
 
@@ -124,8 +123,9 @@ export function LanguageSelector({
             aria-orientation="vertical"
             aria-labelledby="language-selector"
           >
-            <div className="py-1 grid grid-cols-2 gap-2" role="none">
+            <div className="py-1 grid grid-cols-2 gap-2">
               {availableLanguageTags.map((languageTag, languageTagI) => (
+                // biome-ignore lint/a11y/useButtonType: <explanation>
                 <button
                   key={languageTag}
                   onClick={() => {

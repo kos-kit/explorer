@@ -1,8 +1,8 @@
-import { Literal, NamedNode } from "@rdfjs/types";
+import { kosFactory } from "@/app/kosFactory";
 import { Link } from "@/lib/components/Link";
+import { LanguageTag } from "@/lib/models";
+import { Literal, NamedNode } from "@rdfjs/types";
 import { Fragment } from "react";
-import { LanguageTag } from "@kos-kit/models";
-import kosFactory from "@/app/kosFactory";
 
 export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let license: Literal | NamedNode | null = null;
@@ -10,8 +10,10 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let rightsHolder: Literal | null = null;
 
   const conceptSchemes = await (
-    await kosFactory({ languageTag })
-  ).conceptSchemes();
+    await (
+      await kosFactory({ languageTag })
+    ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
+  ).flatResolve();
   if (conceptSchemes.length === 1) {
     const conceptScheme = conceptSchemes[0];
     license = conceptScheme.license.extractNullable();
@@ -24,12 +26,12 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   }
 
   const rightsParts: React.ReactNode[] = [];
-  const copyright = "© " + new Date().getFullYear().toString();
+  const copyright = `© ${new Date().getFullYear().toString()}`;
   if (rightsHolder !== null) {
     rightsParts.push(
       <span
         dangerouslySetInnerHTML={{
-          __html: copyright + " " + rightsHolder.value,
+          __html: `${copyright} ${rightsHolder.value}`,
         }}
       />,
     );

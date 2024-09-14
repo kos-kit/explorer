@@ -1,17 +1,17 @@
-import path from "node:path";
 import fs from "node:fs/promises";
-import { SearchPage as SearchPageClient } from "@/lib/components/SearchPage";
-import configuration from "@/app/configuration";
-import kosFactory from "@/app/kosFactory";
-import { Layout } from "@/lib/components/Layout";
-import { Metadata } from "next";
+import path from "node:path";
 import { PageMetadata } from "@/app/PageMetadata";
-import { LanguageTag } from "@kos-kit/models";
+import { configuration } from "@/app/configuration";
+import { kosFactory } from "@/app/kosFactory";
+import { Layout } from "@/lib/components/Layout";
+import { SearchPage as SearchPageClient } from "@/lib/components/SearchPage";
+import { LanguageTag } from "@/lib/models";
 import {
-  SearchEngineJson,
   LunrSearchEngine,
+  SearchEngineJson,
   ServerSearchEngine,
 } from "@kos-kit/search";
+import { Metadata } from "next";
 
 interface SearchPageParams {
   languageTag: LanguageTag;
@@ -81,17 +81,17 @@ async function getSearchEngineJson({
 }): Promise<SearchEngineJson> {
   if (configuration.dataPaths.length > 0) {
     return getLunrSearchEngineJson({ languageTag });
-  } else if (configuration.searchEndpoint !== null) {
+  }
+  if (configuration.searchEndpoint !== null) {
     return getServerSearchEngineJson({
       searchEndpoint: configuration.dynamic
         ? "/api/search"
         : configuration.searchEndpoint,
     });
-  } else {
-    return Promise.reject(
-      new Error("must specify data paths or search endpoint in configuration"),
-    );
   }
+  return Promise.reject(
+    new Error("must specify data paths or search endpoint in configuration"),
+  );
 }
 
 async function getServerSearchEngineJson({

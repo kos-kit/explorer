@@ -1,12 +1,12 @@
 import { PageMetadata } from "@/app/PageMetadata";
-import configuration from "@/app/configuration";
-import kosFactory from "@/app/kosFactory";
+import { configuration } from "@/app/configuration";
+import { kosFactory } from "@/app/kosFactory";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
+import { dataFactory } from "@/lib/dataFactory";
+import { Identifier, LanguageTag } from "@/lib/models";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
-import { ConceptScheme, LanguageTag } from "@kos-kit/models";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { dataFactory } from "@/lib/dataFactory";
 
 interface ConceptSchemePageParams {
   conceptSchemeIdentifier: string;
@@ -23,13 +23,17 @@ export default async function ConceptSchemePage({
       await kosFactory({
         languageTag,
       })
-    ).conceptSchemeByIdentifier(
-      ConceptScheme.Identifier.fromString({
-        dataFactory,
-        identifier: decodeFileName(conceptSchemeIdentifier),
-      }),
     )
-  ).extractNullable();
+      .conceptScheme(
+        Identifier.fromString({
+          dataFactory,
+          identifier: decodeFileName(conceptSchemeIdentifier),
+        }),
+      )
+      .resolve()
+  )
+    .toMaybe()
+    .extractNullable();
   if (!conceptScheme) {
     notFound();
   }
@@ -50,13 +54,17 @@ export async function generateMetadata({
   const conceptScheme = (
     await (
       await kosFactory({ languageTag })
-    ).conceptSchemeByIdentifier(
-      ConceptScheme.Identifier.fromString({
-        dataFactory,
-        identifier: decodeFileName(conceptSchemeIdentifier),
-      }),
     )
-  ).extractNullable();
+      .conceptScheme(
+        Identifier.fromString({
+          dataFactory,
+          identifier: decodeFileName(conceptSchemeIdentifier),
+        }),
+      )
+      .resolve()
+  )
+    .toMaybe()
+    .extractNullable();
   if (!conceptScheme) {
     return {};
   }
@@ -81,10 +89,10 @@ export async function generateStaticParams(): Promise<
       await kosFactory({
         languageTag,
       })
-    ).conceptSchemes()) {
+    ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })) {
       staticParams.push({
         conceptSchemeIdentifier: encodeFileName(
-          ConceptScheme.Identifier.toString(conceptScheme.identifier),
+          Identifier.toString(conceptScheme.identifier),
         ),
         languageTag,
       });

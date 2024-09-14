@@ -1,117 +1,116 @@
-import * as mem from "@kos-kit/mem-models";
-import {
-  Kos,
-  LanguageTag,
-  LanguageTagSet,
-  NotImplementedKos,
-} from "@kos-kit/models";
-import { GlobalRef } from "@kos-kit/next-utils";
-import { parseRdfFile } from "@kos-kit/next-utils/parseRdfFile";
-import * as sparql from "@kos-kit/sparql-models";
-import { DatasetCore } from "@rdfjs/types";
-import { Store } from "n3";
-import configuration from "./configuration";
 import fs from "node:fs/promises";
-import path from "node:path";
-import { logger } from "@/lib/logger";
-import { Stats } from "node:fs";
 import { dataFactory } from "@/lib/dataFactory";
+import { logger } from "@/lib/logger";
+import { Kos, LanguageTag } from "@/lib/models";
+import { LanguageTagSet, NotImplementedKos } from "@kos-kit/models";
+import { GlobalRef } from "@kos-kit/next-utils";
+import { RdfDirectory } from "@kos-kit/next-utils/RdfDirectory";
+import { RdfFile } from "@kos-kit/next-utils/RdfFile";
+import * as fsEither from "@kos-kit/next-utils/fsEither";
+import { getRdfFileFormat } from "@kos-kit/next-utils/getRdfFileFormat";
+import * as rdfjsDataset from "@kos-kit/rdfjs-dataset-models";
+import { HttpSparqlQueryClient } from "@kos-kit/sparql-client";
+import * as sparql from "@kos-kit/sparql-models";
+import { DatasetCore, DatasetCoreFactory, Quad } from "@rdfjs/types";
+import * as N3 from "n3";
+import { configuration } from "./configuration";
+
+const datasetCoreFactory: DatasetCoreFactory = {
+  dataset(quads?: Quad[]): DatasetCore {
+    return new N3.Store(quads);
+  },
+};
 
 type KosFactory = (kwds: { languageTag: LanguageTag }) => Promise<Kos>;
 
 async function loadKosDataset(
   dataPaths: readonly string[],
 ): Promise<DatasetCore> {
-  const store = new Store();
-
-  async function loadDirectory(directoryPath: string): Promise<void> {
-    for (const dirent of await fs.readdir(directoryPath, {
-      withFileTypes: true,
-    })) {
-      const direntPath = path.resolve(directoryPath, dirent.name);
-      if (dirent.isDirectory()) {
-        await loadDirectory(direntPath);
-      } else if (dirent.isFile()) {
-        await loadFile(direntPath);
-      } else {
-        logger.warn("%s is not a directory or file", direntPath);
-      }
-    }
-  }
-
-  async function loadFile(filePath: string): Promise<void> {
-    logger.debug("loading RDF file %s", filePath);
-    await parseRdfFile({ dataFactory, dataset: store, rdfFilePath: filePath });
-    logger.debug("loading RDF file %s", filePath);
-  }
+  logger.info("loading KOS dataset from data paths: %s", dataPaths.join(":"));
+  const dataset = new N3.Store();
 
   for (const dataPath of dataPaths) {
-    const absoluteDataPath = path.resolve(dataPath);
-    let stat: Stats;
-    try {
-      stat = await fs.stat(absoluteDataPath);
-    } catch {
-      logger.warn("error stat'ing %s", absoluteDataPath);
-      continue;
-    }
-    if (stat.isDirectory()) {
-      await loadDirectory(absoluteDataPath);
-    } else if (stat.isFile()) {
-      await loadFile(absoluteDataPath);
-    } else {
-      logger.warn("%s is not a directory or a file", absoluteDataPath);
-    }
+    const absoluteDataPath = await fs.realpath(dataPath);
+    await (await fsEither.stat(absoluteDataPath))
+      .mapLeft(async (error) => {
+        logger.warn("error stat'ing %s: %s", absoluteDataPath, error.message);
+      })
+      .map(async (stat) => {
+        if (stat.isDirectory()) {
+          for await (const file of new RdfDirectory({
+            logger,
+            path: absoluteDataPath,
+          }).files()) {
+            await file.parse({ dataFactory, dataset });
+          }
+        } else if (stat.isFile()) {
+          await getRdfFileFormat(absoluteDataPath)
+            .mapLeft(async (error) => {
+              logger.warn(
+                "%s is not an RDF file: %s",
+                absoluteDataPath,
+                error.message,
+              );
+            })
+            .map(async (rdfFileFormat) => {
+              await new RdfFile({
+                logger,
+                path: absoluteDataPath,
+                format: rdfFileFormat,
+              }).parse({ dataFactory, dataset });
+            })
+            .extract();
+        } else {
+          logger.warn("%s is not a directory or a file", absoluteDataPath);
+        }
+      })
+      .extract();
   }
 
-  return store;
+  if (dataset.size === 0) {
+    logger.warn("empty dataset after loading data paths");
+  }
+
+  return dataset;
 }
 
-const kosDataset = new GlobalRef("kosDataset");
-if (!kosDataset.value) {
-  kosDataset.value = await loadKosDataset(configuration.dataPaths);
-}
+const kosDatasetGlobalRef = new GlobalRef<DatasetCore>("kosDataset");
 
-const kosFactory = new GlobalRef("kosFactory");
-if (!kosFactory.value) {
+const kosFactoryGlobalRef = new GlobalRef<KosFactory>("kosFactory");
+if (!kosFactoryGlobalRef.value) {
   let kosFactoryValue: KosFactory;
 
-  if (configuration.dataPaths.length > 0) {
-    kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
-      return new mem.Kos({
-        dataset: kosDataset.value as DatasetCore,
-        modelFactory: new mem.DefaultModelFactory({
-          conceptConstructor: mem.Concept,
-          conceptSchemeConstructor: mem.ConceptScheme,
-          includeLanguageTags: new LanguageTagSet(languageTag, ""),
-          labelConstructor: mem.Label,
-        }),
-      });
-    };
-  } else if (configuration.sparqlEndpoint !== null) {
+  if (configuration.sparqlEndpoint !== null) {
     console.info(
       "using SPARQL endpoint",
       configuration.sparqlEndpoint,
       "as KOS",
     );
     kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
-      const sparqlClient = new sparql.HttpSparqlClient({
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        endpointUrl: configuration.sparqlEndpoint!,
-      });
-      return new sparql.Kos({
-        modelFetcher: new sparql.DefaultModelFetcher({
-          conceptConstructor: sparql.Concept,
-          conceptSchemeConstructor: sparql.ConceptScheme,
-          memModelFactory: new mem.DefaultModelFactory({
-            conceptConstructor: mem.Concept,
-            conceptSchemeConstructor: mem.ConceptScheme,
-            includeLanguageTags: new LanguageTagSet(languageTag, ""),
-            labelConstructor: mem.Label,
-          }),
-          includeLanguageTags: new LanguageTagSet(languageTag, ""),
-          sparqlClient,
+      return new sparql.DefaultKos({
+        datasetCoreFactory,
+        includeLanguageTags: new LanguageTagSet(languageTag, ""),
+        logger,
+        sparqlQueryClient: new HttpSparqlQueryClient({
+          dataFactory: N3.DataFactory,
+          endpointUrl: configuration.sparqlEndpoint!,
+          logger,
+          defaultRequestOptions: {
+            cache: "no-store",
+            method: "POSTDirectly",
+          },
         }),
-        sparqlClient,
+      });
+    };
+  } else if (configuration.dataPaths.length > 0) {
+    if (!kosDatasetGlobalRef.value) {
+      kosDatasetGlobalRef.value = await loadKosDataset(configuration.dataPaths);
+    }
+
+    kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
+      return new rdfjsDataset.DefaultKos({
+        dataset: kosDatasetGlobalRef.value!,
+        includeLanguageTags: new LanguageTagSet(languageTag, ""),
       });
     };
   } else {
@@ -119,6 +118,6 @@ if (!kosFactory.value) {
     kosFactoryValue = () => Promise.resolve(new NotImplementedKos());
   }
 
-  kosFactory.value = kosFactoryValue;
+  kosFactoryGlobalRef.value = kosFactoryValue;
 }
-export default kosFactory.value as KosFactory;
+export const kosFactory: KosFactory = kosFactoryGlobalRef.value;

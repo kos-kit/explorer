@@ -1,5 +1,7 @@
 "use client";
 
+import { XMarkIcon } from "@heroicons/react/24/solid";
+import clsx from "clsx";
 import {
   ClearIndicatorProps,
   GroupBase,
@@ -7,8 +9,6 @@ import {
   components,
 } from "react-select";
 import ReactSelect, { AsyncProps } from "react-select/async";
-import clsx from "clsx";
-import { XMarkIcon } from "@heroicons/react/24/solid";
 
 // Styling adapted from https://www.jussivirtanen.fi/writing/styling-react-select-with-tailwind
 // const DropdownIndicator = <
@@ -78,8 +78,7 @@ const groupHeadingStyles = "ml-3 mt-2 mb-1 text-gray-500 text-sm";
 const optionStyles = {
   base: "hover:cursor-pointer px-3 py-2 rounded",
   focus: "bg-gray-100 active:bg-gray-200",
-  selected:
-    "after:content-['✔'] after:ml-2 after:text-green-500 text-gray-500",
+  selected: "after:content-['✔'] after:ml-2 after:text-green-500 text-gray-500",
 };
 const noOptionsMessageStyles =
   "text-gray-500 p-2 bg-gray-50 border border-dashed border-gray-200 rounded-sm";

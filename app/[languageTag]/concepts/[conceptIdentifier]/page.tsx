@@ -1,25 +1,25 @@
-import configuration from "@/app/configuration";
 import { PageMetadata } from "@/app/PageMetadata";
+import { configuration } from "@/app/configuration";
+import { kosFactory } from "@/app/kosFactory";
+import { Hrefs } from "@/lib/Hrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";
 import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
-import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
+import { dataFactory } from "@/lib/dataFactory";
 import {
-  Concept,
+  Identifier,
   LanguageTag,
   noteProperties,
   semanticRelationProperties,
-} from "@kos-kit/models";
-import { Metadata } from "next";
-import React from "react";
-import { Hrefs } from "@/lib/Hrefs";
+} from "@/lib/models";
+import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import kosFactory from "@/app/kosFactory";
-import { dataFactory } from "@/lib/dataFactory";
+import React from "react";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
@@ -34,13 +34,17 @@ export default async function ConceptPage({
   const concept = (
     await (
       await kosFactory({ languageTag })
-    ).conceptByIdentifier(
-      Concept.Identifier.fromString({
-        dataFactory,
-        identifier: decodeFileName(conceptIdentifier),
-      }),
     )
-  ).extractNullable();
+      .concept(
+        Identifier.fromString({
+          dataFactory,
+          identifier: decodeFileName(conceptIdentifier),
+        }),
+      )
+      .resolve()
+  )
+    .toMaybe()
+    .extractNullable();
   if (!concept) {
     notFound();
   }
@@ -53,27 +57,29 @@ export default async function ConceptPage({
     <Layout languageTag={languageTag}>
       <PageTitleHeading>Concept: {concept.displayLabel}</PageTitleHeading>
       <LabelSections model={concept} />
-      {await Promise.all(
-        noteProperties.map((noteProperty) => {
-          const notes = concept.notes(noteProperty);
-          if (notes.length === 0) {
-            return null;
-          }
-          return (
-            <Section key={noteProperty.name} title={noteProperty.pluralLabel}>
-              <table className="w-full">
-                <tbody>
-                  {notes.map((note, noteI) => (
-                    <tr key={noteI}>
-                      <td>{note.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </Section>
-          );
-        }),
-      )}
+      {
+        await Promise.all(
+          noteProperties.map((noteProperty) => {
+            const notes = concept.notes(noteProperty);
+            if (notes.length === 0) {
+              return null;
+            }
+            return (
+              <Section key={noteProperty.name} title={noteProperty.pluralLabel}>
+                <table className="w-full">
+                  <tbody>
+                    {notes.map((note, noteI) => (
+                      <tr key={noteI}>
+                        <td>{note.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </Section>
+            );
+          }),
+        )
+      }
       {notations.length > 0 ? (
         <Section title="Notations">
           <ul className="list-disc list-inside">
@@ -88,46 +94,48 @@ export default async function ConceptPage({
           </ul>
         </Section>
       ) : null}
-      {await Promise.all(
-        semanticRelationProperties.map(async (semanticRelationProperty) => {
-          const semanticRelations = await concept.semanticRelations(
-            semanticRelationProperty,
-          );
-          if (semanticRelations.length === 0) {
-            return null;
-          }
-          return (
-            <Section
-              key={semanticRelationProperty.name}
-              title={`${semanticRelationProperty.label} concepts`}
-            >
-              <ConceptList
-                concepts={
-                  semanticRelations.length <=
-                  configuration.relatedConceptsPerSection
-                    ? semanticRelations
-                    : semanticRelations.slice(
-                        0,
-                        configuration.relatedConceptsPerSection,
-                      )
-                }
-                languageTag={languageTag}
-              />
-              {semanticRelations.length >
-              configuration.relatedConceptsPerSection ? (
-                <Link
-                  href={hrefs.conceptSemanticRelations({
-                    concept,
-                    semanticRelationProperty,
-                  })}
-                >
-                  More
-                </Link>
-              ) : null}
-            </Section>
-          );
-        }),
-      )}
+      {
+        await Promise.all(
+          semanticRelationProperties.map(async (semanticRelationProperty) => {
+            const semanticRelations = await (
+              await concept.semanticRelations(semanticRelationProperty)
+            ).flatResolve();
+            if (semanticRelations.length === 0) {
+              return null;
+            }
+            return (
+              <Section
+                key={semanticRelationProperty.name}
+                title={`${semanticRelationProperty.name} concepts`}
+              >
+                <ConceptList
+                  concepts={
+                    semanticRelations.length <=
+                    configuration.relatedConceptsPerSection
+                      ? semanticRelations
+                      : semanticRelations.slice(
+                          0,
+                          configuration.relatedConceptsPerSection,
+                        )
+                  }
+                  languageTag={languageTag}
+                />
+                {semanticRelations.length >
+                configuration.relatedConceptsPerSection ? (
+                  <Link
+                    href={hrefs.conceptSemanticRelations({
+                      concept,
+                      semanticRelationProperty,
+                    })}
+                  >
+                    More
+                  </Link>
+                ) : null}
+              </Section>
+            );
+          }),
+        )
+      }
     </Layout>
   );
 }
@@ -140,13 +148,17 @@ export async function generateMetadata({
   const concept = (
     await (
       await kosFactory({ languageTag })
-    ).conceptByIdentifier(
-      Concept.Identifier.fromString({
-        dataFactory,
-        identifier: decodeFileName(conceptIdentifier),
-      }),
     )
-  ).extractNullable();
+      .concept(
+        Identifier.fromString({
+          dataFactory,
+          identifier: decodeFileName(conceptIdentifier),
+        }),
+      )
+      .resolve()
+  )
+    .toMaybe()
+    .extractNullable();
   if (!concept) {
     return {};
   }
@@ -161,12 +173,14 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
   const staticParams: ConceptPageParams[] = [];
 
   for (const languageTag of configuration.languageTags) {
-    for await (const concept of (
-      await kosFactory({ languageTag })
-    ).concepts()) {
+    for (const concept of await (await kosFactory({ languageTag })).concepts({
+      limit: null,
+      offset: 0,
+      query: { type: "All" },
+    })) {
       staticParams.push({
         conceptIdentifier: encodeFileName(
-          Concept.Identifier.toString(concept.identifier),
+          Identifier.toString(concept.identifier),
         ),
         languageTag,
       });

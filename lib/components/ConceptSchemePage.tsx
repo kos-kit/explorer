@@ -1,12 +1,12 @@
+import { configuration } from "@/app/configuration";
+import { Hrefs } from "@/lib/Hrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
-import { Link } from "@/lib/components/Link";
-import configuration from "@/app/configuration";
 import { LabelSections } from "@/lib/components/LabelSections";
-import { Section } from "@/lib/components/Section";
 import { Layout } from "@/lib/components/Layout";
+import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
-import { ConceptScheme, LanguageTag } from "@kos-kit/models";
-import { Hrefs } from "../Hrefs";
+import { Section } from "@/lib/components/Section";
+import { ConceptScheme, LanguageTag } from "@/lib/models";
 
 export async function ConceptSchemePage({
   conceptScheme,
@@ -27,10 +27,14 @@ export async function ConceptSchemePage({
         <Section title="Top concepts">
           <div className="flex flex-col gap-2">
             <ConceptList
-              concepts={await conceptScheme.topConceptsPage({
-                limit: configuration.relatedConceptsPerSection,
-                offset: 0,
-              })}
+              concepts={
+                await (
+                  await conceptScheme.topConcepts({
+                    limit: configuration.relatedConceptsPerSection,
+                    offset: 0,
+                  })
+                ).flatResolve()
+              }
               languageTag={languageTag}
             />
             {topConceptsCount > configuration.relatedConceptsPerSection ? (
