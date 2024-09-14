@@ -14,7 +14,7 @@
     "flag-icons": "^7.2.1",
     "language-name-map": "^0.3.0",
     "n3": "^1.17.4",
-    "next": "14.1.4",
+    "next": "^14.2.11",
     "next-http-proxy-middleware": "^1.2.6",
     "pino": "^9.2.0",
     "purify-ts": "~2.1.0",
