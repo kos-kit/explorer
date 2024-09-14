@@ -16,6 +16,7 @@
     "n3": "^1.17.4",
     "next": "^14.2.11",
     "next-http-proxy-middleware": "^1.2.6",
+    "next-intl": "^3.19.1",
     "pino": "^9.2.0",
     "purify-ts": "~2.1.0",
     "query-string": "^9.0.0",
