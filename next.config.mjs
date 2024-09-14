@@ -18,7 +18,7 @@ const nextConfig = {
 
     config.plugins.push(
       new webpack.IgnorePlugin({
-        checkResource: function (resource, context) {
+        checkResource: (resource, context) => {
           if (resource.endsWith("/.env")) {
             return true; // Ignore
           }

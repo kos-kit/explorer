@@ -61,7 +61,7 @@ export function Pagination({
         <PageLink href={currentPage !== lastPage ? pageHref(lastPage) : null}>
           <span className="w-5 h-5">{">>"}</span>
         </PageLink>
-        <span className="flex items-center gap-1"></span>
+        <span className="flex items-center gap-1" />
       </div>
     </div>
   );
