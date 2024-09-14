@@ -1,9 +1,10 @@
 import {
   Concept,
   ConceptScheme,
+  Label,
   LanguageTag,
   SemanticRelationProperty,
-} from "@kos-kit/models";
+} from "@/lib/models";
 import { Metadata } from "next";
 import kosFactory from "./kosFactory";
 
@@ -38,7 +39,7 @@ export class PageMetadata {
 
     return {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-base-to-string
-      title: conceptSchemePageMetadata.title!.toString() + ": Top concepts",
+      title: `${conceptSchemePageMetadata.title!.toString()}: Top concepts`,
     } satisfies Metadata;
   }
 
@@ -52,21 +53,23 @@ export class PageMetadata {
     const conceptPageMetadata = await this.concept(concept);
 
     return {
-      title: `${conceptPageMetadata.title}: ${semanticRelationProperty.label} concepts`,
+      title: `${conceptPageMetadata.title}: ${semanticRelationProperty.name} concepts`,
     } satisfies Metadata;
   }
 
   async languageTag(): Promise<Metadata> {
     const conceptSchemes = await (
-      await kosFactory({
-        languageTag: this._languageTag,
-      })
-    ).conceptSchemes();
+      await (
+        await kosFactory({
+          languageTag: this._languageTag,
+        })
+      ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
+    ).flatResolve();
 
     let title = "SKOS";
     if (conceptSchemes.length === 1) {
       const conceptScheme = conceptSchemes[0];
-      const prefLabels = conceptScheme.prefLabels;
+      const prefLabels = conceptScheme.labels(Label.Type.PREFERRED);
       if (prefLabels.length > 0) {
         title = prefLabels[0].literalForm.value;
       }

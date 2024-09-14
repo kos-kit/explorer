@@ -10,8 +10,10 @@ export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
   let rightsHolder: Literal | null = null;
 
   const conceptSchemes = await (
-    await kosFactory({ languageTag })
-  ).conceptSchemes();
+    await (
+      await kosFactory({ languageTag })
+    ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
+  ).flatResolve();
   if (conceptSchemes.length === 1) {
     const conceptScheme = conceptSchemes[0];
     license = conceptScheme.license.extractNullable();

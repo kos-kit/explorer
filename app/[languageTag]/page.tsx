@@ -1,8 +1,8 @@
+import { PageMetadata } from "@/app/PageMetadata";
 import configuration from "@/app/configuration";
 import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
+import { LanguageTag } from "@/lib/models";
 import { Metadata } from "next";
-import { PageMetadata } from "../PageMetadata";
-import { LanguageTag } from "@kos-kit/models";
 import kosFactory from "../kosFactory";
 
 interface LanguageTagPageParams {
@@ -11,10 +11,12 @@ interface LanguageTagPageParams {
 
 export default async function LanguageTagPage() {
   const conceptSchemes = await (
-    await kosFactory({
-      languageTag: configuration.defaultLanguageTag,
-    })
-  ).conceptSchemes();
+    await (
+      await kosFactory({
+        languageTag: configuration.defaultLanguageTag,
+      })
+    ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
+  ).flatResolve();
   if (conceptSchemes.length === 1) {
     return (
       <ConceptSchemePage
