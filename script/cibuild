@@ -9,4 +9,6 @@ touch ../.env
 
 export NEXT_TELEMETRY_DISABLED=1
 
-npm run lint
+npm run check
+
+npm run tsc
