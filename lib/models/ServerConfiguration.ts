@@ -1,12 +1,10 @@
-import { LanguageTag } from "@kos-kit/models";
-
-export interface Configuration {
+export interface ServerConfiguration {
   readonly cacheDirectoryPath: string;
   readonly conceptsPerPage: number;
   readonly dataPaths: readonly string[];
-  readonly defaultLanguageTag: LanguageTag;
+  readonly defaultLocale: string;
   readonly dynamic: boolean;
-  readonly languageTags: readonly LanguageTag[];
+  readonly locales: readonly string[];
   readonly nextBasePath: string;
   readonly relatedConceptsPerSection: number;
   readonly searchEndpoint: string | null;

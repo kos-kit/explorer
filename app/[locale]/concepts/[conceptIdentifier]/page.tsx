@@ -1,7 +1,6 @@
 import { PageMetadata } from "@/app/PageMetadata";
 import { configuration } from "@/app/configuration";
 import { kosFactory } from "@/app/kosFactory";
-import { Hrefs } from "@/lib/Hrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";
 import { Layout } from "@/lib/components/Layout";
@@ -9,31 +8,35 @@ import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { dataFactory } from "@/lib/dataFactory";
+import { getHrefs } from "@/lib/getHrefs";
 import {
   Identifier,
-  LanguageTag,
+  Locale,
   noteProperties,
   semanticRelationProperties,
 } from "@/lib/models";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Metadata } from "next";
+import { unstable_setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import React from "react";
 
 interface ConceptPageParams {
   conceptIdentifier: string;
-  languageTag: LanguageTag;
+  locale: Locale;
 }
 
 export default async function ConceptPage({
-  params: { conceptIdentifier, languageTag },
+  params: { conceptIdentifier, locale },
 }: {
   params: ConceptPageParams;
 }) {
+  unstable_setRequestLocale(locale);
+
   const concept = (
     await (
-      await kosFactory({ languageTag })
+      await kosFactory({ locale })
     )
       .concept(
         Identifier.fromString({
@@ -49,12 +52,12 @@ export default async function ConceptPage({
     notFound();
   }
 
-  const hrefs = new Hrefs({ configuration, languageTag });
+  const hrefs = await getHrefs();
 
   const notations = concept.notations;
 
   return (
-    <Layout languageTag={languageTag}>
+    <Layout>
       <PageTitleHeading>Concept: {concept.displayLabel}</PageTitleHeading>
       <LabelSections model={concept} />
       {
@@ -118,7 +121,6 @@ export default async function ConceptPage({
                           configuration.relatedConceptsPerSection,
                         )
                   }
-                  languageTag={languageTag}
                 />
                 {semanticRelations.length >
                 configuration.relatedConceptsPerSection ? (
@@ -141,13 +143,13 @@ export default async function ConceptPage({
 }
 
 export async function generateMetadata({
-  params: { conceptIdentifier, languageTag },
+  params: { conceptIdentifier, locale },
 }: {
   params: ConceptPageParams;
 }): Promise<Metadata> {
   const concept = (
     await (
-      await kosFactory({ languageTag })
+      await kosFactory({ locale })
     )
       .concept(
         Identifier.fromString({
@@ -162,7 +164,7 @@ export async function generateMetadata({
   if (!concept) {
     return {};
   }
-  return (await new PageMetadata({ languageTag }).concept(concept)) ?? {};
+  return (await new PageMetadata({ locale }).concept(concept)) ?? {};
 }
 
 export async function generateStaticParams(): Promise<ConceptPageParams[]> {
@@ -172,8 +174,8 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
 
   const staticParams: ConceptPageParams[] = [];
 
-  for (const languageTag of configuration.languageTags) {
-    for (const concept of await (await kosFactory({ languageTag })).concepts({
+  for (const locale of configuration.locales) {
+    for (const concept of await (await kosFactory({ locale })).concepts({
       limit: null,
       offset: 0,
       query: { type: "All" },
@@ -182,7 +184,7 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
         conceptIdentifier: encodeFileName(
           Identifier.toString(concept.identifier),
         ),
-        languageTag,
+        locale,
       });
     }
   }

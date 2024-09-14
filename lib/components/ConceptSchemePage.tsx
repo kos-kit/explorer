@@ -1,24 +1,23 @@
 import { configuration } from "@/app/configuration";
-import { Hrefs } from "@/lib/Hrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";
 import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
-import { ConceptScheme, LanguageTag } from "@/lib/models";
+import { getHrefs } from "@/lib/getHrefs";
+import { ConceptScheme } from "@/lib/models";
 
 export async function ConceptSchemePage({
   conceptScheme,
-  languageTag,
 }: {
   conceptScheme: ConceptScheme;
-  languageTag: LanguageTag;
 }) {
+  const hrefs = await getHrefs();
   const topConceptsCount = await conceptScheme.topConceptsCount();
 
   return (
-    <Layout languageTag={languageTag}>
+    <Layout>
       <PageTitleHeading>
         Concept Scheme: {conceptScheme.displayLabel}
       </PageTitleHeading>
@@ -35,14 +34,13 @@ export async function ConceptSchemePage({
                   })
                 ).flatResolve()
               }
-              languageTag={languageTag}
             />
             {topConceptsCount > configuration.relatedConceptsPerSection ? (
               <Link
-                href={new Hrefs({
-                  configuration,
-                  languageTag,
-                }).conceptSchemeTopConcepts({ conceptScheme, page: 0 })}
+                href={hrefs.conceptSchemeTopConcepts({
+                  conceptScheme,
+                  page: 0,
+                })}
               >
                 More
               </Link>

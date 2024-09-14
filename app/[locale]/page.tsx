@@ -1,19 +1,26 @@
 import { PageMetadata } from "@/app/PageMetadata";
 import { configuration } from "@/app/configuration";
 import { ConceptSchemePage } from "@/lib/components/ConceptSchemePage";
-import { LanguageTag } from "@/lib/models";
+import { Locale } from "@/lib/models";
 import { Metadata } from "next";
+import { unstable_setRequestLocale } from "next-intl/server";
 import { kosFactory } from "../kosFactory";
 
-interface LanguageTagPageParams {
-  languageTag: LanguageTag;
+interface LocalePageParams {
+  locale: Locale;
 }
 
-export default async function LanguageTagPage() {
+export default async function LocalePage({
+  params: { locale },
+}: {
+  params: LocalePageParams;
+}) {
+  unstable_setRequestLocale(locale);
+
   const conceptSchemes = await (
     await (
       await kosFactory({
-        languageTag: configuration.defaultLanguageTag,
+        languageTag: locale,
       })
     ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
   ).flatResolve();
@@ -21,7 +28,7 @@ export default async function LanguageTagPage() {
     return (
       <ConceptSchemePage
         conceptScheme={conceptSchemes[0]}
-        languageTag={configuration.defaultLanguageTag}
+        languageTag={configuration.defaultLocale}
       />
     );
   }
@@ -31,19 +38,19 @@ export default async function LanguageTagPage() {
 }
 
 export function generateMetadata({
-  params: { languageTag },
+  params: { locale },
 }: {
-  params: LanguageTagPageParams;
+  params: LocalePageParams;
 }): Promise<Metadata> {
-  return new PageMetadata({ languageTag }).languageTag();
+  return new PageMetadata({ locale }).locale();
 }
 
-export function generateStaticParams(): LanguageTagPageParams[] {
+export function generateStaticParams(): LocalePageParams[] {
   if (configuration.dynamic) {
     return [];
   }
 
-  return configuration.languageTags.map((languageTag) => ({
-    languageTag,
+  return configuration.locales.map((locale) => ({
+    locale,
   }));
 }

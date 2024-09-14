@@ -1,17 +1,17 @@
 import { kosFactory } from "@/app/kosFactory";
 import { Link } from "@/lib/components/Link";
-import { LanguageTag } from "@/lib/models";
 import { Literal, NamedNode } from "@rdfjs/types";
-import { Fragment } from "react";
+import { getLocale } from "next-intl/server";
+import React, { Fragment } from "react";
 
-export async function Footer({ languageTag }: { languageTag: LanguageTag }) {
+export async function Footer() {
   let license: Literal | NamedNode | null = null;
   let rights: Literal | null = null;
   let rightsHolder: Literal | null = null;
 
   const conceptSchemes = await (
     await (
-      await kosFactory({ languageTag })
+      await kosFactory({ locale: await getLocale() })
     ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
   ).flatResolve();
   if (conceptSchemes.length === 1) {

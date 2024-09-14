@@ -4,9 +4,9 @@
 
 import React, { useEffect, useState } from "react";
 import "@/node_modules/flag-icons/css/flag-icons.min.css";
+import { usePathname, useRouter } from "@/lib/hooks";
 import { LanguageTag } from "@/lib/models";
 import { getLangNameFromCode } from "language-name-map";
-import { usePathname, useRouter } from "next/navigation";
 
 function FlagIcon({ countryCode }: { countryCode: string }) {
   return (

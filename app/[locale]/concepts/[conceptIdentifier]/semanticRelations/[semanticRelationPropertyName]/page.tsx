@@ -7,17 +7,18 @@ import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { dataFactory } from "@/lib/dataFactory";
 import {
   Identifier,
-  LanguageTag,
+  Locale,
   SemanticRelationProperty,
   semanticRelationProperties,
 } from "@/lib/models";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Metadata } from "next";
+import { unstable_setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
-  languageTag: LanguageTag;
+  locale: Locale;
   semanticRelationPropertyName: string;
 }
 
@@ -31,13 +32,15 @@ const semanticRelationPropertiesByName = semanticRelationProperties.reduce(
 );
 
 export default async function ConceptSemanticRelationsPage({
-  params: { conceptIdentifier, languageTag, semanticRelationPropertyName },
+  params: { conceptIdentifier, locale, semanticRelationPropertyName },
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
+  unstable_setRequestLocale(locale);
+
   const concept = (
     await (
-      await kosFactory({ languageTag })
+      await kosFactory({ locale })
     )
       .concept(
         Identifier.fromString({
@@ -61,21 +64,21 @@ export default async function ConceptSemanticRelationsPage({
   ).flatResolve();
 
   return (
-    <Layout languageTag={languageTag}>
+    <Layout>
       <PageTitleHeading>Concept: {concept.displayLabel}</PageTitleHeading>
-      <ConceptList concepts={semanticRelations} languageTag={languageTag} />
+      <ConceptList concepts={semanticRelations} />
     </Layout>
   );
 }
 
 export async function generateMetadata({
-  params: { conceptIdentifier, languageTag, semanticRelationPropertyName },
+  params: { conceptIdentifier, locale, semanticRelationPropertyName },
 }: {
   params: ConceptSemanticRelationsPageParams;
 }): Promise<Metadata> {
   const concept = (
     await (
-      await kosFactory({ languageTag })
+      await kosFactory({ locale })
     )
       .concept(
         Identifier.fromString({
@@ -92,7 +95,7 @@ export async function generateMetadata({
   }
   return (
     (await new PageMetadata({
-      languageTag,
+      locale,
     }).conceptSemanticRelations({
       concept,
       semanticRelationProperty:
@@ -110,10 +113,10 @@ export async function generateStaticParams(): Promise<
 
   const staticParams: ConceptSemanticRelationsPageParams[] = [];
 
-  for (const languageTag of configuration.languageTags) {
+  for (const locale of configuration.locales) {
     for await (const concept of await (
       await (
-        await kosFactory({ languageTag })
+        await kosFactory({ locale })
       ).concepts({ limit: null, offset: 0, query: { type: "All" } })
     ).flatResolve()) {
       const conceptIdentifier = encodeFileName(
@@ -130,7 +133,7 @@ export async function generateStaticParams(): Promise<
 
         staticParams.push({
           conceptIdentifier,
-          languageTag,
+          locale,
           semanticRelationPropertyName: semanticRelationProperty.name,
         });
       }

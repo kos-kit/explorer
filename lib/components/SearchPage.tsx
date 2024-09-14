@@ -2,14 +2,17 @@
 
 import { Hrefs } from "@/lib/Hrefs";
 import { Link } from "@/lib/components/Link";
+import { ClientConfigurationContext } from "@/lib/contexts";
 import { dataFactory } from "@/lib/dataFactory";
-import { Configuration, Identifier, LanguageTag } from "@/lib/models";
+import { useHrefs } from "@/lib/hooks/useHrefs";
+import { ClientConfiguration, Identifier } from "@/lib/models";
 import {
   SearchEngineJson,
   SearchResult,
   SearchResults,
   createSearchEngineFromJson,
 } from "@kos-kit/search";
+import { useLocale } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { PageTitleHeading } from "./PageTitleHeading";
@@ -42,16 +45,12 @@ function AnimatedSpinner() {
 }
 
 function searchResultHref({
-  configuration,
-  languageTag,
+  hrefs,
   searchResult,
 }: {
-  configuration: Configuration;
-  languageTag: LanguageTag;
+  hrefs: Hrefs;
   searchResult: SearchResult;
 }): string {
-  const hrefs = new Hrefs({ configuration, languageTag });
-
   switch (searchResult.type) {
     case "Concept":
       return hrefs.concept({
@@ -71,17 +70,13 @@ function searchResultHref({
 }
 
 interface SearchPageProps {
-  configuration: Configuration;
-  languageTag: LanguageTag;
+  configuration: ClientConfiguration;
   searchEngineJson: SearchEngineJson;
 }
 
-function SearchPageImpl({
-  configuration,
-  languageTag,
-  searchEngineJson,
-}: SearchPageProps) {
-  const hrefs = new Hrefs({ configuration, languageTag });
+function SearchPageImpl({ configuration, searchEngineJson }: SearchPageProps) {
+  const hrefs = useHrefs();
+  const locale = useLocale();
   const resultsPerPage = configuration.conceptsPerPage;
   const searchParams = useSearchParams();
   const pageString = searchParams?.get("page");
@@ -106,13 +101,13 @@ function SearchPageImpl({
 
     searchEngine
       .search({
-        languageTag,
+        languageTag: locale,
         limit: resultsPerPage,
         offset: page * resultsPerPage,
         query,
       })
       .then(setSearchResults, setError);
-  }, [languageTag, page, query, resultsPerPage, searchEngineJson]);
+  }, [locale, page, query, resultsPerPage, searchEngineJson]);
 
   if (error) {
     return (
@@ -149,8 +144,7 @@ function SearchPageImpl({
             {searchResult.type}:&nbsp;
             <Link
               href={searchResultHref({
-                configuration,
-                languageTag,
+                hrefs,
                 searchResult,
               })}
             >
@@ -174,11 +168,13 @@ function SearchPageImpl({
   );
 }
 
-export function SearchPage(props: SearchPageProps) {
+export function SearchPage({ configuration, ...otherProps }: SearchPageProps) {
   // https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
   return (
     <Suspense>
-      <SearchPageImpl {...props} />
+      <ClientConfigurationContext.Provider value={configuration}>
+        <SearchPageImpl configuration={configuration} {...otherProps} />
+      </ClientConfigurationContext.Provider>
     </Suspense>
   );
 }

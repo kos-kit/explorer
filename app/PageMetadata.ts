@@ -2,28 +2,28 @@ import {
   Concept,
   ConceptScheme,
   Label,
-  LanguageTag,
+  Locale,
   SemanticRelationProperty,
 } from "@/lib/models";
 import { Metadata } from "next";
 import { kosFactory } from "./kosFactory";
 
 export class PageMetadata {
-  private readonly _languageTag: LanguageTag;
+  private readonly _locale: Locale;
 
-  constructor({ languageTag }: { languageTag: LanguageTag }) {
-    this._languageTag = languageTag;
+  constructor({ locale }: { locale: Locale }) {
+    this._locale = locale;
   }
 
   async concept(concept: Concept): Promise<Metadata> {
-    const rootPageMetadata = await this.languageTag();
+    const rootPageMetadata = await this.locale();
     return {
       title: `${rootPageMetadata.title}: Concept: ${concept.displayLabel}`,
     } satisfies Metadata;
   }
 
   async conceptScheme(conceptScheme: ConceptScheme): Promise<Metadata> {
-    const rootPageMetadata = await this.languageTag();
+    const rootPageMetadata = await this.locale();
     return {
       title: `${rootPageMetadata.title}: Concept Scheme: ${conceptScheme.displayLabel}`,
     } satisfies Metadata;
@@ -57,11 +57,11 @@ export class PageMetadata {
     } satisfies Metadata;
   }
 
-  async languageTag(): Promise<Metadata> {
+  async locale(): Promise<Metadata> {
     const conceptSchemes = await (
       await (
         await kosFactory({
-          languageTag: this._languageTag,
+          languageTag: this._locale,
         })
       ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
     ).flatResolve();
@@ -82,7 +82,7 @@ export class PageMetadata {
 
   async search(): Promise<Metadata> {
     return {
-      title: `${(await this.languageTag()).title}: search results`,
+      title: `${(await this.locale()).title}: search results`,
     } satisfies Metadata;
   }
 }
