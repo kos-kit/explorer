@@ -1,11 +1,11 @@
-import { ListBulletIcon } from "@heroicons/react/24/solid";
-import { Link } from "@/lib/components/Link";
 import { PageMetadata } from "@/app/PageMetadata";
+import configuration from "@/app/configuration";
+import { Link } from "@/lib/components/Link";
+import { LanguageTag } from "@/lib/models";
+import { ListBulletIcon } from "@heroicons/react/24/solid";
+import { Hrefs } from "../Hrefs";
 import { LanguageSelector } from "./LanguageSelector";
 import { SearchForm } from "./SearchForm";
-import configuration from "@/app/configuration";
-import { LanguageTag } from "@kos-kit/models";
-import { Hrefs } from "../Hrefs";
 
 export async function Navbar({ languageTag }: { languageTag: LanguageTag }) {
   const title: string = (await new PageMetadata({ languageTag }).languageTag())

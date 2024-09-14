@@ -1,23 +1,23 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
-import { PageTitleHeading } from "./PageTitleHeading";
+import { Hrefs } from "@/lib/Hrefs";
 import { Link } from "@/lib/components/Link";
-import { Pagination } from "./Pagination";
+import { dataFactory } from "@/lib/dataFactory";
+import { Configuration, Identifier, LanguageTag } from "@/lib/models";
 import {
   SearchEngineJson,
   SearchResult,
   SearchResults,
   createSearchEngineFromJson,
 } from "@kos-kit/search";
-import { Concept, ConceptScheme, LanguageTag } from "@kos-kit/models";
-import { Hrefs } from "../Hrefs";
-import { Configuration } from "../models/Configuration";
-import { dataFactory } from "@/lib/dataFactory";
+import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { PageTitleHeading } from "./PageTitleHeading";
+import { Pagination } from "./Pagination";
 
 function AnimatedSpinner() {
   return (
+    // biome-ignore lint/a11y/noSvgWithoutTitle: <explanation>
     <svg
       className="animate-spin -ml-1 mr-3 h-16 w-16 text-black"
       xmlns="http://www.w3.org/2000/svg"
@@ -31,12 +31,12 @@ function AnimatedSpinner() {
         r="10"
         stroke="currentColor"
         strokeWidth="4"
-      ></circle>
+      />
       <path
         className="opacity-75"
         fill="currentColor"
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      ></path>
+      />
     </svg>
   );
 }
@@ -85,8 +85,8 @@ function SearchPageImpl({
   const resultsPerPage = configuration.conceptsPerPage;
   const searchParams = useSearchParams();
   const pageString = searchParams?.get("page");
-  let page = pageString ? parseInt(pageString) : 0;
-  if (isNaN(page)) {
+  let page = pageString ? Number.parseInt(pageString) : 0;
+  if (Number.isNaN(page)) {
     page = 0;
   }
   const query = searchParams?.get("query");
@@ -112,14 +112,7 @@ function SearchPageImpl({
         query,
       })
       .then(setSearchResults, setError);
-  }, [
-    languageTag,
-    page,
-    query,
-    resultsPerPage,
-    searchEngineJson,
-    searchParams,
-  ]);
+  }, [languageTag, page, query, resultsPerPage, searchEngineJson]);
 
   if (error) {
     return (

@@ -15,11 +15,15 @@
         "useLiteralKeys": "off"
       },
       "recommended": true,
+      "security": {
+        "noDangerouslySetInnerHtml": "off"
+      },
       "style": {
         "noNonNullAssertion": "off",
         "useImportType": "off"
       },
       "suspicious": {
+        "noArrayIndexKey": "off",
         "noExplicitAny": "off"
       }
     }

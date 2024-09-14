@@ -1,6 +1,6 @@
 import { Link } from "@/lib/components/Link";
-import { PropsWithChildren } from "react";
 import { pageCount } from "@kos-kit/next-utils";
+import { PropsWithChildren } from "react";
 
 function PageLink({
   active,
@@ -16,9 +16,8 @@ function PageLink({
         {children}
       </Link>
     );
-  } else {
-    return <span className="rounded p-1">{children}</span>;
   }
+  return <span className="rounded p-1">{children}</span>;
 }
 
 export function Pagination({

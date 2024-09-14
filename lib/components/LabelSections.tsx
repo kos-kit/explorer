@@ -1,6 +1,6 @@
-import React from "react";
 import { Section } from "@/lib/components/Section";
-import { LabeledModel } from "@kos-kit/models";
+import { LabeledModel } from "@/lib/models";
+import React from "react";
 
 export function LabelSections({ model }: { model: LabeledModel }) {
   const sections: React.ReactElement[] = [];

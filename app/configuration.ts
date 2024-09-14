@@ -30,7 +30,7 @@ if (!configuration.value) {
     conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
     dataPaths: env.INPUT_DATA_PATHS,
     defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
-    dynamic: env.INPUT_NEXT_OUTPUT.toLowerCase() == "standalone",
+    dynamic: env.INPUT_NEXT_OUTPUT.toLowerCase() === "standalone",
     languageTags:
       env.INPUT_LANGUAGE_TAGS.length > 0
         ? env.INPUT_LANGUAGE_TAGS

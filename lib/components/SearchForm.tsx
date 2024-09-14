@@ -1,7 +1,7 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import configuration from "@/app/configuration";
+import { Hrefs } from "@/lib/Hrefs";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { LanguageTag } from "@kos-kit/models";
-import { Hrefs } from "../Hrefs";
 
 export function SearchForm({ languageTag }: { languageTag: LanguageTag }) {
   return (
@@ -11,7 +11,6 @@ export function SearchForm({ languageTag }: { languageTag: LanguageTag }) {
       method="GET"
     >
       <input
-        autoFocus
         className="w-full min-w-64 p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded bg-gray-50 focus:border-black"
         name="query"
         placeholder="Search..."

@@ -1,7 +1,6 @@
 import { Configuration } from "@/lib/models/Configuration";
 import {
-  Concept,
-  ConceptScheme,
+  Identifier,
   LanguageTag,
   SemanticRelationProperty,
 } from "@kos-kit/models";
