@@ -1,4 +1,4 @@
-import { Configuration } from "@/lib/models/Configuration";
+import { ServerConfiguration } from "@/lib/models/ServerConfiguration";
 import { GlobalRef } from "@kos-kit/next-utils";
 import {
   existingPathsValidator,
@@ -8,7 +8,9 @@ import {
 } from "@kos-kit/next-utils/envalidValidators";
 import * as envalid from "envalid";
 
-const configurationGlobalRef = new GlobalRef<Configuration>("configuration");
+const configurationGlobalRef = new GlobalRef<ServerConfiguration>(
+  "configuration",
+);
 if (!configurationGlobalRef.value) {
   const env = envalid.cleanEnv(process.env, {
     INPUT_CACHE_DIRECTORY_PATH: pathValidator({
@@ -16,8 +18,8 @@ if (!configurationGlobalRef.value) {
     }),
     INPUT_CONCEPTS_PER_PAGE: intValidator({ default: 25 }),
     INPUT_DATA_PATHS: existingPathsValidator({ default: [] }),
-    INPUT_DEFAULT_LANGUAGE_TAG: envalid.str({ default: "en" }),
-    INPUT_LANGUAGE_TAGS: languageTagArrayValidator({ default: [] }),
+    INPUT_DEFAULT_LOCALE: envalid.str({ default: "en" }),
+    INPUT_LOCALES: languageTagArrayValidator({ default: [] }),
     INPUT_NEXT_BASE_PATH: envalid.str({ default: "" }),
     INPUT_NEXT_OUTPUT: envalid.str({ default: "" }),
     INPUT_RELATED_CONCEPTS_PER_SECTION: intValidator({ default: 10 }),
@@ -29,18 +31,18 @@ if (!configurationGlobalRef.value) {
     cacheDirectoryPath: env.INPUT_CACHE_DIRECTORY_PATH,
     conceptsPerPage: env.INPUT_CONCEPTS_PER_PAGE,
     dataPaths: env.INPUT_DATA_PATHS,
-    defaultLanguageTag: env.INPUT_DEFAULT_LANGUAGE_TAG,
+    defaultLocale: env.INPUT_DEFAULT_LOCALE,
     dynamic: env.INPUT_NEXT_OUTPUT.toLowerCase() === "standalone",
-    languageTags:
-      env.INPUT_LANGUAGE_TAGS.length > 0
-        ? env.INPUT_LANGUAGE_TAGS
-        : [env.INPUT_DEFAULT_LANGUAGE_TAG],
+    locales:
+      env.INPUT_LOCALES.length > 0
+        ? env.INPUT_LOCALES
+        : [env.INPUT_DEFAULT_LOCALE],
     nextBasePath: env.INPUT_NEXT_BASE_PATH,
     relatedConceptsPerSection: env.INPUT_RELATED_CONCEPTS_PER_SECTION,
     searchEndpoint:
       env.INPUT_SEARCH_ENDPOINT.length > 0 ? env.INPUT_SEARCH_ENDPOINT : null,
     sparqlEndpoint:
       env.INPUT_SPARQL_ENDPOINT.length > 0 ? env.INPUT_SPARQL_ENDPOINT : null,
-  } satisfies Configuration;
+  } satisfies ServerConfiguration;
 }
-export const configuration: Configuration = configurationGlobalRef.value;
+export const configuration: ServerConfiguration = configurationGlobalRef.value;

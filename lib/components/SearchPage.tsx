@@ -2,14 +2,22 @@
 
 import { Hrefs } from "@/lib/Hrefs";
 import { Link } from "@/lib/components/Link";
+import { ClientConfigurationContext } from "@/lib/contexts";
 import { dataFactory } from "@/lib/dataFactory";
-import { Configuration, Identifier, LanguageTag } from "@/lib/models";
+import { useHrefs } from "@/lib/hooks/useHrefs";
+import { ClientConfiguration, Identifier, Locale } from "@/lib/models";
 import {
   SearchEngineJson,
   SearchResult,
   SearchResults,
   createSearchEngineFromJson,
 } from "@kos-kit/search";
+import {
+  AbstractIntlMessages,
+  NextIntlClientProvider,
+  useLocale,
+  useTranslations,
+} from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { PageTitleHeading } from "./PageTitleHeading";
@@ -42,16 +50,12 @@ function AnimatedSpinner() {
 }
 
 function searchResultHref({
-  configuration,
-  languageTag,
+  hrefs,
   searchResult,
 }: {
-  configuration: Configuration;
-  languageTag: LanguageTag;
+  hrefs: Hrefs;
   searchResult: SearchResult;
 }): string {
-  const hrefs = new Hrefs({ configuration, languageTag });
-
   switch (searchResult.type) {
     case "Concept":
       return hrefs.concept({
@@ -71,17 +75,13 @@ function searchResultHref({
 }
 
 interface SearchPageProps {
-  configuration: Configuration;
-  languageTag: LanguageTag;
+  configuration: ClientConfiguration;
   searchEngineJson: SearchEngineJson;
 }
 
-function SearchPageImpl({
-  configuration,
-  languageTag,
-  searchEngineJson,
-}: SearchPageProps) {
-  const hrefs = new Hrefs({ configuration, languageTag });
+function SearchPageImpl({ configuration, searchEngineJson }: SearchPageProps) {
+  const hrefs = useHrefs();
+  const locale = useLocale();
   const resultsPerPage = configuration.conceptsPerPage;
   const searchParams = useSearchParams();
   const pageString = searchParams?.get("page");
@@ -90,6 +90,7 @@ function SearchPageImpl({
     page = 0;
   }
   const query = searchParams?.get("query");
+  const translations = useTranslations();
 
   const [error, setError] = useState<Error | null>(null);
   const [searchResults, setSearchResults] = useState<SearchResults | null>(
@@ -106,25 +107,27 @@ function SearchPageImpl({
 
     searchEngine
       .search({
-        languageTag,
+        languageTag: locale,
         limit: resultsPerPage,
         offset: page * resultsPerPage,
         query,
       })
       .then(setSearchResults, setError);
-  }, [languageTag, page, query, resultsPerPage, searchEngineJson]);
+  }, [locale, page, query, resultsPerPage, searchEngineJson]);
 
   if (error) {
     return (
       <>
-        <PageTitleHeading>Error</PageTitleHeading>
+        <PageTitleHeading>{translations("Error")}</PageTitleHeading>
         <p>{error.message}</p>
       </>
     );
   }
 
   const heading = (
-    <PageTitleHeading>Search results for &quot;{query}&quot;</PageTitleHeading>
+    <PageTitleHeading>
+      {translations("Search results", { query })}
+    </PageTitleHeading>
   );
   if (searchResults === null) {
     return (
@@ -149,8 +152,7 @@ function SearchPageImpl({
             {searchResult.type}:&nbsp;
             <Link
               href={searchResultHref({
-                configuration,
-                languageTag,
+                hrefs,
                 searchResult,
               })}
             >
@@ -174,11 +176,20 @@ function SearchPageImpl({
   );
 }
 
-export function SearchPage(props: SearchPageProps) {
+export function SearchPage({
+  configuration,
+  locale,
+  messages,
+  ...otherProps
+}: SearchPageProps & { locale: Locale; messages: AbstractIntlMessages }) {
   // https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
   return (
     <Suspense>
-      <SearchPageImpl {...props} />
+      <ClientConfigurationContext.Provider value={configuration}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <SearchPageImpl configuration={configuration} {...otherProps} />
+        </NextIntlClientProvider>
+      </ClientConfigurationContext.Provider>
     </Suspense>
   );
 }

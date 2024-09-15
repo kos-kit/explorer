@@ -1,30 +1,31 @@
 import { configuration } from "@/app/configuration";
-import { Hrefs } from "@/lib/Hrefs";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { LabelSections } from "@/lib/components/LabelSections";
 import { Layout } from "@/lib/components/Layout";
 import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
-import { ConceptScheme, LanguageTag } from "@/lib/models";
+import { getHrefs } from "@/lib/getHrefs";
+import { ConceptScheme } from "@/lib/models";
+import { getTranslations } from "next-intl/server";
 
 export async function ConceptSchemePage({
   conceptScheme,
-  languageTag,
 }: {
   conceptScheme: ConceptScheme;
-  languageTag: LanguageTag;
 }) {
+  const hrefs = await getHrefs();
   const topConceptsCount = await conceptScheme.topConceptsCount();
+  const translations = await getTranslations("ConceptSchemePage");
 
   return (
-    <Layout languageTag={languageTag}>
+    <Layout>
       <PageTitleHeading>
-        Concept Scheme: {conceptScheme.displayLabel}
+        {translations("Concept scheme")}: {conceptScheme.displayLabel}
       </PageTitleHeading>
       <LabelSections model={conceptScheme} />
       {topConceptsCount > 0 ? (
-        <Section title="Top concepts">
+        <Section title={translations("Top concepts")}>
           <div className="flex flex-col gap-2">
             <ConceptList
               concepts={
@@ -35,16 +36,15 @@ export async function ConceptSchemePage({
                   })
                 ).flatResolve()
               }
-              languageTag={languageTag}
             />
             {topConceptsCount > configuration.relatedConceptsPerSection ? (
               <Link
-                href={new Hrefs({
-                  configuration,
-                  languageTag,
-                }).conceptSchemeTopConcepts({ conceptScheme, page: 0 })}
+                href={hrefs.conceptSchemeTopConcepts({
+                  conceptScheme,
+                  page: 0,
+                })}
               >
-                More
+                {translations("More")}
               </Link>
             ) : null}
           </div>

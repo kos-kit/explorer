@@ -1,37 +1,33 @@
-import {
-  Configuration,
-  Identifier,
-  LanguageTag,
-  SemanticRelationProperty,
-} from "@/lib/models";
+import { Identifier, Locale } from "@/lib/models";
+import { Concept } from "@kos-kit/models";
 import { encodeFileName } from "@kos-kit/next-utils";
 import queryString from "query-string";
 
 export class Hrefs {
-  private readonly _languageTag: LanguageTag;
-  private readonly configuration: Configuration;
+  private readonly _locale: Locale;
+  private readonly nextBasePath: string;
 
   constructor({
-    configuration,
-    languageTag,
+    locale,
+    nextBasePath,
   }: {
-    configuration: Configuration;
-    languageTag: LanguageTag;
+    locale: Locale;
+    nextBasePath: string;
   }) {
-    this.configuration = configuration;
-    this._languageTag = languageTag;
+    this._locale = locale;
+    this.nextBasePath = nextBasePath;
   }
 
-  get languageTag(): string {
-    return `${this.configuration.nextBasePath}/${this._languageTag}`;
+  get locale(): string {
+    return `${this.nextBasePath}/${this._locale}`;
   }
 
   concept(concept: { identifier: Identifier }): string {
-    return `${this.languageTag}/concepts/${encodeFileName(Identifier.toString(concept.identifier))}`;
+    return `${this.locale}/concepts/${encodeFileName(Identifier.toString(concept.identifier))}`;
   }
 
   conceptScheme(conceptScheme: { identifier: Identifier }): string {
-    return `${this.languageTag}/conceptSchemes/${encodeFileName(Identifier.toString(conceptScheme.identifier))}`;
+    return `${this.locale}/conceptSchemes/${encodeFileName(Identifier.toString(conceptScheme.identifier))}`;
   }
 
   conceptSchemeTopConcepts({
@@ -46,12 +42,12 @@ export class Hrefs {
 
   conceptSemanticRelations({
     concept,
-    semanticRelationProperty,
+    semanticRelationType,
   }: {
     concept: { identifier: Identifier };
-    semanticRelationProperty: SemanticRelationProperty;
+    semanticRelationType: Concept.SemanticRelation.Type;
   }): string {
-    return `${this.concept(concept)}/semanticRelations/${semanticRelationProperty.name}`;
+    return `${this.concept(concept)}/semanticRelations/${encodeFileName(Identifier.toString(semanticRelationType.property))}`;
   }
 
   search({ page, query }: { page?: number; query?: string }) {
@@ -64,7 +60,7 @@ export class Hrefs {
     }
 
     return queryString.stringifyUrl({
-      url: `${this.languageTag}/search`,
+      url: `${this.locale}/search`,
       query: searchParams,
     });
   }

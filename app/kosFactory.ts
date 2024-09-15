@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { dataFactory } from "@/lib/dataFactory";
 import { logger } from "@/lib/logger";
-import { Kos, LanguageTag } from "@/lib/models";
+import { Kos, Locale } from "@/lib/models";
 import { LanguageTagSet, NotImplementedKos } from "@kos-kit/models";
 import { GlobalRef } from "@kos-kit/next-utils";
 import { RdfDirectory } from "@kos-kit/next-utils/RdfDirectory";
@@ -21,7 +21,7 @@ const datasetCoreFactory: DatasetCoreFactory = {
   },
 };
 
-type KosFactory = (kwds: { languageTag: LanguageTag }) => Promise<Kos>;
+type KosFactory = (kwds: { locale: Locale }) => Promise<Kos>;
 
 async function loadKosDataset(
   dataPaths: readonly string[],
@@ -86,10 +86,10 @@ if (!kosFactoryGlobalRef.value) {
       configuration.sparqlEndpoint,
       "as KOS",
     );
-    kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
+    kosFactoryValue = async ({ locale }: { locale: Locale }) => {
       return new sparql.DefaultKos({
         datasetCoreFactory,
-        includeLanguageTags: new LanguageTagSet(languageTag, ""),
+        includeLanguageTags: new LanguageTagSet(locale, ""),
         logger,
         sparqlQueryClient: new HttpSparqlQueryClient({
           dataFactory: N3.DataFactory,
@@ -107,10 +107,10 @@ if (!kosFactoryGlobalRef.value) {
       kosDatasetGlobalRef.value = await loadKosDataset(configuration.dataPaths);
     }
 
-    kosFactoryValue = async ({ languageTag }: { languageTag: LanguageTag }) => {
+    kosFactoryValue = async ({ locale }: { locale: Locale }) => {
       return new rdfjsDataset.DefaultKos({
         dataset: kosDatasetGlobalRef.value!,
-        includeLanguageTags: new LanguageTagSet(languageTag, ""),
+        includeLanguageTags: new LanguageTagSet(locale, ""),
       });
     };
   } else {

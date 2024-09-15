@@ -3,25 +3,26 @@ import { configuration } from "@/app/configuration";
 import { kosFactory } from "@/app/kosFactory";
 import { ConceptSchemePage as ConceptSchemePageComponent } from "@/lib/components/ConceptSchemePage";
 import { dataFactory } from "@/lib/dataFactory";
-import { Identifier, LanguageTag } from "@/lib/models";
+import { Identifier, Locale } from "@/lib/models";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Metadata } from "next";
+import { unstable_setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 interface ConceptSchemePageParams {
   conceptSchemeIdentifier: string;
-  languageTag: LanguageTag;
+  locale: Locale;
 }
 
 export default async function ConceptSchemePage({
-  params: { conceptSchemeIdentifier, languageTag },
+  params: { conceptSchemeIdentifier, locale },
 }: {
   params: ConceptSchemePageParams;
 }) {
   const conceptScheme = (
     await (
       await kosFactory({
-        languageTag,
+        locale,
       })
     )
       .conceptScheme(
@@ -38,22 +39,19 @@ export default async function ConceptSchemePage({
     notFound();
   }
 
-  return (
-    <ConceptSchemePageComponent
-      conceptScheme={conceptScheme}
-      languageTag={languageTag}
-    />
-  );
+  return <ConceptSchemePageComponent conceptScheme={conceptScheme} />;
 }
 
 export async function generateMetadata({
-  params: { conceptSchemeIdentifier, languageTag },
+  params: { conceptSchemeIdentifier, locale },
 }: {
   params: ConceptSchemePageParams;
 }): Promise<Metadata> {
+  unstable_setRequestLocale(locale);
+
   const conceptScheme = (
     await (
-      await kosFactory({ languageTag })
+      await kosFactory({ locale })
     )
       .conceptScheme(
         Identifier.fromString({
@@ -69,7 +67,7 @@ export async function generateMetadata({
     return {};
   }
   return (
-    (await new PageMetadata({ languageTag }).conceptScheme(conceptScheme)) ?? {}
+    (await new PageMetadata({ locale }).conceptScheme(conceptScheme)) ?? {}
   );
 }
 
@@ -82,19 +80,19 @@ export async function generateStaticParams(): Promise<
 
   const staticParams: ConceptSchemePageParams[] = [];
 
-  // If there's only one concept scheme the /[languageTag]/ page will show its ConceptPage,
+  // If there's only one concept scheme the /[locale]/ page will show its ConceptPage,
   // but we still have to generate another ConceptPage here because Next doesn't like an empty staticParams.
-  for (const languageTag of configuration.languageTags) {
+  for (const locale of configuration.locales) {
     for (const conceptScheme of await (
       await kosFactory({
-        languageTag,
+        locale,
       })
     ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })) {
       staticParams.push({
         conceptSchemeIdentifier: encodeFileName(
           Identifier.toString(conceptScheme.identifier),
         ),
-        languageTag,
+        locale,
       });
     }
   }

@@ -1,16 +1,13 @@
-import { configuration } from "@/app/configuration";
 import { Link } from "@/lib/components/Link";
-import { Concept, Identifier, LanguageTag } from "@/lib/models";
-import { Hrefs } from "../Hrefs";
+import { getHrefs } from "@/lib/getHrefs";
+import { Concept, Identifier } from "@/lib/models";
 
 export async function ConceptList({
   concepts,
-  languageTag,
 }: {
   concepts: readonly Concept[];
-  languageTag: LanguageTag;
 }) {
-  const hrefs = new Hrefs({ configuration, languageTag });
+  const hrefs = await getHrefs();
 
   return (
     <ul className="list-disc list-inside">

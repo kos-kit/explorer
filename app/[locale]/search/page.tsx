@@ -5,22 +5,23 @@ import { configuration } from "@/app/configuration";
 import { kosFactory } from "@/app/kosFactory";
 import { Layout } from "@/lib/components/Layout";
 import { SearchPage as SearchPageClient } from "@/lib/components/SearchPage";
-import { LanguageTag } from "@/lib/models";
+import { Locale } from "@/lib/models";
 import {
   LunrSearchEngine,
   SearchEngineJson,
   ServerSearchEngine,
 } from "@kos-kit/search";
 import { Metadata } from "next";
+import { getMessages, unstable_setRequestLocale } from "next-intl/server";
 
 interface SearchPageParams {
-  languageTag: LanguageTag;
+  locale: Locale;
 }
 
 async function getLunrSearchEngineJson({
-  languageTag,
+  locale,
 }: {
-  languageTag: LanguageTag;
+  locale: Locale;
 }): Promise<SearchEngineJson> {
   const searchEngineJsonDirPath = path.join(
     configuration.cacheDirectoryPath,
@@ -29,7 +30,7 @@ async function getLunrSearchEngineJson({
 
   const searchEngineJsonFilePath = path.join(
     searchEngineJsonDirPath,
-    `${languageTag}.json`,
+    `${locale}.json`,
   );
 
   let searchEngineJsonFileContents: Buffer | undefined;
@@ -44,12 +45,12 @@ async function getLunrSearchEngineJson({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     searchEngineJson = JSON.parse(searchEngineJsonFileContents.toString());
   } else {
-    console.info("creating", languageTag, "search engine");
+    console.info("creating", locale, "search engine");
     const searchEngine = await LunrSearchEngine.create({
-      languageTag,
-      kos: await kosFactory({ languageTag: languageTag }),
+      languageTag: locale,
+      kos: await kosFactory({ locale }),
     });
-    console.info("created", languageTag, "search engine");
+    console.info("created", locale, "search engine");
 
     const searchEngineJsonString = JSON.stringify(searchEngine.toJson());
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -57,7 +58,7 @@ async function getLunrSearchEngineJson({
 
     console.info(
       "writing",
-      languageTag,
+      locale,
       "search engine JSON to",
       searchEngineJsonFilePath,
     );
@@ -65,7 +66,7 @@ async function getLunrSearchEngineJson({
     await fs.writeFile(searchEngineJsonFilePath, searchEngineJsonString);
     console.info(
       "wrote",
-      languageTag,
+      locale,
       "search engine JSON to",
       searchEngineJsonFilePath,
     );
@@ -75,12 +76,12 @@ async function getLunrSearchEngineJson({
 }
 
 async function getSearchEngineJson({
-  languageTag,
+  locale,
 }: {
-  languageTag: LanguageTag;
+  locale: Locale;
 }): Promise<SearchEngineJson> {
   if (configuration.dataPaths.length > 0) {
-    return getLunrSearchEngineJson({ languageTag });
+    return getLunrSearchEngineJson({ locale });
   }
   if (configuration.searchEndpoint !== null) {
     return getServerSearchEngineJson({
@@ -104,27 +105,33 @@ async function getServerSearchEngineJson({
 }
 
 export default async function SearchPage({
-  params: { languageTag },
+  params: { locale },
 }: {
   params: SearchPageParams;
 }) {
+  unstable_setRequestLocale(locale);
+
   return (
-    <Layout languageTag={languageTag}>
+    <Layout>
       <SearchPageClient
-        configuration={configuration}
-        languageTag={languageTag}
-        searchEngineJson={await getSearchEngineJson({ languageTag })}
+        configuration={{
+          conceptsPerPage: configuration.conceptsPerPage,
+          nextBasePath: configuration.nextBasePath,
+        }}
+        locale={locale}
+        messages={await getMessages()}
+        searchEngineJson={await getSearchEngineJson({ locale })}
       />
     </Layout>
   );
 }
 
 export async function generateMetadata({
-  params: { languageTag },
+  params: { locale },
 }: {
   params: SearchPageParams;
 }): Promise<Metadata> {
-  return new PageMetadata({ languageTag }).search();
+  return new PageMetadata({ locale }).search();
 }
 
 export function generateStaticParams(): SearchPageParams[] {
@@ -132,7 +139,7 @@ export function generateStaticParams(): SearchPageParams[] {
     return [];
   }
 
-  return configuration.languageTags.map((languageTag) => ({
-    languageTag,
+  return configuration.locales.map((locale) => ({
+    locale,
   }));
 }
