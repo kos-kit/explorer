@@ -5,34 +5,21 @@ import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { dataFactory } from "@/lib/dataFactory";
-import {
-  Identifier,
-  Locale,
-  SemanticRelationProperty,
-  semanticRelationProperties,
-} from "@/lib/models";
+import { Identifier, Locale } from "@/lib/models";
+import { Concept } from "@kos-kit/models";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { Metadata } from "next";
-import { unstable_setRequestLocale } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
   locale: Locale;
-  semanticRelationPropertyName: string;
+  semanticRelationType: string;
 }
 
-const semanticRelationPropertiesByName = semanticRelationProperties.reduce(
-  (semanticRelationPropertiesByName, semanticRelationProperty) => {
-    semanticRelationPropertiesByName[semanticRelationProperty.name] =
-      semanticRelationProperty;
-    return semanticRelationPropertiesByName;
-  },
-  {} as Record<string, SemanticRelationProperty>,
-);
-
 export default async function ConceptSemanticRelationsPage({
-  params: { conceptIdentifier, locale, semanticRelationPropertyName },
+  params: { conceptIdentifier, locale, semanticRelationType },
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
@@ -57,22 +44,30 @@ export default async function ConceptSemanticRelationsPage({
   }
 
   const semanticRelationProperty =
-    semanticRelationPropertiesByName[semanticRelationPropertyName];
+    semanticRelationPropertiesByName[semanticRelationType];
 
   const semanticRelations = await (
     await concept.semanticRelations(semanticRelationProperty)
   ).flatResolve();
 
+  const translations = await getTranslations("ConceptSemanticRelationsPage");
+
   return (
     <Layout>
-      <PageTitleHeading>Concept: {concept.displayLabel}</PageTitleHeading>
+      <PageTitleHeading>
+        {translations("concept")}: {concept.displayLabel}
+      </PageTitleHeading>
       <ConceptList concepts={semanticRelations} />
     </Layout>
   );
 }
 
 export async function generateMetadata({
-  params: { conceptIdentifier, locale, semanticRelationPropertyName },
+  params: {
+    conceptIdentifier,
+    locale,
+    semanticRelationType: semanticRelationTypeString,
+  },
 }: {
   params: ConceptSemanticRelationsPageParams;
 }): Promise<Metadata> {
@@ -98,8 +93,10 @@ export async function generateMetadata({
       locale,
     }).conceptSemanticRelations({
       concept,
-      semanticRelationProperty:
-        semanticRelationPropertiesByName[semanticRelationPropertyName],
+      semanticRelationType: Concept.SemanticRelation.Types.find(
+        (semanticRelationType) =>
+          semanticRelationType.property.value === semanticRelationTypeString,
+      )!,
     })) ?? {}
   );
 }
@@ -123,9 +120,9 @@ export async function generateStaticParams(): Promise<
         Identifier.toString(concept.identifier),
       );
 
-      for (const semanticRelationProperty of semanticRelationProperties) {
+      for (const semanticRelationType of Concept.SemanticRelation.Type) {
         if (
-          (await concept.semanticRelations(semanticRelationProperty)).length <=
+          (await concept.semanticRelations(semanticRelationType)).length <=
           configuration.relatedConceptsPerSection
         ) {
           continue;
@@ -134,7 +131,7 @@ export async function generateStaticParams(): Promise<
         staticParams.push({
           conceptIdentifier,
           locale,
-          semanticRelationPropertyName: semanticRelationProperty.name,
+          semanticRelationType: semanticRelationType.name,
         });
       }
     }

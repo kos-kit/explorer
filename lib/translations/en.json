@@ -1,0 +1,23 @@
+{
+  "ConceptSchemePage": {
+    "Concept scheme": "Concept scheme",
+    "Top concepts": "Top concepts"
+  },
+  "ConceptSemanticRelationsPage": {
+    "Concept": "Concept"
+  },
+  "LabelTypes": {
+    "alternative": "Alternative labels",
+    "hidden": "Hidden labels",
+    "preferred": "Preferred labels"
+  },
+  "PageMetadata": {
+    "Concept": "Concept",
+    "Concept scheme": "Concept scheme",
+    "Top concepts": "Top concepts",
+    "Search results": "Search results"
+  },
+  "SemanticRelationProperties": {
+    "broader": "Broader concepts"
+  }
+}

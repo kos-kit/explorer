@@ -1,12 +1,12 @@
 {
   "dependencies": {
     "@heroicons/react": "^2.1.3",
-    "@kos-kit/models": "2.0.71",
-    "@kos-kit/next-utils": "2.0.71",
-    "@kos-kit/rdfjs-dataset-models": "2.0.71",
-    "@kos-kit/search": "2.0.71",
-    "@kos-kit/sparql-client": "2.0.71",
-    "@kos-kit/sparql-models": "2.0.71",
+    "@kos-kit/models": "2.0.72",
+    "@kos-kit/next-utils": "2.0.72",
+    "@kos-kit/rdfjs-dataset-models": "2.0.72",
+    "@kos-kit/search": "2.0.72",
+    "@kos-kit/sparql-client": "2.0.72",
+    "@kos-kit/sparql-models": "2.0.72",
     "@rdfjs/types": "^1.1.0",
     "@tpluscode/rdf-ns-builders": "^4.3.0",
     "clsx": "^2.1.0",
