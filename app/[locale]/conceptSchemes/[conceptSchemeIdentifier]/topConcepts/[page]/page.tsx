@@ -12,7 +12,7 @@ import { getHrefs } from "@/lib/getHrefs";
 import { Identifier, Locale } from "@/lib/models";
 import { decodeFileName, encodeFileName, pageCount } from "@kos-kit/next-utils";
 import { Metadata } from "next";
-import { unstable_setRequestLocale } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
 interface ConceptSchemeTopConceptsPageParams {
@@ -54,22 +54,25 @@ export default async function ConceptSchemeTopConceptsPage({
 
   const topConceptsCount = await conceptScheme.topConceptsCount();
 
+  const translations = await getTranslations("ConceptSchemeTopConceptsPage");
+
   return (
     <Layout>
       <PageTitleHeading>
         <Link href={hrefs.conceptScheme(conceptScheme)}>
-          Concept Scheme: {conceptScheme.displayLabel}
+          {translations("Concept scheme")}: {conceptScheme.displayLabel}
         </Link>
       </PageTitleHeading>
       <Section
         title={
           <span>
-            Top concepts (Page {pageInt + 1} of{" "}
-            {pageCount({
-              itemsPerPage: configuration.conceptsPerPage,
-              itemsTotal: topConceptsCount,
+            {translations("Top concepts page", {
+              pageCount: pageCount({
+                itemsPerPage: configuration.conceptsPerPage,
+                itemsTotal: topConceptsCount,
+              }),
+              page: pageInt + 1,
             })}
-            )
           </span>
         }
       >

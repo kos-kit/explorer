@@ -7,6 +7,7 @@ import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { getHrefs } from "@/lib/getHrefs";
 import { ConceptScheme } from "@/lib/models";
+import { getTranslations } from "next-intl/server";
 
 export async function ConceptSchemePage({
   conceptScheme,
@@ -15,15 +16,16 @@ export async function ConceptSchemePage({
 }) {
   const hrefs = await getHrefs();
   const topConceptsCount = await conceptScheme.topConceptsCount();
+  const translations = await getTranslations("ConceptSchemePage");
 
   return (
     <Layout>
       <PageTitleHeading>
-        Concept Scheme: {conceptScheme.displayLabel}
+        {translations("Concept scheme")}: {conceptScheme.displayLabel}
       </PageTitleHeading>
       <LabelSections model={conceptScheme} />
       {topConceptsCount > 0 ? (
-        <Section title="Top concepts">
+        <Section title={translations("Top concepts")}>
           <div className="flex flex-col gap-2">
             <ConceptList
               concepts={
@@ -42,7 +44,7 @@ export async function ConceptSchemePage({
                   page: 0,
                 })}
               >
-                More
+                {translations("More")}
               </Link>
             ) : null}
           </div>

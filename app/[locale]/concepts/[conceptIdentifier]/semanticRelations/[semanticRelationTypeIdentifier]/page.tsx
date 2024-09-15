@@ -4,6 +4,7 @@ import { kosFactory } from "@/app/kosFactory";
 import { ConceptList } from "@/lib/components/ConceptList";
 import { Layout } from "@/lib/components/Layout";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
+import { Section } from "@/lib/components/Section";
 import { dataFactory } from "@/lib/dataFactory";
 import { Identifier, Locale } from "@/lib/models";
 import { Concept } from "@kos-kit/models";
@@ -15,11 +16,15 @@ import { notFound } from "next/navigation";
 interface ConceptSemanticRelationsPageParams {
   conceptIdentifier: string;
   locale: Locale;
-  semanticRelationType: string;
+  semanticRelationTypeIdentifier: string;
 }
 
 export default async function ConceptSemanticRelationsPage({
-  params: { conceptIdentifier, locale, semanticRelationType },
+  params: {
+    conceptIdentifier,
+    locale,
+    semanticRelationTypeIdentifier: semanticRelationshipTypeIdentifierString,
+  },
 }: {
   params: ConceptSemanticRelationsPageParams;
 }) {
@@ -43,21 +48,39 @@ export default async function ConceptSemanticRelationsPage({
     notFound();
   }
 
-  const semanticRelationProperty =
-    semanticRelationPropertiesByName[semanticRelationType];
+  const semanticRelationTypeIdentifier = Identifier.fromString({
+    dataFactory,
+    identifier: decodeFileName(semanticRelationshipTypeIdentifierString),
+  });
+  const semanticRelationType = Concept.SemanticRelation.Types.find(
+    (semanticRelationType) =>
+      semanticRelationType.property.equals(semanticRelationTypeIdentifier),
+  );
+  if (!semanticRelationType) {
+    notFound();
+  }
 
   const semanticRelations = await (
-    await concept.semanticRelations(semanticRelationProperty)
+    await concept.semanticRelations(semanticRelationType)
   ).flatResolve();
 
   const translations = await getTranslations("ConceptSemanticRelationsPage");
+  const semanticRelationTypeTranslations = await getTranslations(
+    "SemanticRelationTypes",
+  );
 
   return (
     <Layout>
       <PageTitleHeading>
-        {translations("concept")}: {concept.displayLabel}
+        {translations("Concept")}: {concept.displayLabel}
       </PageTitleHeading>
-      <ConceptList concepts={semanticRelations} />
+      <Section
+        title={semanticRelationTypeTranslations(
+          semanticRelationType.property.value.replaceAll(".", "_"),
+        )}
+      >
+        <ConceptList concepts={semanticRelations} />
+      </Section>
     </Layout>
   );
 }
@@ -66,7 +89,7 @@ export async function generateMetadata({
   params: {
     conceptIdentifier,
     locale,
-    semanticRelationType: semanticRelationTypeString,
+    semanticRelationTypeIdentifier: semanticRelationshipTypeIdentifierString,
   },
 }: {
   params: ConceptSemanticRelationsPageParams;
@@ -88,15 +111,25 @@ export async function generateMetadata({
   if (!concept) {
     return {};
   }
+
+  const semanticRelationTypeIdentifier = Identifier.fromString({
+    dataFactory,
+    identifier: decodeFileName(semanticRelationshipTypeIdentifierString),
+  });
+  const semanticRelationType = Concept.SemanticRelation.Types.find(
+    (semanticRelationType) =>
+      semanticRelationType.property.equals(semanticRelationTypeIdentifier),
+  );
+  if (!semanticRelationType) {
+    return {};
+  }
+
   return (
     (await new PageMetadata({
       locale,
     }).conceptSemanticRelations({
       concept,
-      semanticRelationType: Concept.SemanticRelation.Types.find(
-        (semanticRelationType) =>
-          semanticRelationType.property.value === semanticRelationTypeString,
-      )!,
+      semanticRelationType,
     })) ?? {}
   );
 }
@@ -120,7 +153,7 @@ export async function generateStaticParams(): Promise<
         Identifier.toString(concept.identifier),
       );
 
-      for (const semanticRelationType of Concept.SemanticRelation.Type) {
+      for (const semanticRelationType of Concept.SemanticRelation.Types) {
         if (
           (await concept.semanticRelations(semanticRelationType)).length <=
           configuration.relatedConceptsPerSection
@@ -131,7 +164,9 @@ export async function generateStaticParams(): Promise<
         staticParams.push({
           conceptIdentifier,
           locale,
-          semanticRelationType: semanticRelationType.name,
+          semanticRelationTypeIdentifier: encodeFileName(
+            Identifier.toString(semanticRelationType.property),
+          ),
         });
       }
     }

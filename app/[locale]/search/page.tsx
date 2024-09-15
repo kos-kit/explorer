@@ -12,6 +12,7 @@ import {
   ServerSearchEngine,
 } from "@kos-kit/search";
 import { Metadata } from "next";
+import { getMessages, unstable_setRequestLocale } from "next-intl/server";
 
 interface SearchPageParams {
   locale: Locale;
@@ -108,10 +109,17 @@ export default async function SearchPage({
 }: {
   params: SearchPageParams;
 }) {
+  unstable_setRequestLocale(locale);
+
   return (
     <Layout>
       <SearchPageClient
-        configuration={configuration}
+        configuration={{
+          conceptsPerPage: configuration.conceptsPerPage,
+          nextBasePath: configuration.nextBasePath,
+        }}
+        locale={locale}
+        messages={await getMessages()}
         searchEngineJson={await getSearchEngineJson({ locale })}
       />
     </Layout>

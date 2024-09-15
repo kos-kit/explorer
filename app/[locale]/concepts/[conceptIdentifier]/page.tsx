@@ -9,16 +9,12 @@ import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { dataFactory } from "@/lib/dataFactory";
 import { getHrefs } from "@/lib/getHrefs";
-import {
-  Identifier,
-  Locale,
-  noteProperties,
-  semanticRelationProperties,
-} from "@/lib/models";
+import { Identifier, Locale } from "@/lib/models";
+import { Concept } from "@kos-kit/models";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Metadata } from "next";
-import { unstable_setRequestLocale } from "next-intl/server";
+import { getTranslations, unstable_setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -55,36 +51,40 @@ export default async function ConceptPage({
   const hrefs = await getHrefs();
 
   const notations = concept.notations;
+  const notes = concept.notes();
+
+  const translations = await getTranslations("ConceptPage");
+  const noteTypeTranslations = await getTranslations("NoteTypes");
+  const semanticRelationTypeTranslations = await getTranslations(
+    "SemanticRelationTypes",
+  );
 
   return (
     <Layout>
-      <PageTitleHeading>Concept: {concept.displayLabel}</PageTitleHeading>
+      <PageTitleHeading>
+        {translations("Concept")}: {concept.displayLabel}
+      </PageTitleHeading>
       <LabelSections model={concept} />
-      {
-        await Promise.all(
-          noteProperties.map((noteProperty) => {
-            const notes = concept.notes(noteProperty);
-            if (notes.length === 0) {
-              return null;
-            }
-            return (
-              <Section key={noteProperty.name} title={noteProperty.pluralLabel}>
-                <table className="w-full">
-                  <tbody>
-                    {notes.map((note, noteI) => (
-                      <tr key={noteI}>
-                        <td>{note.value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Section>
-            );
-          }),
-        )
-      }
+      {notes.map((note, noteI) => (
+        <Section
+          key={noteI}
+          title={noteTypeTranslations(
+            note.type.skosProperty.value.replaceAll(".", "_"),
+          )}
+        >
+          <table className="w-full">
+            <tbody>
+              {notes.map((note, noteI) => (
+                <tr key={noteI}>
+                  <td>{note.literalForm.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Section>
+      ))}
       {notations.length > 0 ? (
-        <Section title="Notations">
+        <Section title={translations("Notations")}>
           <ul className="list-disc list-inside">
             {notations.map((notation, notationI) => (
               <li key={notationI}>
@@ -99,17 +99,19 @@ export default async function ConceptPage({
       ) : null}
       {
         await Promise.all(
-          semanticRelationProperties.map(async (semanticRelationProperty) => {
+          Concept.SemanticRelation.Types.map(async (semanticRelationType) => {
             const semanticRelations = await (
-              await concept.semanticRelations(semanticRelationProperty)
+              await concept.semanticRelations(semanticRelationType)
             ).flatResolve();
             if (semanticRelations.length === 0) {
               return null;
             }
             return (
               <Section
-                key={semanticRelationProperty.name}
-                title={`${semanticRelationProperty.name} concepts`}
+                key={semanticRelationType.property.value}
+                title={semanticRelationTypeTranslations(
+                  semanticRelationType.property.value.replaceAll(".", "_"),
+                )}
               >
                 <ConceptList
                   concepts={
@@ -127,10 +129,10 @@ export default async function ConceptPage({
                   <Link
                     href={hrefs.conceptSemanticRelations({
                       concept,
-                      semanticRelationProperty,
+                      semanticRelationType: semanticRelationType,
                     })}
                   >
-                    More
+                    {translations("More")}
                   </Link>
                 ) : null}
               </Section>

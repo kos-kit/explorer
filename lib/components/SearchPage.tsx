@@ -5,14 +5,19 @@ import { Link } from "@/lib/components/Link";
 import { ClientConfigurationContext } from "@/lib/contexts";
 import { dataFactory } from "@/lib/dataFactory";
 import { useHrefs } from "@/lib/hooks/useHrefs";
-import { ClientConfiguration, Identifier } from "@/lib/models";
+import { ClientConfiguration, Identifier, Locale } from "@/lib/models";
 import {
   SearchEngineJson,
   SearchResult,
   SearchResults,
   createSearchEngineFromJson,
 } from "@kos-kit/search";
-import { useLocale } from "next-intl";
+import {
+  AbstractIntlMessages,
+  NextIntlClientProvider,
+  useLocale,
+  useTranslations,
+} from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { PageTitleHeading } from "./PageTitleHeading";
@@ -85,6 +90,7 @@ function SearchPageImpl({ configuration, searchEngineJson }: SearchPageProps) {
     page = 0;
   }
   const query = searchParams?.get("query");
+  const translations = useTranslations();
 
   const [error, setError] = useState<Error | null>(null);
   const [searchResults, setSearchResults] = useState<SearchResults | null>(
@@ -112,14 +118,16 @@ function SearchPageImpl({ configuration, searchEngineJson }: SearchPageProps) {
   if (error) {
     return (
       <>
-        <PageTitleHeading>Error</PageTitleHeading>
+        <PageTitleHeading>{translations("Error")}</PageTitleHeading>
         <p>{error.message}</p>
       </>
     );
   }
 
   const heading = (
-    <PageTitleHeading>Search results for &quot;{query}&quot;</PageTitleHeading>
+    <PageTitleHeading>
+      {translations("Search results", { query })}
+    </PageTitleHeading>
   );
   if (searchResults === null) {
     return (
@@ -168,12 +176,19 @@ function SearchPageImpl({ configuration, searchEngineJson }: SearchPageProps) {
   );
 }
 
-export function SearchPage({ configuration, ...otherProps }: SearchPageProps) {
+export function SearchPage({
+  configuration,
+  locale,
+  messages,
+  ...otherProps
+}: SearchPageProps & { locale: Locale; messages: AbstractIntlMessages }) {
   // https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
   return (
     <Suspense>
       <ClientConfigurationContext.Provider value={configuration}>
-        <SearchPageImpl configuration={configuration} {...otherProps} />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <SearchPageImpl configuration={configuration} {...otherProps} />
+        </NextIntlClientProvider>
       </ClientConfigurationContext.Provider>
     </Suspense>
   );

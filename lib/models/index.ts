@@ -10,7 +10,5 @@ export * from "./ServerConfiguration";
 export {
   Identifier,
   Label,
-  noteProperties,
-  SemanticRelationProperty,
-  semanticRelationProperties,
+  Note,
 } from "@kos-kit/models";

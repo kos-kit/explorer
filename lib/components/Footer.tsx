@@ -1,7 +1,7 @@
 import { kosFactory } from "@/app/kosFactory";
 import { Link } from "@/lib/components/Link";
 import { Literal, NamedNode } from "@rdfjs/types";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import React, { Fragment } from "react";
 
 export async function Footer() {
@@ -25,6 +25,8 @@ export async function Footer() {
     return null;
   }
 
+  const translations = await getTranslations("Footer");
+
   const rightsParts: React.ReactNode[] = [];
   const copyright = `© ${new Date().getFullYear().toString()}`;
   if (rightsHolder !== null) {
@@ -45,7 +47,9 @@ export async function Footer() {
   }
   if (license !== null) {
     if (license.termType === "NamedNode") {
-      rightsParts.push(<Link href={license.value}>License</Link>);
+      rightsParts.push(
+        <Link href={license.value}>{translations("License")}</Link>,
+      );
     } else {
       rightsParts.push(
         <span dangerouslySetInnerHTML={{ __html: license.value }} />,

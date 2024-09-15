@@ -20,17 +20,12 @@ export default async function LocalePage({
   const conceptSchemes = await (
     await (
       await kosFactory({
-        languageTag: locale,
+        locale,
       })
     ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
   ).flatResolve();
   if (conceptSchemes.length === 1) {
-    return (
-      <ConceptSchemePage
-        conceptScheme={conceptSchemes[0]}
-        languageTag={configuration.defaultLocale}
-      />
-    );
+    return <ConceptSchemePage conceptScheme={conceptSchemes[0]} />;
   }
   throw new RangeError(
     `TODO: generate concept scheme links for ${conceptSchemes.length} concept schemes`,

@@ -1,15 +1,38 @@
 {
+  "ConceptPage": {
+    "Concept": "Concept",
+    "More": "More",
+    "Notations": "Notations"
+  },
   "ConceptSchemePage": {
     "Concept scheme": "Concept scheme",
+    "More": "More",
     "Top concepts": "Top concepts"
+  },
+  "ConceptSchemeTopConceptsPage": {
+    "Concept scheme": "Concept scheme",
+    "Top concepts page": "Top concepts (Page {page} of {pageCount})"
   },
   "ConceptSemanticRelationsPage": {
     "Concept": "Concept"
   },
+  "Footer": {
+    "License": "License"
+  },
+  "NoteTypes": {
+    "http://www_w3_org/2004/02/skos/core#changeNote": "Change note",
+    "http://www_w3_org/2004/02/skos/core#definition": "Definition",
+    "http://www_w3_org/2004/02/skos/core#editorialNote": "Editorial note",
+    "http://www_w3_org/2004/02/skos/core#example": "Example",
+    "http://www_w3_org/2004/02/skos/core#historyNote": "History note",
+    "http://www_w3_org/2004/02/skos/core#note": "Note",
+    "http://www_w3_org/2004/02/skos/core#scopeNote": "Scope note"
+  },
   "LabelTypes": {
-    "alternative": "Alternative labels",
-    "hidden": "Hidden labels",
-    "preferred": "Preferred labels"
+    "http://www_w3_org/2004/02/skos/core#altLabel": "Alternative labels",
+    "http://www_w3_org/2004/02/skos/core#hiddenLabel": "Hidden labels",
+    "http://www_w3_org/2000/01/rdf-schema#label": "Other labels",
+    "http://www_w3_org/2004/02/skos/core#prefLabel": "Preferred labels"
   },
   "PageMetadata": {
     "Concept": "Concept",
@@ -17,7 +40,23 @@
     "Top concepts": "Top concepts",
     "Search results": "Search results"
   },
-  "SemanticRelationProperties": {
-    "broader": "Broader concepts"
+  "SearchForm": {
+    "placeholder": "Search..."
+  },
+  "SearchPage": {
+    "Error": "Error",
+    "Search results": "Search results for \"{query}\""
+  },
+  "SemanticRelationTypes": {
+    "http://www_w3_org/2004/02/skos/core#broader": "Broader concepts",
+    "http://www_w3_org/2004/02/skos/core#broaderTransitive": "Broader concepts (transitive)",
+    "http://www_w3_org/2004/02/skos/core#broadMatch": "Broad match concepts",
+    "http://www_w3_org/2004/02/skos/core#closeMatch": "Close match concepts",
+    "http://www_w3_org/2004/02/skos/core#exactMatch": "Exact match concepts",
+    "http://www_w3_org/2004/02/skos/core#narrower": "Narrower concepts",
+    "http://www_w3_org/2004/02/skos/core#narrowerTransitive": "Varrower concepts (transitive)",
+    "http://www_w3_org/2004/02/skos/core#narrowMatch": "Narrow match concepts",
+    "http://www_w3_org/2004/02/skos/core#related": "Related concepts",
+    "http://www_w3_org/2004/02/skos/core#relatedMatch": "Related match concepts"
   }
 }

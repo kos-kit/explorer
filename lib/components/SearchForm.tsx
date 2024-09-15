@@ -1,15 +1,17 @@
 import { getHrefs } from "@/lib/getHrefs";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { getTranslations } from "next-intl/server";
 
 export async function SearchForm() {
   const hrefs = await getHrefs();
+  const translations = await getTranslations("SearchForm");
 
   return (
     <form action={hrefs.search({})} className="flex gap-1" method="GET">
       <input
         className="w-full min-w-64 p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded bg-gray-50 focus:border-black"
         name="query"
-        placeholder="Search..."
+        placeholder={translations("placeholder")}
         type="search"
       />
       <button
