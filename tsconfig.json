@@ -19,7 +19,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "../lib/packages/next-utils/src/GlobalRef.ts"
+    ".next/types/**/*.ts"
   ]
 }
