@@ -66,7 +66,7 @@ export default async function ConceptSemanticRelationsPage({
 
   const translations = await getTranslations("ConceptSemanticRelationsPage");
   const semanticRelationTypeTranslations = await getTranslations(
-    "SemanticRelationTypes",
+    "SemanticRelationProperties",
   );
 
   return (

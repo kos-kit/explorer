@@ -9,8 +9,7 @@ import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { dataFactory } from "@/lib/dataFactory";
 import { getHrefs } from "@/lib/getHrefs";
-import { Identifier, Locale } from "@/lib/models";
-import { Concept } from "@kos-kit/models";
+import { Identifier, Labels, Locale } from "@/lib/models";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Metadata } from "next";
@@ -33,14 +32,12 @@ export default async function ConceptPage({
   const concept = (
     await (
       await kosFactory({ locale })
+    ).concept(
+      Identifier.fromString({
+        dataFactory,
+        identifier: decodeFileName(conceptIdentifier),
+      }),
     )
-      .concept(
-        Identifier.fromString({
-          dataFactory,
-          identifier: decodeFileName(conceptIdentifier),
-        }),
-      )
-      .resolve()
   )
     .toMaybe()
     .extractNullable();
@@ -50,25 +47,25 @@ export default async function ConceptPage({
 
   const hrefs = await getHrefs();
 
-  const notations = concept.notations;
+  const notations = concept.notation;
   const notes = concept.notes();
 
   const translations = await getTranslations("ConceptPage");
-  const noteTypeTranslations = await getTranslations("NoteTypes");
-  const semanticRelationTypeTranslations = await getTranslations(
-    "SemanticRelationTypes",
+  const notePropertyTranslations = await getTranslations("NoteProperties");
+  const semanticRelationPropertyTranslations = await getTranslations(
+    "SemanticRelationProperties",
   );
 
   return (
     <Layout>
       <PageTitleHeading>
-        {translations("Concept")}: {concept.displayLabel}
+        {translations("Concept")}: {new Labels(concept).display}
       </PageTitleHeading>
-      <LabelSections model={concept} />
+      <LabelSections kosResource={concept} />
       {notes.map((note, noteI) => (
         <Section
           key={noteI}
-          title={noteTypeTranslations(
+          title={notePropertyTranslations(
             note.type.skosProperty.value.replaceAll(".", "_"),
           )}
         >
@@ -109,7 +106,7 @@ export default async function ConceptPage({
             return (
               <Section
                 key={semanticRelationType.property.value}
-                title={semanticRelationTypeTranslations(
+                title={semanticRelationPropertyTranslations(
                   semanticRelationType.property.value.replaceAll(".", "_"),
                 )}
               >
@@ -129,7 +126,7 @@ export default async function ConceptPage({
                   <Link
                     href={hrefs.conceptSemanticRelations({
                       concept,
-                      semanticRelationType: semanticRelationType,
+                      semanticRelationProperty: semanticRelationType,
                     })}
                   >
                     {translations("More")}

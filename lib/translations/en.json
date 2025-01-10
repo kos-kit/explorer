@@ -19,7 +19,7 @@
   "Footer": {
     "License": "License"
   },
-  "NoteTypes": {
+  "NoteProperties": {
     "http://www_w3_org/2004/02/skos/core#changeNote": "Change note",
     "http://www_w3_org/2004/02/skos/core#definition": "Definition",
     "http://www_w3_org/2004/02/skos/core#editorialNote": "Editorial note",
@@ -28,7 +28,7 @@
     "http://www_w3_org/2004/02/skos/core#note": "Note",
     "http://www_w3_org/2004/02/skos/core#scopeNote": "Scope note"
   },
-  "LabelTypes": {
+  "LabelProperties": {
     "http://www_w3_org/2004/02/skos/core#altLabel": "Alternative labels",
     "http://www_w3_org/2004/02/skos/core#hiddenLabel": "Hidden labels",
     "http://www_w3_org/2000/01/rdf-schema#label": "Other labels",
@@ -47,7 +47,7 @@
     "Error": "Error",
     "Search results": "Search results for \"{query}\""
   },
-  "SemanticRelationTypes": {
+  "SemanticRelationProperties": {
     "http://www_w3_org/2004/02/skos/core#broader": "Broader concepts",
     "http://www_w3_org/2004/02/skos/core#broaderTransitive": "Broader concepts (transitive)",
     "http://www_w3_org/2004/02/skos/core#broadMatch": "Broad match concepts",

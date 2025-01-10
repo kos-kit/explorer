@@ -1,11 +1,11 @@
 import { Link } from "@/lib/components/Link";
 import { getHrefs } from "@/lib/getHrefs";
-import { Concept, Identifier } from "@/lib/models";
+import { ConceptStub, Identifier, Labels } from "@/lib/models";
 
 export async function ConceptList({
   concepts,
 }: {
-  concepts: readonly Concept[];
+  concepts: readonly ConceptStub[];
 }) {
   const hrefs = await getHrefs();
 
@@ -15,7 +15,9 @@ export async function ConceptList({
         await Promise.all(
           concepts.map((concept) => (
             <li key={Identifier.toString(concept.identifier)}>
-              <Link href={hrefs.concept(concept)}>{concept.displayLabel}</Link>
+              <Link href={hrefs.concept(concept)}>
+                {new Labels(concept).display}
+              </Link>
             </li>
           )),
         )

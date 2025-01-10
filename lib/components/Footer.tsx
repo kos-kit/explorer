@@ -9,13 +9,16 @@ export async function Footer() {
   let rights: Literal | null = null;
   let rightsHolder: Literal | null = null;
 
-  const conceptSchemes = await (
-    await (
-      await kosFactory({ locale: await getLocale() })
-    ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
-  ).flatResolve();
-  if (conceptSchemes.length === 1) {
-    const conceptScheme = conceptSchemes[0];
+  const kos = await kosFactory({ locale: await getLocale() });
+  const conceptSchemeIdentifiers = await kos.conceptSchemeIdentifiers({
+    limit: null,
+    offset: 0,
+    query: { type: "All" },
+  });
+  if (conceptSchemeIdentifiers.length === 1) {
+    const conceptScheme = (
+      await kos.conceptScheme(conceptSchemeIdentifiers[0])
+    ).unsafeCoerce();
     license = conceptScheme.license.extractNullable();
     rights = conceptScheme.rights.extractNullable();
     rightsHolder = conceptScheme.rightsHolder.extractNullable();

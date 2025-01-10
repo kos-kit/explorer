@@ -17,18 +17,22 @@ export default async function LocalePage({
 }) {
   unstable_setRequestLocale(locale);
 
-  const conceptSchemes = await (
-    await (
-      await kosFactory({
-        locale,
-      })
-    ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
-  ).flatResolve();
-  if (conceptSchemes.length === 1) {
-    return <ConceptSchemePage conceptScheme={conceptSchemes[0]} />;
+  const kos = await kosFactory({
+    locale,
+  });
+  const conceptSchemeIdentifiers = await kos.conceptSchemeIdentifiers({
+    limit: null,
+    offset: 0,
+    query: { type: "All" },
+  });
+  if (conceptSchemeIdentifiers.length === 1) {
+    const conceptScheme = (
+      await kos.conceptScheme(conceptSchemeIdentifiers[0])
+    ).unsafeCoerce();
+    return <ConceptSchemePage conceptScheme={conceptScheme} kos={kos} />;
   }
   throw new RangeError(
-    `TODO: generate concept scheme links for ${conceptSchemes.length} concept schemes`,
+    `TODO: generate concept scheme links for ${conceptSchemeIdentifiers.length} concept schemes`,
   );
 }
 

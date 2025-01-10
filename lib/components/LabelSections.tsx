@@ -1,35 +1,54 @@
 import { Section } from "@/lib/components/Section";
-import { Label, LabeledModel } from "@/lib/models";
+import {
+  KosResource,
+  Label,
+  LabelProperty,
+  Labels,
+} from "@kos-kit/generated-models";
 import { getTranslations } from "next-intl/server";
 import React from "react";
 
-export async function LabelSections({ model }: { model: LabeledModel }) {
-  const sections: React.ReactElement[] = [];
-  const labelTypeTranslations = await getTranslations("LabelTypes");
-
-  for (const labelType of Label.Types) {
-    const labels = model.labels({ types: [labelType] });
-
-    if (
-      labels.length === 0 ||
-      (labelType === Label.Type.PREFERRED && labels.length === 1)
-    ) {
-      continue;
-    }
-
-    sections.push(
-      <Section
-        title={labelTypeTranslations(
-          `${labelType.literalProperty.value.replaceAll(".", "_")}`,
+function LabelSection({
+  labels,
+  title,
+}: { labels: readonly Label[]; title: string }) {
+  return (
+    <Section title={title}>
+      <ul className="list-disc list-inside">
+        {labels.flatMap((label, labelI) =>
+          label.literalForm.map((literalForm, literalFormI) => (
+            <li key={`${labelI}-${literalFormI}`}>{literalForm.value}</li>
+          )),
         )}
-      >
-        <ul className="list-disc list-inside">
-          {labels.map((label, labelI) => (
-            <li key={labelI}>{label.literalForm.value}</li>
-          ))}
-        </ul>
-      </Section>,
+      </ul>
+    </Section>
+  );
+}
+
+export async function LabelSections({
+  kosResource,
+}: { kosResource: KosResource }) {
+  const sections: React.ReactElement[] = [];
+  const labels = new Labels(kosResource);
+  const labelTypeTranslations = await getTranslations("LabelProperties");
+
+  if (labels.alternative.length > 0) {
+    sections.push(
+      <LabelSection
+        labels={labels.alternative}
+        title={labelTypeTranslations(LabelProperty.ALT.translationKey)}
+      />,
     );
   }
+
+  if (labels.hidden.length > 0) {
+    sections.push(
+      <LabelSection
+        labels={labels.hidden}
+        title={labelTypeTranslations(LabelProperty.HIDDEN.translationKey)}
+      />,
+    );
+  }
+
   return sections;
 }

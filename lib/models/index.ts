@@ -1,14 +1,26 @@
 export * from "./ClientConfiguration";
-export * from "./Concept";
-export * from "./ConceptScheme";
-export * from "./Kos";
-export * from "./Label";
-export * from "./LabeledModel";
-export type { LanguageTag } from "@kos-kit/models";
 export * from "./Locale";
 export * from "./ServerConfiguration";
 export {
+  Concept,
+  ConceptScheme,
+  ConceptStub,
+  ConceptSchemeStub,
   Identifier,
-  Label,
-  Note,
-} from "@kos-kit/models";
+  Labels,
+  SemanticRelationProperty,
+} from "@kos-kit/generated-models";
+export type { LanguageTag } from "@kos-kit/generated-models";
+import {
+  Concept,
+  ConceptScheme,
+  ConceptSchemeStub,
+  ConceptStub,
+  Kos as LibKos,
+} from "@kos-kit/generated-models";
+export type Kos = LibKos<
+  Concept,
+  ConceptScheme,
+  ConceptSchemeStub,
+  ConceptStub
+>;

@@ -2,15 +2,19 @@ import fs from "node:fs/promises";
 import { dataFactory } from "@/lib/dataFactory";
 import { logger } from "@/lib/logger";
 import { Kos, Locale } from "@/lib/models";
-import { LanguageTagSet, NotImplementedKos } from "@kos-kit/models";
-import { GlobalRef } from "@kos-kit/next-utils";
-import { RdfDirectory } from "@kos-kit/next-utils/RdfDirectory";
-import { RdfFile } from "@kos-kit/next-utils/RdfFile";
-import * as fsEither from "@kos-kit/next-utils/fsEither";
-import { getRdfFileFormat } from "@kos-kit/next-utils/getRdfFileFormat";
-import * as rdfjsDataset from "@kos-kit/rdfjs-dataset-models";
+import {
+  ModelFactories,
+  RdfjsDatasetKos,
+  SparqlKos,
+} from "@kos-kit/generated-models";
+import {
+  GlobalRef,
+  RdfDirectory,
+  RdfFile,
+  fsEither,
+  getRdfFileFormat,
+} from "@kos-kit/next-utils/server";
 import { HttpSparqlQueryClient } from "@kos-kit/sparql-client";
-import * as sparql from "@kos-kit/sparql-models";
 import { DatasetCore, DatasetCoreFactory, Quad } from "@rdfjs/types";
 import * as N3 from "n3";
 import { configuration } from "./configuration";
@@ -45,7 +49,7 @@ async function loadKosDataset(
           }
         } else if (stat.isFile()) {
           await getRdfFileFormat(absoluteDataPath)
-            .mapLeft(async (error) => {
+            .mapLeft(async (error: any) => {
               logger.warn(
                 "%s is not an RDF file: %s",
                 absoluteDataPath,
@@ -87,10 +91,10 @@ if (!kosFactoryGlobalRef.value) {
       "as KOS",
     );
     kosFactoryValue = async ({ locale }: { locale: Locale }) => {
-      return new sparql.DefaultKos({
+      return new SparqlKos({
         datasetCoreFactory,
-        includeLanguageTags: new LanguageTagSet(locale, ""),
-        logger,
+        languageIn: [locale, ""],
+        modelFactories: ModelFactories.default_,
         sparqlQueryClient: new HttpSparqlQueryClient({
           dataFactory: N3.DataFactory,
           endpointUrl: configuration.sparqlEndpoint!,
@@ -108,14 +112,21 @@ if (!kosFactoryGlobalRef.value) {
     }
 
     kosFactoryValue = async ({ locale }: { locale: Locale }) => {
-      return new rdfjsDataset.DefaultKos({
+      return new RdfjsDatasetKos({
         dataset: kosDatasetGlobalRef.value!,
-        includeLanguageTags: new LanguageTagSet(locale, ""),
+        languageIn: [locale, ""],
+        modelFactories: ModelFactories.default_,
       });
     };
   } else {
-    console.info("using NotImplementedKos");
-    kosFactoryValue = () => Promise.resolve(new NotImplementedKos());
+    logger.warn("no data paths or SPARQL endpoint configured");
+    kosFactoryValue = async ({ locale }: { locale: Locale }) => {
+      return new RdfjsDatasetKos({
+        dataset: new N3.Store(),
+        languageIn: [locale, ""],
+        modelFactories: ModelFactories.default_,
+      });
+    };
   }
 
   kosFactoryGlobalRef.value = kosFactoryValue;

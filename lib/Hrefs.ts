@@ -1,5 +1,4 @@
-import { Identifier, Locale } from "@/lib/models";
-import { Concept } from "@kos-kit/models";
+import { Identifier, Locale, SemanticRelationProperty } from "@/lib/models";
 import { encodeFileName } from "@kos-kit/next-utils";
 import queryString from "query-string";
 
@@ -42,12 +41,12 @@ export class Hrefs {
 
   conceptSemanticRelations({
     concept,
-    semanticRelationType,
+    semanticRelationProperty,
   }: {
     concept: { identifier: Identifier };
-    semanticRelationType: Concept.SemanticRelation.Type;
+    semanticRelationProperty: SemanticRelationProperty;
   }): string {
-    return `${this.concept(concept)}/semanticRelations/${encodeFileName(Identifier.toString(semanticRelationType.property))}`;
+    return `${this.concept(concept)}/semanticRelations/${encodeFileName(Identifier.toString(semanticRelationProperty.identifier))}`;
   }
 
   search({ page, query }: { page?: number; query?: string }) {
