@@ -7,8 +7,10 @@ export {
   ConceptStub,
   ConceptSchemeStub,
   Identifier,
-  Labels,
+  labels,
+  notes,
   SemanticRelationProperty,
+  semanticRelations,
 } from "@kos-kit/generated-models";
 export type { LanguageTag } from "@kos-kit/generated-models";
 import {
