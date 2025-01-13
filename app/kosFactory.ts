@@ -2,11 +2,7 @@ import fs from "node:fs/promises";
 import { dataFactory } from "@/lib/dataFactory";
 import { logger } from "@/lib/logger";
 import { Kos, Locale } from "@/lib/models";
-import {
-  ModelFactories,
-  RdfjsDatasetKos,
-  SparqlKos,
-} from "@kos-kit/models";
+import { ModelFactories, RdfjsDatasetKos, SparqlKos } from "@kos-kit/models";
 import {
   GlobalRef,
   RdfDirectory,
