@@ -48,7 +48,7 @@ async function getLunrSearchEngineJson({
     console.info("creating", locale, "search engine");
     const searchEngine = await LunrSearchEngine.create({
       kos: await kosFactory({ locale }),
-      languageIn: [locale, ""],
+      languageTag: locale,
     });
     console.info("created", locale, "search engine");
 
