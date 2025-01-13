@@ -15,15 +15,15 @@ export {
   SemanticRelationProperty,
   semanticRelations,
   semanticRelationProperties,
-} from "@kos-kit/generated-models";
-export type { LanguageTag } from "@kos-kit/generated-models";
+} from "@kos-kit/models";
+export type { LanguageTag } from "@kos-kit/models";
 import {
   Concept,
   ConceptScheme,
   ConceptSchemeStub,
   ConceptStub,
   Kos as LibKos,
-} from "@kos-kit/generated-models";
+} from "@kos-kit/models";
 export type Kos = LibKos<
   Concept,
   ConceptScheme,

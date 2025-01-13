@@ -6,7 +6,7 @@ import {
   ModelFactories,
   RdfjsDatasetKos,
   SparqlKos,
-} from "@kos-kit/generated-models";
+} from "@kos-kit/models";
 import {
   GlobalRef,
   RdfDirectory,
