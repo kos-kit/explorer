@@ -1,6 +1,6 @@
 import { Link } from "@/lib/components/Link";
 import { getHrefs } from "@/lib/getHrefs";
-import { ConceptStub, Identifier, Labels } from "@/lib/models";
+import { ConceptStub, Identifier, labels } from "@/lib/models";
 
 export async function ConceptList({
   concepts,
@@ -16,7 +16,7 @@ export async function ConceptList({
           concepts.map((concept) => (
             <li key={Identifier.toString(concept.identifier)}>
               <Link href={hrefs.concept(concept)}>
-                {new Labels(concept).display}
+                {labels(concept).display}
               </Link>
             </li>
           )),

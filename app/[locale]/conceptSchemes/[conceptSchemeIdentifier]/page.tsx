@@ -19,19 +19,17 @@ export default async function ConceptSchemePage({
 }: {
   params: ConceptSchemePageParams;
 }) {
+  const kos = await kosFactory({
+    locale,
+  });
+
   const conceptScheme = (
-    await (
-      await kosFactory({
-        locale,
-      })
+    await kos.conceptScheme(
+      Identifier.fromString({
+        dataFactory,
+        identifier: decodeFileName(conceptSchemeIdentifier),
+      }),
     )
-      .conceptScheme(
-        Identifier.fromString({
-          dataFactory,
-          identifier: decodeFileName(conceptSchemeIdentifier),
-        }),
-      )
-      .resolve()
   )
     .toMaybe()
     .extractNullable();
@@ -39,7 +37,7 @@ export default async function ConceptSchemePage({
     notFound();
   }
 
-  return <ConceptSchemePageComponent conceptScheme={conceptScheme} />;
+  return <ConceptSchemePageComponent conceptScheme={conceptScheme} kos={kos} />;
 }
 
 export async function generateMetadata({
@@ -52,14 +50,12 @@ export async function generateMetadata({
   const conceptScheme = (
     await (
       await kosFactory({ locale })
+    ).conceptSchemeStub(
+      Identifier.fromString({
+        dataFactory,
+        identifier: decodeFileName(conceptSchemeIdentifier),
+      }),
     )
-      .conceptScheme(
-        Identifier.fromString({
-          dataFactory,
-          identifier: decodeFileName(conceptSchemeIdentifier),
-        }),
-      )
-      .resolve()
   )
     .toMaybe()
     .extractNullable();
@@ -83,14 +79,18 @@ export async function generateStaticParams(): Promise<
   // If there's only one concept scheme the /[locale]/ page will show its ConceptPage,
   // but we still have to generate another ConceptPage here because Next doesn't like an empty staticParams.
   for (const locale of configuration.locales) {
-    for (const conceptScheme of await (
+    for (const conceptSchemeIdentifier of await (
       await kosFactory({
         locale,
       })
-    ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })) {
+    ).conceptSchemeIdentifiers({
+      limit: null,
+      offset: 0,
+      query: { type: "All" },
+    })) {
       staticParams.push({
         conceptSchemeIdentifier: encodeFileName(
-          Identifier.toString(conceptScheme.identifier),
+          Identifier.toString(conceptSchemeIdentifier),
         ),
         locale,
       });

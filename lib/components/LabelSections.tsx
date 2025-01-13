@@ -1,10 +1,5 @@
 import { Section } from "@/lib/components/Section";
-import {
-  KosResource,
-  Label,
-  LabelProperty,
-  Labels,
-} from "@kos-kit/generated-models";
+import { KosResource, Label, LabelProperty, labels } from "@/lib/models";
 import { getTranslations } from "next-intl/server";
 import React from "react";
 
@@ -29,22 +24,22 @@ export async function LabelSections({
   kosResource,
 }: { kosResource: KosResource }) {
   const sections: React.ReactElement[] = [];
-  const labels = new Labels(kosResource);
+  const labels_ = labels(kosResource);
   const labelTypeTranslations = await getTranslations("LabelProperties");
 
-  if (labels.alternative.length > 0) {
+  if (labels_.alternative.length > 0) {
     sections.push(
       <LabelSection
-        labels={labels.alternative}
+        labels={labels_.alternative}
         title={labelTypeTranslations(LabelProperty.ALT.translationKey)}
       />,
     );
   }
 
-  if (labels.hidden.length > 0) {
+  if (labels_.hidden.length > 0) {
     sections.push(
       <LabelSection
-        labels={labels.hidden}
+        labels={labels_.hidden}
         title={labelTypeTranslations(LabelProperty.HIDDEN.translationKey)}
       />,
     );

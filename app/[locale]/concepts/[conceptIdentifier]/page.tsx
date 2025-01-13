@@ -9,7 +9,13 @@ import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { dataFactory } from "@/lib/dataFactory";
 import { getHrefs } from "@/lib/getHrefs";
-import { Identifier, Labels, Locale } from "@/lib/models";
+import {
+  Identifier,
+  Locale,
+  labels,
+  notes,
+  semanticRelations,
+} from "@/lib/models";
 import { decodeFileName, encodeFileName } from "@kos-kit/next-utils";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Metadata } from "next";
@@ -48,7 +54,6 @@ export default async function ConceptPage({
   const hrefs = await getHrefs();
 
   const notations = concept.notation;
-  const notes = concept.notes();
 
   const translations = await getTranslations("ConceptPage");
   const notePropertyTranslations = await getTranslations("NoteProperties");
@@ -59,21 +64,19 @@ export default async function ConceptPage({
   return (
     <Layout>
       <PageTitleHeading>
-        {translations("Concept")}: {new Labels(concept).display}
+        {translations("Concept")}: {labels(concept).display}
       </PageTitleHeading>
       <LabelSections kosResource={concept} />
-      {notes.map((note, noteI) => (
+      {notes(concept).map(([noteProperty, notes]) => (
         <Section
-          key={noteI}
-          title={notePropertyTranslations(
-            note.type.skosProperty.value.replaceAll(".", "_"),
-          )}
+          key={noteProperty.identifier.value}
+          title={notePropertyTranslations(noteProperty.translationKey)}
         >
           <table className="w-full">
             <tbody>
-              {notes.map((note, noteI) => (
-                <tr key={noteI}>
-                  <td>{note.literalForm.value}</td>
+              {notes.map((literal, literalI) => (
+                <tr key={literalI}>
+                  <td>{literal.value}</td>
                 </tr>
               ))}
             </tbody>
@@ -94,49 +97,37 @@ export default async function ConceptPage({
           </ul>
         </Section>
       ) : null}
-      {
-        await Promise.all(
-          Concept.SemanticRelation.Types.map(async (semanticRelationType) => {
-            const semanticRelations = await (
-              await concept.semanticRelations(semanticRelationType)
-            ).flatResolve();
-            if (semanticRelations.length === 0) {
-              return null;
-            }
-            return (
-              <Section
-                key={semanticRelationType.property.value}
-                title={semanticRelationPropertyTranslations(
-                  semanticRelationType.property.value.replaceAll(".", "_"),
-                )}
+      {semanticRelations(concept).map(
+        ([semanticRelationProperty, conceptStubs]) => (
+          <Section
+            key={semanticRelationProperty.identifier.value}
+            title={semanticRelationPropertyTranslations(
+              semanticRelationProperty.translationKey,
+            )}
+          >
+            <ConceptList
+              concepts={
+                conceptStubs.length <= configuration.relatedConceptsPerSection
+                  ? conceptStubs
+                  : conceptStubs.slice(
+                      0,
+                      configuration.relatedConceptsPerSection,
+                    )
+              }
+            />
+            {conceptStubs.length > configuration.relatedConceptsPerSection ? (
+              <Link
+                href={hrefs.conceptSemanticRelations({
+                  concept,
+                  semanticRelationProperty,
+                })}
               >
-                <ConceptList
-                  concepts={
-                    semanticRelations.length <=
-                    configuration.relatedConceptsPerSection
-                      ? semanticRelations
-                      : semanticRelations.slice(
-                          0,
-                          configuration.relatedConceptsPerSection,
-                        )
-                  }
-                />
-                {semanticRelations.length >
-                configuration.relatedConceptsPerSection ? (
-                  <Link
-                    href={hrefs.conceptSemanticRelations({
-                      concept,
-                      semanticRelationProperty: semanticRelationType,
-                    })}
-                  >
-                    {translations("More")}
-                  </Link>
-                ) : null}
-              </Section>
-            );
-          }),
-        )
-      }
+                {translations("More")}
+              </Link>
+            ) : null}
+          </Section>
+        ),
+      )}
     </Layout>
   );
 }
@@ -149,14 +140,12 @@ export async function generateMetadata({
   const concept = (
     await (
       await kosFactory({ locale })
+    ).conceptStub(
+      Identifier.fromString({
+        dataFactory,
+        identifier: decodeFileName(conceptIdentifier),
+      }),
     )
-      .concept(
-        Identifier.fromString({
-          dataFactory,
-          identifier: decodeFileName(conceptIdentifier),
-        }),
-      )
-      .resolve()
   )
     .toMaybe()
     .extractNullable();
@@ -174,14 +163,16 @@ export async function generateStaticParams(): Promise<ConceptPageParams[]> {
   const staticParams: ConceptPageParams[] = [];
 
   for (const locale of configuration.locales) {
-    for (const concept of await (await kosFactory({ locale })).concepts({
+    for (const conceptIdentifier of await (
+      await kosFactory({ locale })
+    ).conceptIdentifiers({
       limit: null,
       offset: 0,
       query: { type: "All" },
     })) {
       staticParams.push({
         conceptIdentifier: encodeFileName(
-          Identifier.toString(concept.identifier),
+          Identifier.toString(conceptIdentifier),
         ),
         locale,
       });

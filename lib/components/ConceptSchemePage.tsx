@@ -6,7 +6,7 @@ import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { getHrefs } from "@/lib/getHrefs";
-import { ConceptScheme, Kos, Labels } from "@/lib/models";
+import { ConceptScheme, Kos, labels } from "@/lib/models";
 import { getTranslations } from "next-intl/server";
 
 export async function ConceptSchemePage({
@@ -34,7 +34,7 @@ export async function ConceptSchemePage({
   return (
     <Layout>
       <PageTitleHeading>
-        {translations("Concept scheme")}: {new Labels(conceptScheme).display}
+        {translations("Concept scheme")}: {labels(conceptScheme).display}
       </PageTitleHeading>
       <LabelSections kosResource={conceptScheme} />
       {topConceptsCount > 0 ? (
