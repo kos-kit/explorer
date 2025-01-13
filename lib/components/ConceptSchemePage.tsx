@@ -6,37 +6,41 @@ import { Link } from "@/lib/components/Link";
 import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { getHrefs } from "@/lib/getHrefs";
-import { ConceptScheme } from "@/lib/models";
+import { ConceptScheme, Kos, labels } from "@/lib/models";
 import { getTranslations } from "next-intl/server";
 
 export async function ConceptSchemePage({
   conceptScheme,
+  kos,
 }: {
   conceptScheme: ConceptScheme;
+  kos: Kos;
 }) {
   const hrefs = await getHrefs();
-  const topConceptsCount = await conceptScheme.topConceptsCount();
   const translations = await getTranslations("ConceptSchemePage");
+  const topConcepts = await kos.conceptStubs({
+    limit: configuration.relatedConceptsPerSection,
+    offset: 0,
+    query: {
+      conceptSchemeIdentifier: conceptScheme.identifier,
+      type: "TopConceptOf",
+    },
+  });
+  const topConceptsCount = await kos.conceptsCount({
+    conceptSchemeIdentifier: conceptScheme.identifier,
+    type: "TopConceptOf",
+  });
 
   return (
     <Layout>
       <PageTitleHeading>
-        {translations("Concept scheme")}: {conceptScheme.displayLabel}
+        {translations("Concept scheme")}: {labels(conceptScheme).display}
       </PageTitleHeading>
-      <LabelSections model={conceptScheme} />
+      <LabelSections kosResource={conceptScheme} />
       {topConceptsCount > 0 ? (
         <Section title={translations("Top concepts")}>
           <div className="flex flex-col gap-2">
-            <ConceptList
-              concepts={
-                await (
-                  await conceptScheme.topConcepts({
-                    limit: configuration.relatedConceptsPerSection,
-                    offset: 0,
-                  })
-                ).flatResolve()
-              }
-            />
+            <ConceptList concepts={topConcepts} />
             {topConceptsCount > configuration.relatedConceptsPerSection ? (
               <Link
                 href={hrefs.conceptSchemeTopConcepts({

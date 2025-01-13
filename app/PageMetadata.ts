@@ -1,6 +1,11 @@
 import { kosFactory } from "@/app/kosFactory";
-import { Concept, ConceptScheme, Label, Locale } from "@/lib/models";
-import { Concept as LibConcept } from "@kos-kit/models";
+import {
+  ConceptSchemeStub,
+  ConceptStub,
+  Locale,
+  SemanticRelationProperty,
+  labels,
+} from "@/lib/models";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
@@ -11,32 +16,34 @@ export class PageMetadata {
     this._locale = locale;
   }
 
-  async concept(concept: Concept): Promise<Metadata> {
+  async concept(concept: Omit<ConceptStub, "type">): Promise<Metadata> {
     const rootPageMetadata = await this.locale();
     const translations = await getTranslations({
       locale: this._locale,
       namespace: "PageMetadata",
     });
     return {
-      title: `${rootPageMetadata.title}: ${translations("Concept")}: ${concept.displayLabel}`,
+      title: `${rootPageMetadata.title}: ${translations("Concept")}: ${labels(concept).display}`,
     } satisfies Metadata;
   }
 
-  async conceptScheme(conceptScheme: ConceptScheme): Promise<Metadata> {
+  async conceptScheme(
+    conceptScheme: Omit<ConceptSchemeStub, "type">,
+  ): Promise<Metadata> {
     const rootPageMetadata = await this.locale();
     const translations = await getTranslations({
       locale: this._locale,
       namespace: "PageMetadata",
     });
     return {
-      title: `${rootPageMetadata.title}: ${translations("Concept scheme")}: ${conceptScheme.displayLabel}`,
+      title: `${rootPageMetadata.title}: ${translations("Concept scheme")}: ${labels(conceptScheme).display}`,
     } satisfies Metadata;
   }
 
   async conceptSchemeTopConcepts({
     conceptScheme,
   }: {
-    conceptScheme: ConceptScheme;
+    conceptScheme: Omit<ConceptSchemeStub, "type">;
     page: number;
   }) {
     const conceptSchemePageMetadata = await this.conceptScheme(conceptScheme);
@@ -53,10 +60,10 @@ export class PageMetadata {
 
   async conceptSemanticRelations({
     concept,
-    semanticRelationType,
+    semanticRelationProperty,
   }: {
-    concept: Concept;
-    semanticRelationType: LibConcept.SemanticRelation.Type;
+    concept: Omit<ConceptStub, "type">;
+    semanticRelationProperty: SemanticRelationProperty;
   }) {
     const conceptPageMetadata = await this.concept(concept);
 
@@ -66,28 +73,20 @@ export class PageMetadata {
     });
 
     return {
-      title: `${conceptPageMetadata.title}: ${translations(semanticRelationType.property.value)}`,
+      title: `${conceptPageMetadata.title}: ${translations(semanticRelationProperty.translationKey)}`,
     } satisfies Metadata;
   }
 
   async locale(): Promise<Metadata> {
     const conceptSchemes = await (
-      await (
-        await kosFactory({
-          locale: this._locale,
-        })
-      ).conceptSchemes({ limit: null, offset: 0, query: { type: "All" } })
-    ).flatResolve();
+      await kosFactory({
+        locale: this._locale,
+      })
+    ).conceptSchemeStubs({ limit: null, offset: 0, query: { type: "All" } });
 
     let title = "SKOS";
     if (conceptSchemes.length === 1) {
-      const conceptScheme = conceptSchemes[0];
-      const prefLabels = conceptScheme.labels({
-        types: [Label.Type.PREFERRED],
-      });
-      if (prefLabels.length > 0) {
-        title = prefLabels[0].literalForm.value;
-      }
+      title = labels(conceptSchemes[0]).display;
     }
 
     return {

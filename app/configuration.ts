@@ -1,11 +1,11 @@
 import { ServerConfiguration } from "@/lib/models/ServerConfiguration";
-import { GlobalRef } from "@kos-kit/next-utils";
+import { GlobalRef } from "@kos-kit/next-utils/server";
 import {
   existingPathsValidator,
   intValidator,
   languageTagArrayValidator,
   pathValidator,
-} from "@kos-kit/next-utils/envalidValidators";
+} from "@kos-kit/next-utils/server/envalidValidators";
 import * as envalid from "envalid";
 
 const configurationGlobalRef = new GlobalRef<ServerConfiguration>(
