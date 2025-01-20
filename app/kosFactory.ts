@@ -88,6 +88,7 @@ if (!kosFactoryGlobalRef.value) {
     );
     kosFactoryValue = async ({ locale }: { locale: Locale }) => {
       return new SparqlKos({
+        dataFactory: N3.DataFactory,
         datasetCoreFactory,
         languageIn: [locale, ""],
         modelFactories: ModelFactories.default_,
