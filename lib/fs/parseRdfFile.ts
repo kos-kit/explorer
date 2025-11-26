@@ -3,9 +3,9 @@ import { Readable } from "node:stream";
 import zlib from "node:zlib";
 import { DataFactory, DatasetCore } from "@rdfjs/types";
 import bz2 from "unbzip2-stream";
+import { parseN3Stream } from "../rdf/parseN3Stream.js";
 import { RdfFileFormat } from "./RdfFileFormat.js";
 import { parseJsonLdStream } from "./parseJsonLdStream.js";
-import { parseN3Stream } from "./parseN3Stream.js";
 
 export async function parseRdfFile({
   dataFactory,

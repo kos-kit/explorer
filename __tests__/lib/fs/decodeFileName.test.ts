@@ -1,8 +1,8 @@
 import { describe, it } from "vitest";
 import { decodeFileName } from "../decodeFileName.js";
 import { encodeFileName } from "../encodeFileName.js";
-import { safeFileNames } from "./safeFileNames.js";
-import { unsafeFileNames } from "./unsafeFileNames.js";
+import { safeFileNames } from "../safeFileNames.js";
+import { unsafeFileNames } from "../unsafeFileNames.js";
 
 describe("decodeFileName", () => {
   for (const fileName of unsafeFileNames.concat(safeFileNames)) {
