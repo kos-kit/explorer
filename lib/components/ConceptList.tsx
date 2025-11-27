@@ -1,11 +1,11 @@
 import { Link } from "@/lib/components/Link";
 import { getHrefs } from "@/lib/getHrefs";
-import { ConceptStub, Identifier, labels } from "@/lib/models";
+import { Identifier, PartialConcept, labels } from "@/lib/models";
 
 export async function ConceptList({
   concepts,
 }: {
-  concepts: readonly ConceptStub[];
+  concepts: readonly PartialConcept[];
 }) {
   const hrefs = await getHrefs();
 

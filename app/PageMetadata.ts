@@ -1,8 +1,8 @@
 import { kosFactory } from "@/app/kosFactory";
 import {
-  ConceptSchemeStub,
-  ConceptStub,
   Locale,
+  PartialConcept,
+  PartialConceptScheme,
   SemanticRelationProperty,
   labels,
 } from "@/lib/models";
@@ -16,7 +16,7 @@ export class PageMetadata {
     this._locale = locale;
   }
 
-  async concept(concept: Omit<ConceptStub, "type">): Promise<Metadata> {
+  async concept(concept: Omit<PartialConcept, "type">): Promise<Metadata> {
     const rootPageMetadata = await this.locale();
     const translations = await getTranslations({
       locale: this._locale,
@@ -28,7 +28,7 @@ export class PageMetadata {
   }
 
   async conceptScheme(
-    conceptScheme: Omit<ConceptSchemeStub, "type">,
+    conceptScheme: Omit<PartialConceptScheme, "type">,
   ): Promise<Metadata> {
     const rootPageMetadata = await this.locale();
     const translations = await getTranslations({
@@ -43,7 +43,7 @@ export class PageMetadata {
   async conceptSchemeTopConcepts({
     conceptScheme,
   }: {
-    conceptScheme: Omit<ConceptSchemeStub, "type">;
+    conceptScheme: Omit<PartialConceptScheme, "type">;
     page: number;
   }) {
     const conceptSchemePageMetadata = await this.conceptScheme(conceptScheme);
@@ -62,7 +62,7 @@ export class PageMetadata {
     concept,
     semanticRelationProperty,
   }: {
-    concept: Omit<ConceptStub, "type">;
+    concept: Omit<PartialConcept, "type">;
     semanticRelationProperty: SemanticRelationProperty;
   }) {
     const conceptPageMetadata = await this.concept(concept);

@@ -4,8 +4,8 @@ export * from "./ServerConfiguration";
 export {
   Concept,
   ConceptScheme,
-  ConceptStub,
-  ConceptSchemeStub,
+  PartialConcept,
+  PartialConceptScheme,
   Identifier,
   KosResource,
   Label,
@@ -20,13 +20,13 @@ export type { LanguageTag } from "@kos-kit/models";
 import {
   Concept,
   ConceptScheme,
-  ConceptSchemeStub,
-  ConceptStub,
   Kos as LibKos,
+  PartialConcept,
+  PartialConceptScheme,
 } from "@kos-kit/models";
 export type Kos = LibKos<
   Concept,
   ConceptScheme,
-  ConceptSchemeStub,
-  ConceptStub
+  PartialConceptScheme,
+  PartialConcept
 >;

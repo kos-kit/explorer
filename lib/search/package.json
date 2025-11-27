@@ -5,7 +5,7 @@
     "@types/lunr": "^2.3.7",
     "lunr": "^2.3.9",
     "purify-ts": "~2.1.0",
-    "rdfjs-resource": "1.0.24"
+    "rdfjs-resource": "1.0.25"
   },
   "files": [
     "*.d.ts",

@@ -7,9 +7,9 @@ import { PageTitleHeading } from "@/lib/components/PageTitleHeading";
 import { Section } from "@/lib/components/Section";
 import { dataFactory } from "@/lib/dataFactory";
 import {
-  ConceptStub,
   Identifier,
   Locale,
+  PartialConcept,
   labels,
   semanticRelationProperties,
   semanticRelations,
@@ -67,7 +67,7 @@ export default async function ConceptSemanticRelationsPage({
     notFound();
   }
 
-  let semanticallyRelatedConcepts: readonly ConceptStub[] = [];
+  let semanticallyRelatedConcepts: readonly PartialConcept[] = [];
   for (const [
     checkSemanticRelationProperty,
     checkSemanticallyRelatedConcepts,
